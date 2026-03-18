@@ -91,7 +91,8 @@ export default async function handler(req, res) {
   const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
   if (webhookUrl) {
     try {
-      await forwardToWebhook(webhookUrl, { type: "booking", ...record });
+      const token = process.env.ADMIN_TOKEN;
+      await forwardToWebhook(webhookUrl, { type: "booking", ...record, token });
     } catch (e) {
       console.error("BOOKING_WEBHOOK_ERROR", e);
       return endJson(res, 502, { ok: false, error: "Upstream webhook failed" });

@@ -1,19 +1,19 @@
 /**
- * Dimshaircare Google Sheets Admin API (free)
+ * Dimshaircare Google Sheets — Webhook + Admin API (free)
  *
- * 1) Create a Google Sheet with two tabs:
- *    - bookings
- *    - contacts
+ * Handles: booking/contact submissions + admin list/update.
+ * Use the SAME Web App URL for both GOOGLE_SHEETS_WEBHOOK_URL and GOOGLE_SHEETS_ADMIN_API_URL.
  *
- * 2) In Apps Script, paste this file as Code.gs
- * 3) Set script properties:
- *    - ADMIN_TOKEN (same value as Vercel ADMIN_TOKEN)
- *
+ * 1) Create a new Google Sheet (blank)
+ * 2) Extensions → Apps Script → paste this entire file as Code.gs
+ * 3) Project Settings → Script Properties → Add:
+ *    - ADMIN_TOKEN = (same as Vercel ADMIN_TOKEN)
  * 4) Deploy → New deployment → Web app
  *    - Execute as: Me
  *    - Who has access: Anyone
- *
- * The web app URL becomes GOOGLE_SHEETS_ADMIN_API_URL in Vercel.
+ * 5) Copy the Web App URL → add to Vercel:
+ *    - GOOGLE_SHEETS_ADMIN_API_URL = <that URL>
+ *    - GOOGLE_SHEETS_WEBHOOK_URL = <same URL>
  */
 
 const SHEET_BOOKINGS = "bookings";
@@ -24,12 +24,18 @@ function doPost(e) {
     const body = e && e.postData && e.postData.contents ? e.postData.contents : "";
     const payload = body ? JSON.parse(body) : {};
 
-    // Auth
+    // Auth (required for all requests)
     const expected = PropertiesService.getScriptProperties().getProperty("ADMIN_TOKEN");
     const provided = String(payload.token || "");
     if (!expected) return json_(500, { ok: false, error: "ADMIN_TOKEN not set in Script Properties" });
     if (!provided || provided !== expected) return json_(401, { ok: false, error: "Unauthorized" });
 
+    // Webhook: new booking or contact
+    const type = String(payload.type || "");
+    if (type === "booking") return appendBooking_(payload);
+    if (type === "contact") return appendContact_(payload);
+
+    // Admin API
     const action = String(payload.action || "");
     switch (action) {
       case "listBookings":
@@ -39,11 +45,44 @@ function doPost(e) {
       case "updateBookingStatus":
         return updateBookingStatus_(payload);
       default:
-        return json_(400, { ok: false, error: "Unknown action" });
+        return json_(400, { ok: false, error: "Unknown action or type" });
     }
   } catch (err) {
     return json_(500, { ok: false, error: String(err && err.message ? err.message : err) });
   }
+}
+
+function appendBooking_(p) {
+  const sh = getOrInitBookings_();
+  const row = [
+    p.ref || "",
+    p.createdAt || new Date().toISOString(),
+    p.status || "new",
+    p.service || "",
+    p.price || "",
+    p.dur || "",
+    p.date || "",
+    p.time || "",
+    p.firstName || "",
+    p.lastName || "",
+    p.phone || "",
+    p.email || "",
+    p.notes || ""
+  ];
+  sh.appendRow(row);
+  return json_(200, { ok: true, ref: p.ref });
+}
+
+function appendContact_(p) {
+  const sh = getOrInitContacts_();
+  const row = [
+    p.createdAt || new Date().toISOString(),
+    p.name || "",
+    p.email || "",
+    p.message || ""
+  ];
+  sh.appendRow(row);
+  return json_(200, { ok: true });
 }
 
 function listBookings_() {

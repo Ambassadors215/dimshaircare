@@ -57,10 +57,15 @@ This repo includes a lightweight admin dashboard:
 - Export CSV
 - Update booking status (`new`, `confirmed`, `completed`, `cancelled`)
 
-### Vercel environment variables (required)
+### Fix "GOOGLE_SHEETS_ADMIN_API_URL not configured"
 
-- `ADMIN_TOKEN`: a long random string (keep private)
-- `GOOGLE_SHEETS_ADMIN_API_URL`: your Apps Script Admin API Web App URL
+Add these 3 env vars in **Vercel → Project → Settings → Environment Variables**:
+
+| Name | Value |
+|------|-------|
+| `ADMIN_TOKEN` | `dhc_a8f2k9m4x7q1w5e3r6t0y2u8i4o7p1s9` (or your own secret) |
+| `GOOGLE_SHEETS_ADMIN_API_URL` | Your Apps Script Web App URL (see below) |
+| `GOOGLE_SHEETS_WEBHOOK_URL` | Same URL as above |
 
 ### Google Apps Script Admin API (required)
 
