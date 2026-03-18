@@ -37,25 +37,4 @@ function requireAdmin(req, res) {
   return true;
 }
 
-function getAdminApiUrl(res) {
-  const url = process.env.GOOGLE_SHEETS_ADMIN_API_URL;
-  if (!url) {
-    endJson(res, 500, { ok: false, error: "GOOGLE_SHEETS_ADMIN_API_URL not configured" });
-    return null;
-  }
-  return url;
-}
-
-async function forwardJson(url, payload) {
-  const token = process.env.ADMIN_TOKEN;
-  const r = await fetch(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ ...payload, token })
-  });
-  const data = await r.json().catch(() => ({}));
-  return { ok: r.ok, status: r.status, data };
-}
-
-export { endJson, readBody, requireAdmin, getAdminApiUrl, forwardJson };
-
+export { endJson, readBody, requireAdmin };

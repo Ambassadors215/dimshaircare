@@ -1,3 +1,5 @@
+import { addBooking } from "../lib/kv-store.js";
+
 function readBody(req, limitBytes = 1024 * 1024) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -25,13 +27,11 @@ function safeText(s, max = 5000) {
   return s.trim().slice(0, max);
 }
 
-async function forwardToWebhook(url, payload) {
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-  if (!res.ok) throw new Error(`Webhook failed (${res.status})`);
+function endJson(res, statusCode, obj) {
+  res.statusCode = statusCode;
+  res.setHeader("content-type", "application/json; charset=utf-8");
+  res.setHeader("cache-control", "no-store");
+  res.end(JSON.stringify(obj));
 }
 
 export default async function handler(req, res) {
@@ -47,10 +47,7 @@ export default async function handler(req, res) {
     const raw = await readBody(req);
     payload = JSON.parse(raw);
   } catch {
-    res.statusCode = 400;
-    res.setHeader("content-type", "application/json; charset=utf-8");
-    res.end(JSON.stringify({ ok: false, error: "Invalid JSON" }));
-    return;
+    return endJson(res, 400, { ok: false, error: "Invalid JSON" });
   }
 
   const service = safeText(payload?.service, 120);
@@ -65,7 +62,7 @@ export default async function handler(req, res) {
   const notes = safeText(payload?.notes, 3000);
   const consent = Boolean(payload?.consent);
 
-  if (!service || !date || !time) return res.json?.({ ok: false, error: "Missing service/date/time" }) ?? endJson(res, 400, { ok: false, error: "Missing service/date/time" });
+  if (!service || !date || !time) return endJson(res, 400, { ok: false, error: "Missing service/date/time" });
   if (!firstName || !lastName) return endJson(res, 400, { ok: false, error: "Missing name" });
   if (!phone) return endJson(res, 400, { ok: false, error: "Missing phone" });
   if (!isValidEmail(email)) return endJson(res, 400, { ok: false, error: "Invalid email" });
@@ -76,6 +73,7 @@ export default async function handler(req, res) {
   const record = {
     ref,
     createdAt,
+    status: "new",
     service,
     price,
     dur,
@@ -88,27 +86,11 @@ export default async function handler(req, res) {
     notes
   };
 
-  const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
-  if (webhookUrl) {
-    try {
-      const token = process.env.ADMIN_TOKEN;
-      await forwardToWebhook(webhookUrl, { type: "booking", ...record, token });
-    } catch (e) {
-      console.error("BOOKING_WEBHOOK_ERROR", e);
-      return endJson(res, 502, { ok: false, error: "Upstream webhook failed" });
-    }
-  } else {
-    // Fallback: log only (no storage) if webhook not configured.
-    console.log("BOOKING_REQUEST", record);
+  try {
+    await addBooking(record);
+    return endJson(res, 200, { ok: true, ref });
+  } catch (e) {
+    console.error("BOOKING_KV_ERROR", e);
+    return endJson(res, 500, { ok: false, error: "Failed to save booking" });
   }
-
-  return endJson(res, 200, { ok: true, ref });
 }
-
-function endJson(res, statusCode, obj) {
-  res.statusCode = statusCode;
-  res.setHeader("content-type", "application/json; charset=utf-8");
-  res.setHeader("cache-control", "no-store");
-  res.end(JSON.stringify(obj));
-}
-

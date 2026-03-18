@@ -1,4 +1,5 @@
-import { endJson, getAdminApiUrl, readBody, requireAdmin, forwardJson } from "./_utils.js";
+import { endJson, readBody, requireAdmin } from "./_utils.js";
+import { updateBookingStatus } from "../../lib/kv-store.js";
 
 export default async function handler(req, res) {
   if (!requireAdmin(req, res)) return;
@@ -17,12 +18,12 @@ export default async function handler(req, res) {
   if (!ref) return endJson(res, 400, { ok: false, error: "Missing ref" });
   if (!allowed.has(status)) return endJson(res, 400, { ok: false, error: "Invalid status" });
 
-  const url = getAdminApiUrl(res);
-  if (!url) return;
-
-  const out = await forwardJson(url, { action: "updateBookingStatus", ref, status });
-  if (!out.ok) return endJson(res, 502, { ok: false, error: out.data?.error || "Upstream failed" });
-
-  return endJson(res, 200, { ok: true });
+  try {
+    const updated = await updateBookingStatus(ref, status);
+    if (!updated) return endJson(res, 404, { ok: false, error: "Booking not found" });
+    return endJson(res, 200, { ok: true });
+  } catch (e) {
+    console.error("ADMIN_UPDATE_BOOKING_ERROR", e);
+    return endJson(res, 500, { ok: false, error: "Failed to update" });
+  }
 }
-

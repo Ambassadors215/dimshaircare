@@ -1,3 +1,5 @@
+import { addContact } from "../lib/kv-store.js";
+
 function readBody(req, limitBytes = 1024 * 1024) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -32,15 +34,6 @@ function endJson(res, statusCode, obj) {
   res.end(JSON.stringify(obj));
 }
 
-async function forwardToWebhook(url, payload) {
-  const r = await fetch(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(payload)
-  });
-  if (!r.ok) throw new Error(`Webhook failed (${r.status})`);
-}
-
 export default async function handler(req, res) {
   if (req.method !== "POST") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
 
@@ -63,19 +56,11 @@ export default async function handler(req, res) {
   const createdAt = new Date().toISOString();
   const record = { createdAt, name, email, message };
 
-  const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
-  if (webhookUrl) {
-    try {
-      const token = process.env.ADMIN_TOKEN;
-      await forwardToWebhook(webhookUrl, { type: "contact", ...record, token });
-    } catch (e) {
-      console.error("CONTACT_WEBHOOK_ERROR", e);
-      return endJson(res, 502, { ok: false, error: "Upstream webhook failed" });
-    }
-  } else {
-    console.log("CONTACT_MESSAGE", record);
+  try {
+    await addContact(record);
+    return endJson(res, 200, { ok: true });
+  } catch (e) {
+    console.error("CONTACT_KV_ERROR", e);
+    return endJson(res, 500, { ok: false, error: "Failed to save message" });
   }
-
-  return endJson(res, 200, { ok: true });
 }
-
