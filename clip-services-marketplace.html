@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clip Services — Manchester's Local Service Marketplace</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #07101F;
+  --navy2: #0C1628;
+  --surface: #101E38;
+  --card: #152240;
+  --card2: #1A2B50;
+  --border: #1E3060;
+  --border2: #2A4080;
+  --white: #EEF3FF;
+  --muted: #8A9DC0;
+  --faint: #3A5080;
+  --cyan: #00C8F0;
+  --cyan2: #0099BB;
+  --amber: #F59E0B;
+  --green: #10B981;
+  --red: #EF4444;
+  --purple: #8B5CF6;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--navy);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.7;overflow-x:hidden;}
+
+/* GRID BG */
+.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,200,240,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,240,0.025) 1px,transparent 1px);background-size:56px 56px;pointer-events:none;z-index:0;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.02;pointer-events:none;z-index:9999;}
+
+/* ===== NAV ===== */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:18px 56px;display:flex;align-items:center;justify-content:space-between;transition:all 0.35s;}
+nav.scrolled{background:rgba(7,16,31,0.96);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);padding:12px 56px;}
+.logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-0.02em;text-decoration:none;color:var(--white);display:flex;align-items:center;gap:8px;}
+.logo-c{color:var(--cyan);}
+.pulse{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.nav-links{display:flex;align-items:center;gap:28px;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:13px;transition:color .2s;}
+.nav-links a:hover{color:var(--white);}
+.nav-btn{background:var(--cyan);color:var(--navy)!important;padding:10px 22px;border-radius:4px;font-weight:500!important;transition:background .2s,transform .15s!important;}
+.nav-btn:hover{background:var(--cyan2)!important;transform:translateY(-1px);}
+.nav-toggle{display:none;background:none;border:1px solid var(--border);color:var(--muted);padding:8px 12px;cursor:pointer;font-size:18px;border-radius:4px;}
+
+/* ===== TABS (USER / PROVIDER) ===== */
+.mode-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 56px;display:flex;align-items:center;gap:0;position:fixed;top:64px;left:0;right:0;z-index:199;transition:top .35s;}
+nav.scrolled + .mode-bar{top:56px;}
+.mode-tab{padding:14px 28px;font-size:13px;letter-spacing:.05em;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
+.mode-tab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+.mode-tab:hover{color:var(--white);}
+
+/* Views */
+.view{display:none;padding-top:128px;}
+.view.active{display:block;}
+
+/* ===== SHARED ===== */
+section{padding:96px 56px;position:relative;z-index:1;}
+.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.eyebrow::before{content:'';width:22px;height:1px;background:var(--cyan);}
+h2.stitle{font-family:'Syne',sans-serif;font-size:clamp(30px,4vw,52px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-bottom:12px;}
+h2.stitle em{font-style:italic;color:var(--cyan);}
+.sdesc{color:var(--muted);font-size:15px;max-width:520px;margin-bottom:52px;}
+.divbg{background:var(--navy2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+
+.btn-p{background:var(--cyan);color:var(--navy);text-decoration:none;padding:15px 34px;font-size:14px;font-weight:500;border-radius:4px;display:inline-flex;align-items:center;gap:8px;transition:background .2s,transform .15s;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-p:hover{background:var(--cyan2);transform:translateY(-2px);}
+.btn-s{color:var(--muted);text-decoration:none;padding:15px 22px;font-size:14px;border:1px solid var(--border);border-radius:4px;display:inline-flex;align-items:center;gap:8px;transition:all .2s;background:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.btn-s:hover{color:var(--white);border-color:var(--border2);}
+.btn-ghost{background:none;border:1px solid var(--border);color:var(--muted);padding:10px 20px;border-radius:4px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan);}
+
+/* reveal */
+.r{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease;}
+.r.v{opacity:1;transform:none;}
+.rd1{transition-delay:.1s;}.rd2{transition-delay:.2s;}.rd3{transition-delay:.3s;}
+
+/* ===== CUSTOMER HERO ===== */
+.c-hero{min-height:calc(100vh - 128px);display:flex;flex-direction:column;justify-content:center;padding:80px 56px;position:relative;overflow:hidden;}
+.c-hero-glow{position:absolute;top:10%;right:10%;width:700px;height:700px;background:radial-gradient(circle,rgba(0,200,240,.06) 0%,transparent 65%);pointer-events:none;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,200,240,.08);border:1px solid rgba(0,200,240,.2);color:var(--cyan);font-size:12px;letter-spacing:.06em;padding:6px 14px;border-radius:20px;margin-bottom:24px;width:fit-content;}
+.hero-badge .bl{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.5s ease infinite;}
+.c-hero h1{font-family:'Syne',sans-serif;font-size:clamp(44px,7vw,92px);font-weight:800;line-height:.95;letter-spacing:-.04em;max-width:820px;margin-bottom:24px;}
+.c-hero h1 .hl{color:var(--cyan);}
+.c-hero h1 .it{font-style:italic;font-weight:700;}
+.c-hero p{font-size:clamp(14px,1.8vw,17px);color:var(--muted);max-width:480px;margin-bottom:44px;}
+.hero-acts{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+
+/* SEARCH BAR */
+.search-hero{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:20px 24px;display:flex;align-items:center;gap:12px;max-width:640px;margin-bottom:52px;transition:border-color .2s;}
+.search-hero:focus-within{border-color:var(--cyan);}
+.search-icon{color:var(--faint);font-size:18px;flex-shrink:0;}
+.search-hero input{background:none;border:none;outline:none;color:var(--white);font-size:15px;font-family:'DM Sans',sans-serif;flex:1;}
+.search-hero input::placeholder{color:var(--faint);}
+.search-hero select{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:8px 12px;border-radius:4px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;}
+.search-btn{background:var(--cyan);color:var(--navy);border:none;padding:10px 20px;border-radius:4px;font-weight:500;font-size:13px;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;}
+
+/* CATEGORY PILLS */
+.cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:56px;}
+.cat{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:9px 18px;border-radius:40px;font-size:13px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.cat:hover,.cat.active{background:rgba(0,200,240,.1);border-color:var(--cyan);color:var(--cyan);}
+
+/* PROVIDER CARDS */
+.providers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2px;}
+.pcard{background:var(--card);border:1px solid var(--border);overflow:hidden;transition:border-color .25s,transform .2s;cursor:pointer;position:relative;}
+.pcard:hover{border-color:var(--cyan);transform:translateY(-2px);}
+.pcard-top{padding:24px 24px 20px;display:flex;align-items:flex-start;gap:14px;}
+.pcard-avatar{width:52px;height:52px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;position:relative;}
+.pcard-verified{position:absolute;bottom:-2px;right:-2px;background:var(--green);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px;border:2px solid var(--card);}
+.pcard-info{flex:1;min-width:0;}
+.pcard-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:2px;}
+.pcard-role{font-size:12px;color:var(--cyan);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;}
+.pcard-rating{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.pcard-stars{color:var(--amber);}
+.pcard-badge{position:absolute;top:16px;right:16px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:20px;}
+.bg-top{background:rgba(245,158,11,.12);color:#FCD34D;border:1px solid rgba(245,158,11,.2);}
+.bg-new{background:rgba(16,185,129,.12);color:#6EE7B7;border:1px solid rgba(16,185,129,.2);}
+.bg-busy{background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);}
+.pcard-mid{padding:0 24px 16px;font-size:13px;color:var(--muted);line-height:1.6;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.pcard-services{padding:0 24px 16px;display:flex;flex-wrap:wrap;gap:6px;}
+.ptag{font-size:10px;background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:2px;color:var(--faint);letter-spacing:.04em;text-transform:uppercase;}
+.pcard-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.pcard-price{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--white);}
+.pcard-price span{font-size:12px;color:var(--faint);font-weight:300;font-family:'DM Sans',sans-serif;}
+.pcard-avail{font-size:11px;display:flex;align-items:center;gap:5px;}
+.avail-dot{width:6px;height:6px;border-radius:50%;}
+.dot-green{background:var(--green);}
+.dot-amber{background:var(--amber);}
+.book-btn{background:var(--cyan);color:var(--navy);border:none;padding:7px 16px;border-radius:3px;font-size:12px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;}
+.book-btn:hover{background:var(--cyan2);}
+
+/* HOW SECTION */
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;}
+.how-step{background:var(--surface);border:1px solid var(--border);padding:36px 28px;position:relative;overflow:hidden;}
+.how-step::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan);transform:scaleX(0);transform-origin:left;transition:transform .4s;}
+.how-step:hover::before{transform:scaleX(1);}
+.how-num{font-family:'Syne',sans-serif;font-size:56px;font-weight:800;color:var(--border);line-height:1;margin-bottom:16px;}
+.how-step h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:8px;}
+.how-step p{font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* COMMISSION BANNER */
+.commission-banner{background:linear-gradient(135deg,rgba(0,200,240,.08) 0%,rgba(139,92,246,.05) 100%);border:1px solid rgba(0,200,240,.15);padding:48px 56px;margin:0 56px;border-radius:4px;display:grid;grid-template-columns:1fr auto;align-items:center;gap:40px;}
+.cb-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:8px;}
+.cb-sub{color:var(--muted);font-size:14px;max-width:500px;}
+.commission-pills{display:flex;gap:24px;flex-wrap:wrap;margin-top:20px;}
+.cpill{background:var(--card);border:1px solid var(--border);padding:12px 20px;border-radius:4px;text-align:center;}
+.cpill-pct{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--cyan);}
+.cpill-lbl{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+
+/* CATEGORIES SECTION */
+.cat-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px;}
+.cat-card{background:var(--card);border:1px solid var(--border);padding:28px 24px;cursor:pointer;transition:all .2s;text-align:center;}
+.cat-card:hover{border-color:var(--cyan);background:var(--surface);}
+.cat-icon{font-size:36px;margin-bottom:12px;display:block;}
+.cat-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px;}
+.cat-count{font-size:12px;color:var(--faint);}
+
+/* BOOKING MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border2);width:100%;max-width:680px;border-radius:4px;position:relative;animation:min .3s ease;}
+@keyframes min{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.modal-close{position:absolute;top:18px;right:20px;background:none;border:1px solid var(--border);color:var(--muted);width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;border-radius:3px;transition:all .2s;}
+.modal-close:hover{border-color:var(--border2);color:var(--white);}
+.modal-head{padding:40px 40px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;}
+.modal-avatar{width:56px;height:56px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;}
+.modal-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;}
+.modal-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+.modal-body{padding:32px 40px;}
+.modal-body h4{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;margin-top:24px;}
+.modal-body h4:first-child{margin-top:0;}
+.modal-about{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:8px;}
+.modal-services-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+.msvc{background:var(--surface);border:1px solid var(--border);padding:6px 12px;font-size:12px;color:var(--muted);border-radius:2px;}
+.modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:8px;}
+.mstat{background:var(--surface);border:1px solid var(--border);padding:16px;text-align:center;}
+.mstat-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--white);display:block;}
+.mstat-lbl{font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;}
+.modal-foot{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.modal-price-big{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;}
+.modal-price-note{font-size:12px;color:var(--faint);}
+
+/* BOOKING FORM */
+.booking-form{display:flex;flex-direction:column;gap:14px;margin-top:8px;}
+label{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:7px;}
+input,select,textarea{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--white);padding:12px 15px;font-size:14px;font-family:'DM Sans',sans-serif;font-weight:300;outline:none;border-radius:3px;transition:border-color .2s;appearance:none;}
+input:focus,select:focus,textarea:focus{border-color:var(--cyan);}
+input::placeholder,textarea::placeholder{color:var(--faint);}
+textarea{resize:vertical;min-height:80px;}
+
+/* ===== PROVIDER VIEW ===== */
+.p-hero{background:linear-gradient(160deg,var(--navy2) 0%,rgba(7,16,31,0) 100%);padding:80px 56px;border-bottom:1px solid var(--border);position:relative;z-index:1;}
+.p-hero h1{font-family:'Syne',sans-serif;font-size:clamp(40px,6vw,80px);font-weight:800;letter-spacing:-.04em;line-height:.95;margin-bottom:20px;}
+.p-hero h1 .hl{color:var(--cyan);}
+.p-hero p{color:var(--muted);font-size:16px;max-width:500px;margin-bottom:40px;}
+.earnings-display{display:flex;gap:2px;margin-bottom:48px;}
+.earn-card{background:var(--card);border:1px solid var(--border);padding:28px 32px;}
+.earn-num{font-family:'Syne',sans-serif;font-size:42px;font-weight:800;color:var(--cyan);letter-spacing:-.02em;}
+.earn-lbl{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;margin-top:4px;}
+
+/* BENEFITS */
+.benefits-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
+.benefit{background:var(--surface);border:1px solid var(--border);padding:32px 28px;}
+.benefit-icon{font-size:28px;margin-bottom:16px;display:block;}
+.benefit h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;}
+.benefit p{font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* APPLICATION FORM */
+.app-form-wrap{background:var(--card);border:1px solid var(--border);padding:48px;}
+.app-form-wrap h3{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;margin-bottom:8px;}
+.app-form-wrap > p{color:var(--muted);font-size:14px;margin-bottom:36px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-group{display:flex;flex-direction:column;}
+.form-full{grid-column:1/-1;}
+.char-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.char-tag{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:3px;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
+.char-tag.selected{background:rgba(0,200,240,.1);border-color:var(--cyan);color:var(--cyan);}
+.char-tag input{display:none;}
+.rate-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.rate-opt{background:var(--surface);border:1px solid var(--border);padding:14px;text-align:center;border-radius:3px;cursor:pointer;transition:all .2s;}
+.rate-opt:hover,.rate-opt.active{border-color:var(--cyan);background:rgba(0,200,240,.07);}
+.rate-opt-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
+.rate-opt-lbl{font-size:11px;color:var(--faint);margin-top:3px;}
+.form-note{font-size:12px;color:var(--faint);margin-top:8px;line-height:1.6;}
+
+/* HOW PROVIDERS WORK */
+.provider-how{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;}
+.phow{background:var(--card);border:1px solid var(--border);padding:28px;}
+.phow-num{font-family:'Syne',sans-serif;font-size:48px;font-weight:800;color:var(--border);margin-bottom:14px;}
+.phow h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;}
+.phow p{font-size:13px;color:var(--muted);line-height:1.6;}
+
+/* FAQ */
+.faq-list{max-width:720px;}
+.faq-item{border-bottom:1px solid var(--border);}
+.faq-q{width:100%;background:none;border:none;color:var(--white);text-align:left;padding:18px 0;font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;transition:color .2s;}
+.faq-q:hover{color:var(--cyan);}
+.faq-icon{color:var(--faint);font-size:18px;flex-shrink:0;transition:transform .3s,color .2s;}
+.faq-item.open .faq-icon{transform:rotate(45deg);color:var(--cyan);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s;}
+.faq-item.open .faq-a{max-height:200px;padding-bottom:18px;}
+.faq-a p{color:var(--muted);font-size:13px;line-height:1.7;}
+
+/* MARQUEE */
+.mq-wrap{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 0;overflow:hidden;white-space:nowrap;position:relative;z-index:1;}
+.mq-track{display:inline-block;animation:mq 32s linear infinite;}
+.mq-track span{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);padding:0 24px;}
+.mq-track .dot{color:var(--cyan);}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* FOOTER */
+footer{background:var(--navy2);border-top:1px solid var(--border);padding:56px 56px 36px;position:relative;z-index:1;}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px;}
+.footer-brand p{color:var(--faint);font-size:13px;margin-top:12px;line-height:1.7;max-width:240px;}
+.fcol h4{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:16px;}
+.fcol a{display:block;color:var(--muted);text-decoration:none;font-size:13px;margin-bottom:8px;transition:color .2s;}
+.fcol a:hover{color:var(--white);}
+.footer-bottom{border-top:1px solid var(--border);padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
+.footer-bottom p{font-size:12px;color:var(--faint);}
+
+/* WA FLOAT */
+.wa{position:fixed;bottom:28px;right:28px;z-index:500;background:#25D366;color:#fff;width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;text-decoration:none;box-shadow:0 4px 24px rgba(37,211,102,.4);animation:float 3s ease-in-out infinite;}
+.wa:hover{transform:scale(1.1);}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.wa-tip{position:absolute;right:66px;background:var(--card);border:1px solid var(--border);color:var(--white);font-size:12px;padding:7px 12px;border-radius:3px;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;}
+.wa:hover .wa-tip{opacity:1;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--card);border:1px solid var(--cyan);color:var(--white);padding:14px 22px;font-size:13px;border-radius:4px;z-index:9000;opacity:0;transition:all .3s;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+/* STATUS BAR */
+.sbar{background:var(--cyan);color:var(--navy);text-align:center;font-size:12px;font-weight:500;letter-spacing:.05em;padding:8px;display:flex;align-items:center;justify-content:center;gap:14px;}
+.sbar-close{background:none;border:none;color:var(--navy);cursor:pointer;font-size:16px;padding:0 4px;}
+
+@media(max-width:900px){
+  nav{padding:14px 20px;}
+  nav.scrolled{padding:10px 20px;}
+  .nav-links{display:none;}
+  .nav-toggle{display:block;}
+  .mode-bar{padding:0 20px;}
+  section{padding:64px 20px;}
+  .c-hero,.p-hero{padding:60px 20px;}
+  .how-grid,.provider-how{grid-template-columns:1fr 1fr;}
+  .benefits-grid,.plans-grid{grid-template-columns:1fr;}
+  .form-grid{grid-template-columns:1fr;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .providers-grid{grid-template-columns:1fr;}
+  .modal-head{padding:28px 24px 20px;}
+  .modal-body{padding:24px;}
+  .modal-foot{padding:20px 24px;}
+  .app-form-wrap{padding:28px 20px;}
+  .earnings-display{flex-direction:column;}
+  .commission-banner{grid-template-columns:1fr;margin:0 20px;}
+  .cat-cards{grid-template-columns:repeat(2,1fr);}
+  .modal-stats{grid-template-columns:repeat(3,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="grid-bg"></div>
+<div class="toast" id="toast"></div>
+
+<!-- STATUS BAR -->
+<div class="sbar" id="sbar">
+  <span>🟢</span>
+  <span>Clip Services is live — Clippers Quays & Salford Quays · Manchester</span>
+  <button class="sbar-close" onclick="document.getElementById('sbar').style.display='none'">×</button>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <a href="#" class="logo"><span class="logo-c">Clip</span>Services <span class="pulse"></span></a>
+  <div class="nav-links">
+    <a href="#" onclick="switchView('customer')">Find a Service</a>
+    <a href="#" onclick="switchView('provider')">Offer Your Service</a>
+    <a href="#how-c">How It Works</a>
+    <a href="#" onclick="switchView('provider')" class="nav-btn">Join as Provider</a>
+  </div>
+  <button class="nav-toggle" onclick="toggleMobileMenu()">☰</button>
+</nav>
+
+<!-- MODE BAR -->
+<div class="mode-bar" id="modebar">
+  <button class="mode-tab active" id="tab-customer" onclick="switchView('customer')">🔍 I need a service</button>
+  <button class="mode-tab" id="tab-provider" onclick="switchView('provider')">🙋 I offer a service</button>
+</div>
+
+<!-- WA FLOAT -->
+<a href="https://wa.me/447700000000?text=Hi%2C%20I%20found%20Clip%20Services%20and%20want%20to%20know%20more!" class="wa" target="_blank">
+  <span class="wa-tip">Chat with us</span>💬
+</a>
+
+<!-- ============================================================ -->
+<!-- CUSTOMER VIEW -->
+<!-- ============================================================ -->
+<div class="view active" id="view-customer">
+
+  <!-- HERO -->
+  <div class="c-hero">
+    <div class="c-hero-glow"></div>
+    <div class="hero-badge"><span class="bl"></span>Manchester's local service marketplace</div>
+    <h1 class="r">Find <span class="hl">trusted</span><br>local <span class="it">help,</span><br>instantly.</h1>
+    <p class="r rd1">Book verified runners, cleaners, handymen, dog walkers and more — all based in Salford Quays. Real people. Real service. Done today.</p>
+
+    <div class="search-hero r rd2">
+      <span class="search-icon">🔍</span>
+      <input type="text" placeholder="What service do you need? e.g. grocery run, cleaning..." id="searchInput" oninput="filterProviders()">
+      <select id="catFilter" onchange="filterProviders()">
+        <option value="">All categories</option>
+        <option value="runner">Runner</option>
+        <option value="cleaning">Cleaning</option>
+        <option value="handyman">Handyman</option>
+        <option value="dog">Dog Walking</option>
+        <option value="grocery">Groceries</option>
+        <option value="delivery">Delivery</option>
+        <option value="beauty">Beauty</option>
+        <option value="tech">Tech Help</option>
+      </select>
+      <button class="search-btn" onclick="filterProviders()">Search</button>
+    </div>
+
+    <div class="cats r rd3" id="catPills">
+      <div class="cat active" onclick="filterCat('',this)">All</div>
+      <div class="cat" onclick="filterCat('runner',this)">🏃 Runner</div>
+      <div class="cat" onclick="filterCat('cleaning',this)">🧹 Cleaning</div>
+      <div class="cat" onclick="filterCat('handyman',this)">🔧 Handyman</div>
+      <div class="cat" onclick="filterCat('dog',this)">🐕 Dog Walking</div>
+      <div class="cat" onclick="filterCat('grocery',this)">🛒 Grocery</div>
+      <div class="cat" onclick="filterCat('beauty',this)">💅 Beauty</div>
+      <div class="cat" onclick="filterCat('tech',this)">💻 Tech Help</div>
+    </div>
+  </div>
+
+  <!-- PROVIDERS LISTING -->
+  <section style="background:var(--navy2);border-top:1px solid var(--border);padding-top:64px;">
+    <div class="eyebrow">Available now</div>
+    <h2 class="stitle r">Verified <em>service providers</em><br>near you.</h2>
+    <p class="sdesc r">Every provider is verified by Clip Services before being listed. Rated by real customers. Book in minutes.</p>
+    <div class="providers-grid" id="providersGrid"></div>
+    <div style="text-align:center;margin-top:40px;">
+      <button class="btn-s" onclick="switchView('provider')">Are you a service provider? Join the platform →</button>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="mq-wrap">
+    <div class="mq-track">
+      <span class="dot">✦</span><span>Grocery runs</span>
+      <span class="dot">✦</span><span>Flat cleaning</span>
+      <span class="dot">✦</span><span>Handyman services</span>
+      <span class="dot">✦</span><span>Dog walking</span>
+      <span class="dot">✦</span><span>Pharmacy runs</span>
+      <span class="dot">✦</span><span>IKEA pickup</span>
+      <span class="dot">✦</span><span>Nail technician</span>
+      <span class="dot">✦</span><span>Tech support</span>
+      <span class="dot">✦</span><span>Parcel & returns</span>
+      <span class="dot">✦</span><span>Late night runs</span>
+      <span class="dot">✦</span><span>Grocery runs</span>
+      <span class="dot">✦</span><span>Flat cleaning</span>
+      <span class="dot">✦</span><span>Handyman services</span>
+      <span class="dot">✦</span><span>Dog walking</span>
+      <span class="dot">✦</span><span>Pharmacy runs</span>
+      <span class="dot">✦</span><span>IKEA pickup</span>
+      <span class="dot">✦</span><span>Nail technician</span>
+      <span class="dot">✦</span><span>Tech support</span>
+      <span class="dot">✦</span><span>Parcel & returns</span>
+      <span class="dot">✦</span><span>Late night runs</span>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS (CUSTOMER) -->
+  <section id="how-c">
+    <div class="eyebrow">Simple process</div>
+    <h2 class="stitle r">How it <em>works</em></h2>
+    <p class="sdesc r">Book any service in under 2 minutes. No apps. No accounts. Just results.</p>
+    <div class="how-grid">
+      <div class="how-step r">
+        <div class="how-num">01</div>
+        <h3>Browse & search</h3>
+        <p>Find a verified provider for exactly what you need — filtered by service type, availability, and rating.</p>
+      </div>
+      <div class="how-step r rd1">
+        <div class="how-num">02</div>
+        <h3>Book instantly</h3>
+        <p>Fill in the booking form or tap "Book via WhatsApp." Confirm your time, address, and requirements in seconds.</p>
+      </div>
+      <div class="how-step r rd2">
+        <div class="how-num">03</div>
+        <h3>Service delivered</h3>
+        <p>Your provider arrives, completes the service, and you pay securely through Clip Services. We handle everything.</p>
+      </div>
+      <div class="how-step r rd3">
+        <div class="how-num">04</div>
+        <h3>Rate & review</h3>
+        <p>Leave an honest review to help others. Build the community. Top providers get promoted to the top of the list.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE CATEGORIES -->
+  <section class="divbg" id="categories">
+    <div class="eyebrow">Browse by category</div>
+    <h2 class="stitle r">All the help<br><em>you need.</em></h2>
+    <p class="sdesc r">From everyday errands to specialist services — Clip Services connects you with local experts for everything.</p>
+    <div class="cat-cards">
+      <div class="cat-card r" onclick="filterCat('runner',null);scrollToProviders()">
+        <span class="cat-icon">🏃</span>
+        <div class="cat-name">Runner & Errands</div>
+        <div class="cat-count">Grocery, pharmacy, parcels</div>
+      </div>
+      <div class="cat-card r rd1" onclick="filterCat('cleaning',null);scrollToProviders()">
+        <span class="cat-icon">🧹</span>
+        <div class="cat-name">Cleaning</div>
+        <div class="cat-count">Flat, deep clean, end-of-tenancy</div>
+      </div>
+      <div class="cat-card r rd2" onclick="filterCat('handyman',null);scrollToProviders()">
+        <span class="cat-icon">🔧</span>
+        <div class="cat-name">Handyman</div>
+        <div class="cat-count">Flat-pack, repairs, plumbing</div>
+      </div>
+      <div class="cat-card r" onclick="filterCat('dog',null);scrollToProviders()">
+        <span class="cat-icon">🐕</span>
+        <div class="cat-name">Dog Walking</div>
+        <div class="cat-count">Daily walks, pet sitting</div>
+      </div>
+      <div class="cat-card r rd1" onclick="filterCat('beauty',null);scrollToProviders()">
+        <span class="cat-icon">💅</span>
+        <div class="cat-name">Beauty & Nails</div>
+        <div class="cat-count">Nails, lashes, brows at home</div>
+      </div>
+      <div class="cat-card r rd2" onclick="filterCat('tech',null);scrollToProviders()">
+        <span class="cat-icon">💻</span>
+        <div class="cat-name">Tech Help</div>
+        <div class="cat-count">Setup, repairs, WiFi, printing</div>
+      </div>
+      <div class="cat-card r" onclick="filterCat('delivery',null);scrollToProviders()">
+        <span class="cat-icon">📦</span>
+        <div class="cat-name">Delivery & Pickup</div>
+        <div class="cat-count">Furniture, appliances, IKEA</div>
+      </div>
+      <div class="cat-card r rd1" onclick="switchView('provider')">
+        <span class="cat-icon">➕</span>
+        <div class="cat-name">Add Your Service</div>
+        <div class="cat-count">Offer what you do best</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMMISSION BANNER -->
+  <section style="padding:60px 0;">
+    <div class="commission-banner r">
+      <div>
+        <div class="cb-title">Are you a service provider?</div>
+        <div class="cb-sub">Join Clip Services and get bookings from hundreds of residents and businesses in Salford Quays. We handle the platform, payments, and customer trust — you just do what you're good at.</div>
+        <div class="commission-pills">
+          <div class="cpill"><div class="cpill-pct">Free</div><div class="cpill-lbl">To join</div></div>
+          <div class="cpill"><div class="cpill-pct">15%</div><div class="cpill-lbl">Platform fee</div></div>
+          <div class="cpill"><div class="cpill-pct">85%</div><div class="cpill-lbl">You keep</div></div>
+        </div>
+      </div>
+      <button class="btn-p" onclick="switchView('provider')" style="white-space:nowrap;">Apply to join →</button>
+    </div>
+  </section>
+
+  <!-- CUSTOMER FAQ -->
+  <section class="divbg" id="faq-c">
+    <div class="eyebrow">Questions</div>
+    <h2 class="stitle r">Customer FAQ</h2>
+    <div class="faq-list r">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How do I pay for services? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Payment is handled securely through Clip Services. You pay the provider rate plus a small platform fee. We support bank transfer, Monzo, and card. You only pay once the service is confirmed — never upfront to an individual.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Are providers verified and safe? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Yes. Every provider goes through our verification process before being listed — ID check, reference check, and a brief interview. All cleaning and in-home service providers are DBS checked. You'll see a verified badge on all approved profiles.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What if I'm unhappy with the service? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Message us on WhatsApp immediately. We mediate all disputes and will either arrange a redo or issue a full refund of the platform fee. Provider ratings are public — repeated complaints result in removal from the platform.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Can I book the same provider regularly? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Yes — and we encourage it. Regular bookings with the same provider build trust and often result in better rates. You can message your preferred provider directly via our platform once you've made a first booking.</p></div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- end customer view -->
+
+
+<!-- ============================================================ -->
+<!-- PROVIDER VIEW -->
+<!-- ============================================================ -->
+<div class="view" id="view-provider">
+
+  <!-- PROVIDER HERO -->
+  <div class="p-hero">
+    <div class="eyebrow">For service providers</div>
+    <h1 class="r">Turn your skills<br>into <span class="hl">income.</span></h1>
+    <p class="r rd1">Get listed on Clip Services and start receiving bookings from residents, professionals, and businesses in Salford Quays. Free to join. You keep 85% of every booking.</p>
+
+    <div class="earnings-display r rd2">
+      <div class="earn-card">
+        <div class="earn-num">£150–400</div>
+        <div class="earn-lbl">Avg weekly earnings per provider</div>
+      </div>
+      <div class="earn-card">
+        <div class="earn-num">85%</div>
+        <div class="earn-lbl">You keep of every booking</div>
+      </div>
+      <div class="earn-card">
+        <div class="earn-num">Free</div>
+        <div class="earn-lbl">To join the platform</div>
+      </div>
+    </div>
+
+    <div class="hero-acts r rd3">
+      <a href="#apply" class="btn-p">Apply to join — it's free</a>
+      <button class="btn-s" onclick="switchView('customer')">Browse as customer instead</button>
+    </div>
+  </div>
+
+  <!-- BENEFITS -->
+  <section class="divbg">
+    <div class="eyebrow">Why join Clip Services</div>
+    <h2 class="stitle r">We send you <em>customers.</em><br>You do what you do best.</h2>
+    <p class="sdesc r">No marketing needed. No cold calling. No chasing payments. Just bookings in your WhatsApp.</p>
+    <div class="benefits-grid">
+      <div class="benefit r">
+        <span class="benefit-icon">📲</span>
+        <h3>Instant booking notifications</h3>
+        <p>Every new booking comes straight to your WhatsApp. No platform to log into. No dashboard to manage. Just a message with the job details and customer info.</p>
+      </div>
+      <div class="benefit r rd1">
+        <span class="benefit-icon">💰</span>
+        <h3>You set your own rates</h3>
+        <p>Tell us your hourly rate or fixed fee per service. We add our 15% platform fee on top — customers pay more, you keep your full rate. No cuts to your income.</p>
+      </div>
+      <div class="benefit r rd2">
+        <span class="benefit-icon">⭐</span>
+        <h3>Build your reputation</h3>
+        <p>Every great job earns you a public review. Top-rated providers get featured at the top of the listings and promoted in our social media content — free advertising for you.</p>
+      </div>
+      <div class="benefit r">
+        <span class="benefit-icon">🛡</span>
+        <h3>Secure payments, always</h3>
+        <p>Clip Services collects payment before the job starts and transfers your share within 24 hours of completion. You never chase a customer for money again.</p>
+      </div>
+      <div class="benefit r rd1">
+        <span class="benefit-icon">📍</span>
+        <h3>Hyper-local customer base</h3>
+        <p>Our customers are in Clippers Quays, Salford Quays, and MediaCityUK — minutes from you. Short travel times mean more jobs per day and less time wasted.</p>
+      </div>
+      <div class="benefit r rd2">
+        <span class="benefit-icon">🚀</span>
+        <h3>Grow as we grow</h3>
+        <p>As Clip Services expands across Manchester, your profile reaches more customers. Early providers get featured status — permanent top placement on the listings page.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW PROVIDERS WORK -->
+  <section>
+    <div class="eyebrow">Provider journey</div>
+    <h2 class="stitle r">How it works<br><em>for you.</em></h2>
+    <div class="provider-how">
+      <div class="phow r">
+        <div class="phow-num">01</div>
+        <h3>Apply below</h3>
+        <p>Fill in the form with your services, rate, and a bit about yourself. We review within 48 hours.</p>
+      </div>
+      <div class="phow r rd1">
+        <div class="phow-num">02</div>
+        <h3>Get verified</h3>
+        <p>We do a quick verification — ID check and a short call. Takes under 20 minutes. You're then live on the platform.</p>
+      </div>
+      <div class="phow r rd2">
+        <div class="phow-num">03</div>
+        <h3>Receive bookings</h3>
+        <p>Customers book you through Clip Services. You get a WhatsApp message with the details. Accept or decline — your choice.</p>
+      </div>
+      <div class="phow r rd3">
+        <div class="phow-num">04</div>
+        <h3>Get paid</h3>
+        <p>Complete the job. We transfer 85% of the booking fee to your account within 24 hours. No invoicing needed.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- APPLICATION FORM -->
+  <section class="divbg" id="apply">
+    <div class="eyebrow">Join the platform</div>
+    <h2 class="stitle r">Apply to offer your <em>service.</em></h2>
+    <p class="sdesc r">Tell us what you do and we'll be in touch within 48 hours to complete your verification and get you listed.</p>
+
+    <div class="app-form-wrap r">
+      <h3>Provider Application</h3>
+      <p>Free to apply. Takes 3 minutes. We review every application personally.</p>
+
+      <form onsubmit="handleApply(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Your full name</label>
+            <input type="text" placeholder="First and last name" required>
+          </div>
+          <div class="form-group">
+            <label>WhatsApp number</label>
+            <input type="tel" placeholder="+44 7700 000 000" required>
+          </div>
+          <div class="form-group">
+            <label>Email address</label>
+            <input type="email" placeholder="you@email.com" required>
+          </div>
+          <div class="form-group">
+            <label>Your postcode</label>
+            <input type="text" placeholder="e.g. M50 3XP" required>
+          </div>
+
+          <div class="form-group form-full">
+            <label>What services do you offer? (select all that apply)</label>
+            <div class="char-tags" id="serviceTags">
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="runner">🏃 Runner & Errands</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="cleaning">🧹 Flat Cleaning</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="deep-clean">🧽 Deep Cleaning</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="handyman">🔧 Handyman & Repairs</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="flatpack">📦 Flat-pack Assembly</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="dog">🐕 Dog Walking</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="petsit">🐾 Pet Sitting</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="grocery">🛒 Grocery Runs</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="pharmacy">💊 Pharmacy Runs</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="delivery">🚗 Delivery & Pickup</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="nails">💅 Nail Technician</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="lashes">👁 Lashes & Brows</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="hair">💇 Mobile Hair</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="tech">💻 Tech Support</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="ironing">👕 Ironing & Laundry</label>
+              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="other">✦ Other</label>
+            </div>
+          </div>
+
+          <div class="form-group form-full">
+            <label>Your hourly rate or fixed price</label>
+            <div class="rate-options" id="rateOptions">
+              <div class="rate-opt" onclick="selectRate(this,'£10–15/hr')"><div class="rate-opt-val">£10–15</div><div class="rate-opt-lbl">per hour</div></div>
+              <div class="rate-opt" onclick="selectRate(this,'£15–20/hr')"><div class="rate-opt-val">£15–20</div><div class="rate-opt-lbl">per hour</div></div>
+              <div class="rate-opt" onclick="selectRate(this,'£20–30/hr')"><div class="rate-opt-val">£20–30</div><div class="rate-opt-lbl">per hour</div></div>
+              <div class="rate-opt" onclick="selectRate(this,'£30+/hr')"><div class="rate-opt-val">£30+</div><div class="rate-opt-lbl">per hour</div></div>
+              <div class="rate-opt" onclick="selectRate(this,'Fixed per job')"><div class="rate-opt-val">Fixed</div><div class="rate-opt-lbl">per job</div></div>
+              <div class="rate-opt" onclick="selectRate(this,'Custom/discuss')"><div class="rate-opt-val">Custom</div><div class="rate-opt-lbl">let's discuss</div></div>
+            </div>
+            <div class="form-note">You set your own rate. Clip Services adds a 15% platform fee on top — customers pay that, not you. You keep 100% of your stated rate.</div>
+          </div>
+
+          <div class="form-group form-full">
+            <label>Tell us about yourself & your experience</label>
+            <textarea placeholder="How long have you been offering this service? Any relevant experience, qualifications, or tools you have? Why would customers love working with you?" style="min-height:110px;"></textarea>
+          </div>
+
+          <div class="form-group form-full">
+            <label>Your availability</label>
+            <div class="char-tags">
+              <label class="char-tag" onclick="toggleTag(this)">Mon–Fri mornings</label>
+              <label class="char-tag" onclick="toggleTag(this)">Mon–Fri afternoons</label>
+              <label class="char-tag" onclick="toggleTag(this)">Mon–Fri evenings</label>
+              <label class="char-tag" onclick="toggleTag(this)">Weekends</label>
+              <label class="char-tag" onclick="toggleTag(this)">Late nights (10pm–2am)</label>
+              <label class="char-tag" onclick="toggleTag(this)">Flexible / anytime</label>
+            </div>
+          </div>
+
+          <div class="form-group form-full">
+            <label>Do you have your own transport?</label>
+            <select>
+              <option value="">Select...</option>
+              <option>Yes — car</option>
+              <option>Yes — van</option>
+              <option>Yes — motorbike/scooter</option>
+              <option>Yes — bicycle</option>
+              <option>No — on foot / public transport</option>
+            </select>
+          </div>
+
+          <div class="form-group form-full">
+            <label>How did you hear about Clip Services?</label>
+            <select>
+              <option value="">Select...</option>
+              <option>TikTok</option>
+              <option>Instagram</option>
+              <option>Twitter/X</option>
+              <option>Word of mouth</option>
+              <option>Flyer/poster</option>
+              <option>Google search</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-full" style="margin-top:8px;">
+            <button type="submit" class="btn-p" style="width:100%;justify-content:center;padding:18px;">Submit my application →</button>
+            <div class="form-note" style="text-align:center;margin-top:12px;">We review every application personally and respond within 48 hours via WhatsApp. Free to apply — no commitment required.</div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- PROVIDER FAQ -->
+  <section id="faq-p">
+    <div class="eyebrow">Provider questions</div>
+    <h2 class="stitle r">Common questions<br>from providers.</h2>
+    <div class="faq-list r">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How much does it cost to join? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Completely free. There are no joining fees, no monthly subscriptions, and no setup costs. Clip Services earns a 15% platform fee which is added on top of your stated rate — customers pay that, not you. You keep 100% of your own rate on every booking.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How quickly will I get my first booking? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Most new providers get their first booking within 7 days of going live. Cleaning and runner services get bookings fastest. We also actively promote new providers on our social media to drive initial traffic to your profile.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Can I decline bookings I don't want? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Yes — always. You're not an employee. You set your own schedule and can accept or decline any booking. We just ask that you respond within 30 minutes to maintain good platform ratings.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">When and how do I get paid? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Clip Services collects payment from the customer before or at the start of the job. Your 85% share is transferred via bank transfer within 24 hours of job completion. No chasing. No invoices. Automatic every time.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What if a customer doesn't answer or cancels last minute? <span class="faq-icon">+</span></button>
+        <div class="faq-a"><p>Customers pay a non-refundable deposit on all bookings. If they cancel within 2 hours of the scheduled time, you receive 50% of the booking fee as compensation. We protect your time.</p></div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- end provider view -->
+
+
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('open')">✕</button>
+    <div class="modal-head">
+      <div class="modal-avatar" id="m-avatar"></div>
+      <div>
+        <div class="modal-title" id="m-name"></div>
+        <div class="modal-sub" id="m-role"></div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <h4>About</h4>
+      <p class="modal-about" id="m-about"></p>
+      <h4>Services offered</h4>
+      <div class="modal-services-list" id="m-svcs"></div>
+      <h4>Stats</h4>
+      <div class="modal-stats" id="m-stats"></div>
+      <h4>Book this provider</h4>
+      <form class="booking-form" onsubmit="handleBook(event)">
+        <div>
+          <label>Your name</label>
+          <input type="text" placeholder="Full name" required>
+        </div>
+        <div>
+          <label>Your WhatsApp</label>
+          <input type="tel" placeholder="+44 7700 000 000" required>
+        </div>
+        <div>
+          <label>Service needed</label>
+          <input type="text" placeholder="e.g. Weekly flat clean, 2-bed apartment" required>
+        </div>
+        <div>
+          <label>Preferred date & time</label>
+          <input type="datetime-local" required>
+        </div>
+        <div>
+          <label>Your address / flat number</label>
+          <input type="text" placeholder="Flat 12A, Clippers Quays, M50 3XP" required>
+        </div>
+        <div>
+          <label>Any extra details</label>
+          <textarea placeholder="Any specific requirements, access codes, or notes for the provider..."></textarea>
+        </div>
+        <button type="submit" class="btn-p" style="width:100%;justify-content:center;">Confirm Booking Request →</button>
+        <p style="font-size:12px;color:var(--faint);text-align:center;margin-top:8px;">We'll confirm via WhatsApp within 30 minutes. Clip Services platform fee (15%) added at checkout.</p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo" style="font-size:22px;"><span class="logo-c">Clip</span>Services <span class="pulse"></span></div>
+      <p>Manchester's local service marketplace — connecting residents and businesses with verified local providers in Salford Quays.</p>
+    </div>
+    <div class="fcol">
+      <h4>For customers</h4>
+      <a href="#" onclick="filterCat('runner',null)">Runner services</a>
+      <a href="#" onclick="filterCat('cleaning',null)">Cleaning</a>
+      <a href="#" onclick="filterCat('handyman',null)">Handyman</a>
+      <a href="#" onclick="filterCat('beauty',null)">Beauty</a>
+      <a href="#faq-c">FAQ</a>
+    </div>
+    <div class="fcol">
+      <h4>For providers</h4>
+      <a href="#" onclick="switchView('provider')">Join the platform</a>
+      <a href="#apply">Apply now</a>
+      <a href="#faq-p">Provider FAQ</a>
+      <a href="https://wa.me/447700000000" target="_blank">WhatsApp us</a>
+    </div>
+    <div class="fcol">
+      <h4>Contact</h4>
+      <a href="https://wa.me/447700000000" target="_blank">WhatsApp</a>
+      <a href="#">Instagram @buildwithsonia</a>
+      <a href="#">TikTok @buildwithsonia</a>
+      <a href="#">Email</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Clip Services, Clippers Quays, Salford M50. All rights reserved.</p>
+    <p style="color:var(--cyan);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;">15% platform fee · Providers keep 85%</p>
+  </div>
+</footer>
+
+<script>
+// ===== PROVIDER DATA =====
+const providers = [
+  {
+    id:1, name:"Amara J.", emoji:"👩🏾", role:"Personal Runner", category:"runner",
+    rating:4.9, reviews:34, badge:"Top Rated", badgeClass:"bg-top",
+    bio:"Fast, reliable, and discreet. I cover all of Salford Quays and MediaCityUK. Groceries, pharmacy, parcels, takeaways — I handle it all with a smile.",
+    services:["Grocery Runs","Pharmacy","Parcel Returns","Takeaway Pickup","Late Night"],
+    rate:"£6", unit:"per run", avail:true, jobs:89, responseTime:"< 5 min"
+  },
+  {
+    id:2, name:"Marcus O.", emoji:"👨🏿", role:"Professional Cleaner", category:"cleaning",
+    rating:4.8, reviews:22, badge:"Verified", badgeClass:"bg-new",
+    bio:"4 years professional cleaning experience. Specialise in apartment cleans for Clippers Quays and Exchange Quay buildings. Bring my own eco-friendly supplies.",
+    services:["Flat Clean","Deep Clean","End of Tenancy","Regular Weekly"],
+    rate:"£15", unit:"per hour", avail:true, jobs:58, responseTime:"< 20 min"
+  },
+  {
+    id:3, name:"Yemi K.", emoji:"👩🏽", role:"Handyman & Flat-pack", category:"handyman",
+    rating:4.7, reviews:18, badge:"Verified", badgeClass:"bg-new",
+    bio:"IKEA flat-pack specialist. Also handle TV mounting, shelving, door repairs, and small plumbing fixes. No job too small — I work fast and leave no mess.",
+    services:["Flat-pack Assembly","TV Mounting","Shelving","Minor Repairs"],
+    rate:"£18", unit:"per hour", avail:true, jobs:41, responseTime:"< 30 min"
+  },
+  {
+    id:4, name:"Sofia R.", emoji:"👩🏻", role:"Dog Walker & Pet Sitter", category:"dog",
+    rating:5.0, reviews:29, badge:"Top Rated", badgeClass:"bg-top",
+    bio:"Dog lover with 3 years of professional experience. Daily walks around Salford Quays — your dog will love the waterfront route. DBS checked. Insured.",
+    services:["Daily Walks","Group Walks","Dog Sitting","Puppy Visits"],
+    rate:"£12", unit:"per walk", avail:true, jobs:112, responseTime:"< 10 min"
+  },
+  {
+    id:5, name:"Kemi A.", emoji:"👩🏾", role:"Nail & Beauty Technician", category:"beauty",
+    rating:4.9, reviews:41, badge:"Top Rated", badgeClass:"bg-top",
+    bio:"Qualified nail tech with 5+ years experience. I come to you — no salon needed. Gel nails, acrylics, lashes, brows. All supplies included in price.",
+    services:["Gel Nails","Acrylic Nails","Lash Extensions","Eyebrow Threading"],
+    rate:"£25", unit:"per treatment", avail:true, jobs:94, responseTime:"< 1 hr"
+  },
+  {
+    id:6, name:"David T.", emoji:"👨🏻", role:"Tech Support & Setup", category:"tech",
+    rating:4.6, reviews:15, badge:"Verified", badgeClass:"bg-new",
+    bio:"IT professional helping residents set up smart TVs, printers, WiFi extenders, gaming consoles, and laptops. Patient and clear instructions. Remote help also available.",
+    services:["TV Setup","WiFi & Router","Laptop Help","Smart Home","Printer Setup"],
+    rate:"£20", unit:"per hour", avail:false, jobs:27, responseTime:"< 2 hrs"
+  },
+  {
+    id:7, name:"Priya S.", emoji:"👩🏽", role:"Grocery & Errand Runner", category:"grocery",
+    rating:4.8, reviews:19, badge:"Verified", badgeClass:"bg-new",
+    bio:"Available 7 days a week including early mornings. Specialist in large grocery shops from Aldi, Tesco, and M&S. I use a trolley bag so everything arrives in perfect condition.",
+    services:["Grocery Runs","Water & Drinks","Pharmacy","Bulk Shopping"],
+    rate:"£6", unit:"per run", avail:true, jobs:51, responseTime:"< 8 min"
+  },
+  {
+    id:8, name:"Jordan F.", emoji:"👨🏾", role:"Delivery & Large Item", category:"delivery",
+    rating:4.7, reviews:12, badge:"Verified", badgeClass:"bg-new",
+    bio:"Van owner-operator. IKEA runs, appliance collection, furniture delivery — I have a large transit van and can handle anything up to 3 metres. Available weekends.",
+    services:["IKEA Runs","Appliance Pickup","Furniture Delivery","Man & Van"],
+    rate:"£35", unit:"from", avail:true, jobs:23, responseTime:"< 2 hrs"
+  },
+];
+
+let activeCategory = '';
+
+function renderProviders(list) {
+  const grid = document.getElementById('providersGrid');
+  grid.innerHTML = list.map(p => `
+    <div class="pcard" onclick="openModal(${p.id})">
+      <span class="pcard-badge ${p.badgeClass}">${p.badge}</span>
+      <div class="pcard-top">
+        <div class="pcard-avatar">
+          ${p.emoji}
+          <span class="pcard-verified">✓</span>
+        </div>
+        <div class="pcard-info">
+          <div class="pcard-name">${p.name}</div>
+          <div class="pcard-role">${p.role}</div>
+          <div class="pcard-rating">
+            <span class="pcard-stars">★</span> ${p.rating} <span style="color:var(--faint)">(${p.reviews} reviews)</span>
+          </div>
+        </div>
+      </div>
+      <div class="pcard-mid">${p.bio}</div>
+      <div class="pcard-services">
+        ${p.services.slice(0,3).map(s=>`<span class="ptag">${s}</span>`).join('')}
+        ${p.services.length>3?`<span class="ptag">+${p.services.length-3} more</span>`:''}
+      </div>
+      <div class="pcard-foot">
+        <div>
+          <div class="pcard-price">${p.rate} <span>${p.unit}</span></div>
+          <div class="pcard-avail">
+            <span class="avail-dot ${p.avail?'dot-green':'dot-amber'}"></span>
+            <span style="color:var(--muted)">${p.avail?'Available now':'Busy today'}</span>
+          </div>
+        </div>
+        <button class="book-btn" onclick="event.stopPropagation();openModal(${p.id})">View & Book</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterProviders() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const cat = document.getElementById('catFilter').value || activeCategory;
+  const filtered = providers.filter(p =>
+    (!cat || p.category === cat) &&
+    (!q || p.name.toLowerCase().includes(q) || p.role.toLowerCase().includes(q) ||
+     p.bio.toLowerCase().includes(q) || p.services.some(s=>s.toLowerCase().includes(q)))
+  );
+  renderProviders(filtered);
+}
+
+function filterCat(cat, el) {
+  activeCategory = cat;
+  document.getElementById('catFilter').value = cat;
+  document.querySelectorAll('.cat').forEach(c=>c.classList.remove('active'));
+  if(el) el.classList.add('active');
+  filterProviders();
+}
+
+function scrollToProviders() {
+  document.querySelector('#view-customer section').scrollIntoView({behavior:'smooth'});
+}
+
+// Modal
+function openModal(id) {
+  const p = providers.find(x=>x.id===id);
+  if(!p) return;
+  document.getElementById('m-avatar').textContent = p.emoji;
+  document.getElementById('m-name').textContent = p.name;
+  document.getElementById('m-role').textContent = p.role + ' · ★ ' + p.rating + ' (' + p.reviews + ' reviews)';
+  document.getElementById('m-about').textContent = p.bio;
+  document.getElementById('m-svcs').innerHTML = p.services.map(s=>`<span class="msvc">${s}</span>`).join('');
+  document.getElementById('m-stats').innerHTML = `
+    <div class="mstat"><span class="mstat-num">${p.jobs}</span><span class="mstat-lbl">Jobs done</span></div>
+    <div class="mstat"><span class="mstat-num">${p.rating}</span><span class="mstat-lbl">Rating</span></div>
+    <div class="mstat"><span class="mstat-num">${p.responseTime}</span><span class="mstat-lbl">Response</span></div>
+  `;
+  document.getElementById('modalOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(e) {
+  if(e.target===document.getElementById('modalOverlay')){
+    document.getElementById('modalOverlay').classList.remove('open');
+    document.body.style.overflow='';
+  }
+}
+
+function handleBook(e) {
+  e.preventDefault();
+  document.getElementById('modalOverlay').classList.remove('open');
+  document.body.style.overflow='';
+  showToast('✓ Booking request sent! We\'ll confirm via WhatsApp in under 30 minutes.');
+}
+
+// Provider form
+function toggleTag(el) {
+  el.classList.toggle('selected');
+}
+function selectRate(el, val) {
+  document.querySelectorAll('.rate-opt').forEach(r=>r.classList.remove('active'));
+  el.classList.add('active');
+}
+function handleApply(e) {
+  e.preventDefault();
+  showToast('✓ Application received! Sonia will review and WhatsApp you within 48 hours.');
+  e.target.reset();
+  document.querySelectorAll('.char-tag').forEach(t=>t.classList.remove('selected'));
+  document.querySelectorAll('.rate-opt').forEach(r=>r.classList.remove('active'));
+}
+
+// View switching
+function switchView(v) {
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+v).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// Nav scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40);
+});
+
+// Toast
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),4500);
+}
+
+// FAQ
+function toggleFaq(btn){
+  const item=btn.closest('.faq-item');
+  const was=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!was)item.classList.add('open');
+}
+
+// Reveal
+const ro=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('v');});
+},{threshold:0.1});
+document.querySelectorAll('.r').forEach(el=>ro.observe(el));
+
+// Mobile menu
+function toggleMobileMenu(){
+  const nl=document.querySelector('.nav-links');
+  nl.style.display=nl.style.display==='flex'?'none':'flex';
+  nl.style.flexDirection='column';
+  nl.style.position='fixed';
+  nl.style.top='120px';
+  nl.style.right='20px';
+  nl.style.background='var(--card)';
+  nl.style.border='1px solid var(--border)';
+  nl.style.padding='20px';
+  nl.style.borderRadius='4px';
+  nl.style.gap='16px';
+  nl.style.zIndex='300';
+}
+
+// Init
+renderProviders(providers);
+</script>
+</body>
+</html>
