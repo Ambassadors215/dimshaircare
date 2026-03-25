@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clip Services — To-Do List & Development Plan</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #07101F;
+  --navy2: #0C1628;
+  --surface: #101E38;
+  --card: #152240;
+  --border: #1E3060;
+  --border2: #2A4080;
+  --white: #EEF3FF;
+  --muted: #8A9DC0;
+  --faint: #3A5080;
+  --cyan: #00C8F0;
+  --cyan2: #0099BB;
+  --amber: #F59E0B;
+  --green: #10B981;
+  --red: #EF4444;
+  --purple: #8B5CF6;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--navy);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:300;line-height:1.7;}
+
+.layout{display:grid;grid-template-columns:272px 1fr;min-height:100vh;}
+
+.sidebar{background:var(--navy2);border-right:1px solid var(--border);padding:36px 22px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sb-logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--cyan);letter-spacing:-.02em;margin-bottom:4px;}
+.sb-doc{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:36px;}
+.sb-section{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin:20px 0 7px;}
+.sidebar a{display:block;color:var(--muted);text-decoration:none;font-size:12.5px;padding:5px 10px;border-radius:3px;margin-bottom:2px;transition:all .15s;border-left:2px solid transparent;}
+.sidebar a:hover{color:var(--white);background:var(--surface);}
+.sidebar a.active{color:var(--cyan);background:rgba(0,200,240,.07);border-left-color:var(--cyan);}
+
+.main{padding:56px 64px 120px;max-width:980px;}
+
+.doc-header{margin-bottom:64px;padding-bottom:44px;border-bottom:1px solid var(--border);}
+.doc-eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;}
+.doc-title{font-family:'Syne',sans-serif;font-size:clamp(34px,5vw,52px);font-weight:800;line-height:1.05;letter-spacing:-.03em;margin-bottom:14px;}
+.doc-title span{color:var(--cyan);}
+.doc-intro{color:var(--muted);font-size:15px;max-width:660px;line-height:1.75;margin-bottom:28px;}
+
+.progress-bar-wrap{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:24px 28px;margin-bottom:12px;}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.progress-label{font-size:13px;color:var(--muted);}
+.progress-pct{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--cyan);}
+.progress-track{height:6px;background:var(--border);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));border-radius:3px;transition:width .6s ease;}
+.progress-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:12px;}
+.pstat{background:var(--card);border:1px solid var(--border);padding:14px;text-align:center;}
+.pstat-num{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;display:block;}
+.pstat-num.green{color:var(--green);}
+.pstat-num.amber{color:var(--amber);}
+.pstat-num.cyan{color:var(--cyan);}
+.pstat-num.faint{color:var(--faint);}
+.pstat-lbl{font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+
+.section{margin-bottom:68px;scroll-margin-top:36px;}
+h2{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;margin-bottom:8px;letter-spacing:-.02em;}
+h2 .snum{color:var(--cyan);font-size:13px;font-weight:400;margin-right:10px;}
+h3{font-family:'Syne',sans-serif;font-size:17px;font-weight:600;margin:28px 0 10px;}
+p{color:var(--muted);font-size:14px;margin-bottom:14px;max-width:680px;line-height:1.75;}
+.sdiv{height:1px;background:var(--border);margin-bottom:28px;}
+
+.callout{border-left:3px solid var(--cyan);background:rgba(0,200,240,.04);padding:18px 22px;margin:20px 0;border-radius:0 3px 3px 0;}
+.callout p{margin:0;font-size:14px;color:var(--white);}
+.callout.amber{border-color:var(--amber);background:rgba(245,158,11,.04);}
+.callout.green{border-color:var(--green);background:rgba(16,185,129,.04);}
+.callout.purple{border-color:var(--purple);background:rgba(139,92,246,.04);}
+.callout.red{border-color:var(--red);background:rgba(239,68,68,.04);}
+
+/* TO-DO ITEMS */
+.todo-group{margin:18px 0;}
+.todo{background:var(--card);border:1px solid var(--border);padding:18px 22px;margin-bottom:2px;display:grid;grid-template-columns:32px 1fr auto;gap:14px;align-items:start;transition:border-color .2s;}
+.todo:hover{border-color:var(--border2);}
+.todo-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:2px;}
+.todo-check.done{background:var(--green);border-color:var(--green);color:var(--navy);}
+.todo-check.progress{background:var(--amber);border-color:var(--amber);color:var(--navy);}
+.todo-check.blocked{background:var(--red);border-color:var(--red);color:var(--navy);}
+.todo-content{min-width:0;}
+.todo-title{font-size:14px;color:var(--white);font-weight:400;margin-bottom:4px;}
+.todo.is-done .todo-title{color:var(--faint);text-decoration:line-through;}
+.todo-desc{font-size:12px;color:var(--faint);line-height:1.55;}
+.todo-meta{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+.todo-tag{font-size:9px;letter-spacing:.07em;text-transform:uppercase;padding:3px 8px;border-radius:20px;white-space:nowrap;}
+.t-critical{background:rgba(239,68,68,.12);color:#F87171;border:1px solid rgba(239,68,68,.2);}
+.t-high{background:rgba(245,158,11,.12);color:#FCD34D;border:1px solid rgba(245,158,11,.2);}
+.t-medium{background:rgba(0,200,240,.12);color:#67E8F9;border:1px solid rgba(0,200,240,.2);}
+.t-low{background:rgba(139,92,246,.12);color:#C4B5FD;border:1px solid rgba(139,92,246,.2);}
+.t-done{background:rgba(16,185,129,.12);color:#6EE7B7;border:1px solid rgba(16,185,129,.2);}
+.todo-owner{font-size:10px;color:var(--faint);white-space:nowrap;}
+.todo-time{font-size:10px;color:var(--faint);white-space:nowrap;}
+
+/* TIMELINE */
+.dev-timeline{position:relative;padding-left:30px;}
+.dev-timeline::before{content:'';position:absolute;left:7px;top:8px;bottom:0;width:1px;background:var(--border);}
+.phase{position:relative;margin-bottom:40px;}
+.phase-dot{position:absolute;left:-27px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--cyan);border:2px solid var(--navy);}
+.phase.future .phase-dot{background:var(--faint);}
+.phase-label{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--cyan);margin-bottom:5px;}
+.phase.future .phase-label{color:var(--faint);}
+.phase-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;}
+.phase-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:14px;}
+.phase-deliverables{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+.deliverable{background:var(--surface);border:1px solid var(--border);padding:14px 18px;font-size:12px;color:var(--muted);line-height:1.5;}
+.deliverable strong{color:var(--white);display:block;margin-bottom:3px;font-weight:400;font-family:'Syne',sans-serif;font-size:13px;}
+
+/* DEPENDENCY TABLE */
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:13px;}
+th{background:var(--surface);color:var(--muted);font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:11px 14px;text-align:left;font-weight:400;border-bottom:1px solid var(--border);}
+td{padding:13px 14px;border-bottom:1px solid var(--border);color:var(--muted);vertical-align:top;line-height:1.55;}
+tr:hover td{background:rgba(255,255,255,.015);}
+.td-name{color:var(--white);font-weight:400;}
+.td-cyan{color:var(--cyan);}
+.td-green{color:#6EE7B7;}
+.td-amber{color:#FCD34D;}
+.td-red{color:#F87171;}
+
+/* WEEK VIEW */
+.week-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:2px;margin:18px 0;}
+.week-col{background:var(--card);border:1px solid var(--border);padding:18px;}
+.week-day{font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.week-task{font-size:11px;color:var(--muted);padding:6px 0;border-bottom:1px solid rgba(30,48,96,.5);line-height:1.4;}
+.week-task:last-child{border-bottom:none;}
+.week-task strong{color:var(--white);font-weight:400;}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .main{padding:36px 20px 80px;}
+  .progress-stats{grid-template-columns:repeat(2,1fr);}
+  .phase-deliverables{grid-template-columns:1fr;}
+  .week-grid{grid-template-columns:1fr;}
+  .todo{grid-template-columns:32px 1fr;}
+  .todo-meta{flex-direction:row;align-items:center;grid-column:2;}
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="sb-logo">Clip Services</div>
+  <div class="sb-doc">To-Do List & Development Plan</div>
+
+  <div class="sb-section">Overview</div>
+  <a href="#dashboard" class="active">Dashboard</a>
+  <a href="#status">Current Status</a>
+
+  <div class="sb-section">To-Do List</div>
+  <a href="#pre-launch">Pre-Launch (Critical)</a>
+  <a href="#technical">Technical Fixes</a>
+  <a href="#content">Content & Branding</a>
+  <a href="#operations">Operations Setup</a>
+  <a href="#marketing">Marketing & Growth</a>
+
+  <div class="sb-section">Development Plan</div>
+  <a href="#week1">Week 1 — Foundation</a>
+  <a href="#week2">Week 2 — Go Live</a>
+  <a href="#month1">Month 1 — Traction</a>
+  <a href="#month2-3">Month 2–3 — Scale</a>
+  <a href="#month4-6">Month 4–6 — Automate</a>
+
+  <div class="sb-section">Reference</div>
+  <a href="#dependencies">Dependencies</a>
+  <a href="#costs">Cost Breakdown</a>
+</aside>
+
+<main class="main">
+
+<!-- HEADER -->
+<div class="doc-header">
+  <div class="doc-eyebrow">Project Management — Clip Services</div>
+  <div class="doc-title">To-Do List &<br><span>Development Plan</span></div>
+  <p class="doc-intro">A complete task breakdown and phased development plan for taking Clip Services from current state to live marketplace. Every task is prioritised, assigned, and time-boxed.</p>
+</div>
+
+<!-- DASHBOARD -->
+<div class="section" id="dashboard">
+  <h2><span class="snum">00</span>Project Dashboard</h2>
+  <div class="sdiv"></div>
+
+  <div class="progress-bar-wrap">
+    <div class="progress-header">
+      <span class="progress-label">Overall launch readiness</span>
+      <span class="progress-pct">40%</span>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" style="width:40%"></div>
+    </div>
+  </div>
+
+  <div class="progress-stats">
+    <div class="pstat"><span class="pstat-num green">8</span><span class="pstat-lbl">Completed</span></div>
+    <div class="pstat"><span class="pstat-num amber">6</span><span class="pstat-lbl">In Progress</span></div>
+    <div class="pstat"><span class="pstat-num cyan">22</span><span class="pstat-lbl">To Do</span></div>
+    <div class="pstat"><span class="pstat-num faint">3</span><span class="pstat-lbl">Blocked</span></div>
+  </div>
+</div>
+
+<!-- CURRENT STATUS -->
+<div class="section" id="status">
+  <h2><span class="snum">01</span>Current Status — What's Built</h2>
+  <div class="sdiv"></div>
+
+  <h3>Done</h3>
+  <div class="todo-group">
+    <div class="todo is-done">
+      <div class="todo-check done">✓</div>
+      <div class="todo-content">
+        <div class="todo-title">Marketplace website built and deployed</div>
+        <div class="todo-desc">Customer view, provider view, booking modal, provider application form, FAQ sections, footer — all live on Vercel</div>
+      </div>
+      <div class="todo-meta"><span class="todo-tag t-done">Done</span></div>
+    </div>
+    <div class="todo is-done">
+      <div class="todo-check done">✓</div>
+      <div class="todo-content">
+        <div class="todo-title">PRD v2.0 complete with all 20 sections</div>
+        <div class="todo-desc">Business model, personas, user flows, commission model, legal/compliance, go-to-market strategy, and strategic recommendations</div>
+      </div>
+      <div class="todo-meta"><span class="todo-tag t-done">Done</span></div>
+    </div>
+    <div class="todo is-done">
+      <div class="todo-check done">✓</div>
+      <div class="todo-content">
+        <div class="todo-title">Provider data structure with 8 sample providers</div>
+        <div class="todo-desc">JS array with name, emoji, role, category, rating, reviews, bio, services, rate, availability — ready for real data</div>
+      </div>
+      <div class="todo-meta"><span class="todo-tag t-done">Done</span></div>
+    </div>
+    <div class="todo is-done">
+      <div class="todo-check done">✓</div>
+      <div class="todo-content">
+        <div class="todo-title">Dual-view toggle (Customer / Provider)</div>
+        <div class="todo-desc">Tab-based view switching between marketplace and provider application portal</div>
+      </div>
+      <div class="todo-meta"><span class="todo-tag t-done">Done</span></div>
+    </div>
+    <div class="todo is-done">
+      <div class="todo-check done">✓</div>
+      <div class="todo-content">
+        <div class="todo-title">Search and category filter system</div>
+        <div class="todo-desc">Real-time keyword search, category dropdown, and category pill filters — all working simultaneously</div>
+      </div>
+      <div class="todo-meta"><span class="todo-tag t-done">Done</span></div>
+    </div>
+    <div class="todo is-done">
+      <div class="todo-check done">✓</div>
+      <div class="todo-content">
+        <div class="todo-title">Booking modal with form</div>
+        <div class="todo-desc">Full provider profile in modal with booking form — name, WhatsApp, service, date/time, address, notes</div>
+      </div>
+      <div class="todo-meta"><span class="todo-tag t-done">Done</span></div>
+    </div>
+    <div class="todo is-done">
+      <div class="todo-check done">✓</div>
+      <div class="todo-content">
+        <div class="todo-title">Provider application form</div>
+        <div class="todo-desc">Multi-step form with service tags, rate selector, availability, transport, referral source</div>
+      </div>
+      <div class="todo-meta"><span class="todo-tag t-done">Done</span></div>
+    </div>
+    <div class="todo is-done">
+      <div class="todo-check done">✓</div>
+      <div class="todo-content">
+        <div class="todo-title">Deployed to Vercel (clips-service.vercel.app)</div>
+        <div class="todo-desc">GitHub repo connected, auto-deploy on push, homepage redirects to marketplace</div>
+      </div>
+      <div class="todo-meta"><span class="todo-tag t-done">Done</span></div>
+    </div>
+  </div>
+
+  <h3>Not yet done — needs attention</h3>
+  <div class="callout red">
+    <p><strong>The site looks complete but the forms don't submit anywhere.</strong> Booking and application forms show a toast message but data is lost. The WhatsApp number is a placeholder. There are no legal pages. These must be fixed before real users interact with the site.</p>
+  </div>
+</div>
+
+<!-- PRE-LAUNCH TO-DOS -->
+<div class="section" id="pre-launch">
+  <h2><span class="snum">02</span>Pre-Launch — Critical Tasks</h2>
+  <div class="sdiv"></div>
+  <p>These items must be completed before sharing the site with real customers or providers. Launching without them creates legal, trust, or data-loss risk.</p>
+
+  <div class="todo-group">
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Replace placeholder WhatsApp number with real number</div>
+        <div class="todo-desc">Currently set to +447700000000 in the WhatsApp floating button, footer links, and all "wa.me" href attributes. Update to Sonia's actual WhatsApp Business number.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-critical">Critical</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">10 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Connect booking form to backend (email / Google Sheets / API)</div>
+        <div class="todo-desc">Currently, submitting the booking form shows a toast but data goes nowhere. Options: (a) send form data to Google Sheets via Apps Script, (b) email via Formspree/EmailJS, (c) use existing Vercel KV API at /api/booking. Pick one and wire it up.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-critical">Critical</span>
+        <span class="todo-owner">Dev</span>
+        <span class="todo-time">2–3 hrs</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Connect provider application form to backend</div>
+        <div class="todo-desc">Same issue as booking form — application data is lost on submit. Wire to Google Sheets or Vercel KV so Sonia can review applications. Include all fields: name, WhatsApp, email, postcode, services, rate, experience, availability, transport, referral source.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-critical">Critical</span>
+        <span class="todo-owner">Dev</span>
+        <span class="todo-time">2–3 hrs</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Add Privacy Policy page</div>
+        <div class="todo-desc">Required by GDPR before collecting any personal data. Must cover: what data is collected, why, how long it's kept, who it's shared with, how to request deletion. Use ICO template and adapt. Link from footer.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-critical">Critical</span>
+        <span class="todo-owner">Sonia + Dev</span>
+        <span class="todo-time">1–2 hrs</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Add Terms of Service page</div>
+        <div class="todo-desc">Defines Clip Services as a marketplace (not employer), limitation of liability, cancellation/refund policy, dispute resolution process. Protects Sonia legally. Use a free template from Termly or similar. Link from footer.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-critical">Critical</span>
+        <span class="todo-owner">Sonia + Dev</span>
+        <span class="todo-time">1–2 hrs</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Draft and finalise Provider Agreement</div>
+        <div class="todo-desc">1-page agreement every provider signs before going live: confirms self-employed status, 15% commission terms, right to remove listing, DBS requirement for in-home services, data handling consent, code of conduct.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-critical">Critical</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">2–3 hrs</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Register with ICO as data controller</div>
+        <div class="todo-desc">Legal requirement for processing personal data (names, addresses, phone numbers). Costs £40/year. Register online at ico.org.uk — takes 10 minutes.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-critical">Critical</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">15 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Set up WhatsApp Business account with auto-replies</div>
+        <div class="todo-desc">Download WhatsApp Business app. Set business name, description, hours, location. Configure auto-reply for out-of-hours messages. Set up quick replies for common responses (booking confirmation, provider notification).</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-critical">Critical</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">30 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Set up Monzo Business account</div>
+        <div class="todo-desc">Separate all Clip Services income from personal finances. Receive customer payments, send provider payments, track commissions. Essential for tax reporting and scaling.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-critical">Critical</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">20 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Recruit first 5 founding providers</div>
+        <div class="todo-desc">Personal outreach — contact people Sonia already knows or find through local community groups. Need at minimum: 1 runner, 1 cleaner, 1 handyman, 1 dog walker, 1 beauty/other. Offer 0% commission for first month as founding incentive.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-critical">Critical</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">3–5 days</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Replace sample provider data with real providers</div>
+        <div class="todo-desc">Once founding providers are approved, replace the 8 sample entries in the providers JS array with real names, real bios, real rates, and real service lists. Remove fake reviews/ratings — start at 0 reviews or use "New Provider" badge.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-critical">Critical</span>
+        <span class="todo-owner">Dev</span>
+        <span class="todo-time">1 hr per provider</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TECHNICAL FIXES -->
+<div class="section" id="technical">
+  <h2><span class="snum">03</span>Technical Fixes & Improvements</h2>
+  <div class="sdiv"></div>
+
+  <div class="todo-group">
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Add SEO meta tags and Open Graph tags</div>
+        <div class="todo-desc">Add meta description, og:title, og:description, og:image for social sharing. When someone shares the Clip Services link on WhatsApp/Instagram/Twitter, it should show a branded preview card — not a blank link.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-high">High</span>
+        <span class="todo-owner">Dev</span>
+        <span class="todo-time">30 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Add favicon and Apple touch icon</div>
+        <div class="todo-desc">Currently no favicon — browser tab shows generic icon. Create a simple "CS" favicon in cyan on navy. Add apple-touch-icon for home screen bookmarks.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-medium">Medium</span>
+        <span class="todo-owner">Dev</span>
+        <span class="todo-time">20 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Add Google Analytics / Vercel Analytics</div>
+        <div class="todo-desc">Track page views, view toggle usage (customer vs provider), booking form submissions, provider application submissions, WhatsApp button clicks. Essential for knowing what's working.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-high">High</span>
+        <span class="todo-owner">Dev</span>
+        <span class="todo-time">30 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Fix footer copyright year (2025 → 2026)</div>
+        <div class="todo-desc">Footer currently says "© 2025 Clip Services" — update to 2026.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-low">Low</span>
+        <span class="todo-owner">Dev</span>
+        <span class="todo-time">1 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Add form validation feedback</div>
+        <div class="todo-desc">Forms currently use basic HTML5 validation. Add visible error states (red border, error message below field) for required fields. Show loading spinner on submit button while form is sending. Disable button to prevent double-submit.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-medium">Medium</span>
+        <span class="todo-owner">Dev</span>
+        <span class="todo-time">1–2 hrs</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Add email confirmation on booking/application submit</div>
+        <div class="todo-desc">After a booking or application is submitted, send a confirmation email to the customer/provider with their reference number and expected response time. Use EmailJS (free tier) or Formspree.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-high">High</span>
+        <span class="todo-owner">Dev</span>
+        <span class="todo-time">2 hrs</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Add 404 error page</div>
+        <div class="todo-desc">If someone visits a broken URL, they should see a branded Clip Services 404 page with a link back to the marketplace — not a generic Vercel error.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-low">Low</span>
+        <span class="todo-owner">Dev</span>
+        <span class="todo-time">30 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Accessibility audit and fixes</div>
+        <div class="todo-desc">Add aria-labels to interactive elements, ensure keyboard navigation works for modals/forms, check colour contrast ratios, add alt text where needed. Run Lighthouse audit and fix critical issues.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-medium">Medium</span>
+        <span class="todo-owner">Dev</span>
+        <span class="todo-time">2–3 hrs</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT & BRANDING -->
+<div class="section" id="content">
+  <h2><span class="snum">04</span>Content & Branding</h2>
+  <div class="sdiv"></div>
+
+  <div class="todo-group">
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Purchase and connect clipservices.co.uk domain</div>
+        <div class="todo-desc">Buy domain (~£10/year) from Namecheap or Google Domains. Point to Vercel. Add custom domain in Vercel project settings. SSL is automatic.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-high">High</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">30 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Design and order printed flyers</div>
+        <div class="todo-desc">A5 double-sided flyers with QR code linking to website. Headline: "Your neighbours are already using Clip Services." Include service categories, WhatsApp number, and "Free for providers to join" message. Print 50–100 for Clippers Quays lobby.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-high">High</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">2 hrs design + print</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Create Instagram account (@clipservices or @buildwithsonia)</div>
+        <div class="todo-desc">Set up business profile with logo, bio, link to website. Prepare first 3 posts: launch announcement, provider spotlight template, "How it works" carousel.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-high">High</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">1 hr</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Create TikTok account</div>
+        <div class="todo-desc">Film launch day content: behind-the-scenes of building the marketplace, "I built a business in my apartment building" narrative, first provider onboarding. Aim for 3 posts in first week.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-medium">Medium</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">Ongoing</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Set up Google My Business listing</div>
+        <div class="todo-desc">Register "Clip Services" as a local business on Google Maps. Add location, hours, description, website, photos. Ask early customers and providers to leave Google reviews — this drives free local SEO traffic.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-high">High</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">30 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Create OG share image for social media previews</div>
+        <div class="todo-desc">1200×630 branded image that appears when the Clip Services URL is shared on WhatsApp, Twitter, Facebook. Navy background, Clip Services logo, tagline. Use Canva.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-medium">Medium</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">20 min</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OPERATIONS SETUP -->
+<div class="section" id="operations">
+  <h2><span class="snum">05</span>Operations Setup</h2>
+  <div class="sdiv"></div>
+
+  <div class="todo-group">
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Create master Google Sheet — Provider Tracker</div>
+        <div class="todo-desc">Columns: Provider Name, WhatsApp, Email, Postcode, Services, Rate, Status (Applied/Approved/Active/Suspended/Removed), DBS Status, Date Applied, Date Approved, Jobs Completed, Avg Rating, Total Earnings, Commission Earned.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-high">High</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">45 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Create master Google Sheet — Booking Tracker</div>
+        <div class="todo-desc">Columns: Booking ID, Date, Customer Name, Customer WhatsApp, Provider, Service, Duration, Provider Rate, Platform Fee (15%), Total Charged, Payment Status (Pending/Paid/Refunded), Job Status (Booked/Completed/Cancelled/Disputed), Rating Given.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-high">High</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">45 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Create master Google Sheet — Financial Tracker</div>
+        <div class="todo-desc">Tabs: Income (commission per booking), Expenses (domain, flyers, insurance), Provider Payouts, Monthly P&L. Formulas for: total GMV, total commission, payout outstanding, monthly revenue trend.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-high">High</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">1 hr</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Set up DBS check process for in-home providers</div>
+        <div class="todo-desc">Research DBS check providers (e.g. uCheck, Disclosure Scotland). Decide if Sonia facilitates new checks (£23 each) or accepts existing valid checks. Document the requirement in the provider agreement.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-high">High</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">1 hr research</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Create WhatsApp message templates</div>
+        <div class="todo-desc">Pre-write templates for: (1) booking confirmation to customer, (2) job details to provider, (3) payment request to customer, (4) post-job review request, (5) provider application acknowledgement, (6) provider approval notification. Save as quick replies in WhatsApp Business.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-medium">Medium</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">1 hr</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Get public liability insurance</div>
+        <div class="todo-desc">Platform-level cover in case a provider incident leads to a claim against Clip Services. ~£15–30/month. Research providers like Hiscox, Simply Business, or Superscript.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-high">High</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">1 hr research + apply</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MARKETING & GROWTH -->
+<div class="section" id="marketing">
+  <h2><span class="snum">06</span>Marketing & Growth</h2>
+  <div class="sdiv"></div>
+
+  <div class="todo-group">
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Distribute flyers in Clippers Quays</div>
+        <div class="todo-desc">Lobby noticeboard, mailboxes (if allowed), gym, common areas, lift areas. Ask building management for permission. Offer to become the "recommended services provider" for residents.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-high">High</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">1 hr</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Post in local Facebook/community groups</div>
+        <div class="todo-desc">Find and join: Salford Quays Community, MediaCityUK Workers, Clippers Quays Residents. Post a soft introduction — not a hard sell. "I'm building a local service marketplace for our area — would love feedback."</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-medium">Medium</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">30 min</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Set up referral programme</div>
+        <div class="todo-desc">Customer refers a friend → both get £5 off next booking. Provider refers another provider → featured placement for 1 week. Track via simple referral codes (e.g. "JAMIE5") in Google Sheets.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-medium">Medium</span>
+        <span class="todo-owner">Sonia + Dev</span>
+        <span class="todo-time">Month 1</span>
+      </div>
+    </div>
+
+    <div class="todo">
+      <div class="todo-check"></div>
+      <div class="todo-content">
+        <div class="todo-title">Approach MediaCityUK businesses for B2B accounts</div>
+        <div class="todo-desc">Visit offices at Clippers House, dock10, ITV. Pitch bulk booking packages with monthly invoicing. One B2B account = multiple recurring bookings per month. Bring printed flyers and business card.</div>
+      </div>
+      <div class="todo-meta">
+        <span class="todo-tag t-medium">Medium</span>
+        <span class="todo-owner">Sonia</span>
+        <span class="todo-time">Month 2</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEVELOPMENT PLAN -->
+<div class="section" id="week1">
+  <h2><span class="snum">07</span>Development Plan</h2>
+  <div class="sdiv"></div>
+
+  <div class="callout">
+    <p><strong>This plan assumes Sonia is working on the business part-time alongside other commitments.</strong> Estimated 2–3 hours per day on Clip Services tasks. Development tasks assume access to Cursor for code changes.</p>
+  </div>
+
+  <h3>Week 1 — Foundation (before going live)</h3>
+  <p>Goal: Get all critical infrastructure in place so the site can accept real submissions and Sonia is legally protected.</p>
+
+  <div class="dev-timeline">
+    <div class="phase">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Day 1–2 — Legal & Accounts</div>
+      <div class="phase-title">Set up the business backbone</div>
+      <div class="phase-deliverables">
+        <div class="deliverable"><strong>Register with ICO</strong>ico.org.uk — £40, 10 minutes. Get your registration number.</div>
+        <div class="deliverable"><strong>Set up Monzo Business</strong>Download app, create business account, get payment links ready.</div>
+        <div class="deliverable"><strong>Set up WhatsApp Business</strong>Business profile, auto-replies, quick reply templates.</div>
+        <div class="deliverable"><strong>Draft Provider Agreement</strong>1-page document covering self-employed status, commission, removal rights, DBS.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Day 3–4 — Technical Fixes</div>
+      <div class="phase-title">Make the website actually work</div>
+      <div class="phase-deliverables">
+        <div class="deliverable"><strong>Wire booking form</strong>Connect to Google Sheets or Vercel KV. Confirm data is captured and Sonia gets notified.</div>
+        <div class="deliverable"><strong>Wire provider application form</strong>Same backend. All 10 fields captured. Sonia receives email/WhatsApp alert on new application.</div>
+        <div class="deliverable"><strong>Replace WhatsApp placeholder</strong>Update all wa.me links with Sonia's real WhatsApp Business number.</div>
+        <div class="deliverable"><strong>Add Privacy Policy + Terms</strong>Create two HTML pages, link from footer, add consent checkbox to forms.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Day 5–7 — Operations & Branding</div>
+      <div class="phase-title">Build the tracking system and brand presence</div>
+      <div class="phase-deliverables">
+        <div class="deliverable"><strong>Create Google Sheets</strong>Provider tracker, booking tracker, financial tracker — all with the right columns and formulas.</div>
+        <div class="deliverable"><strong>Set up Instagram + TikTok</strong>Business profiles, first posts drafted, bio and link set.</div>
+        <div class="deliverable"><strong>Add SEO + OG tags</strong>Meta description, og:image, favicon — site looks professional when shared.</div>
+        <div class="deliverable"><strong>Add Google Analytics</strong>Track page views, form submissions, WhatsApp clicks.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="week2">
+  <h3>Week 2 — Go Live</h3>
+  <p>Goal: First 5 providers onboarded and first real bookings completed.</p>
+
+  <div class="dev-timeline">
+    <div class="phase">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Day 8–10 — Supply Side</div>
+      <div class="phase-title">Recruit and onboard founding providers</div>
+      <div class="phase-deliverables">
+        <div class="deliverable"><strong>Personal outreach</strong>Contact 10 potential providers via WhatsApp. Target: 5 confirmed. Offer 0% commission for Month 1.</div>
+        <div class="deliverable"><strong>Vet and verify</strong>ID check via video call, DBS for in-home services, sign provider agreement, test WhatsApp response time.</div>
+        <div class="deliverable"><strong>Update website data</strong>Replace sample providers with real provider cards. Real names, real bios, real rates. Start with "New Provider" badge (no fake reviews).</div>
+        <div class="deliverable"><strong>Deploy updates</strong>Push to GitHub → Vercel auto-deploys. Test every form, every link, every flow end-to-end.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Day 11–14 — Demand Side</div>
+      <div class="phase-title">Get first customers and first bookings</div>
+      <div class="phase-deliverables">
+        <div class="deliverable"><strong>Flyer drop</strong>50 flyers in Clippers Quays lobby, gym, lifts, mailboxes. QR code to website.</div>
+        <div class="deliverable"><strong>WhatsApp status blitz</strong>Post daily availability updates. "Cleaner available tomorrow 2–6pm." Creates urgency.</div>
+        <div class="deliverable"><strong>First 5 bookings</strong>Personally facilitate. Walk through the full flow: booking → payment → provider notification → job done → review request.</div>
+        <div class="deliverable"><strong>Social media launch</strong>Instagram: launch post + provider spotlights. TikTok: behind-the-scenes of building the marketplace.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="month1">
+  <h3>Month 1 — Build Traction</h3>
+  <p>Goal: 12 active providers, 50 total bookings, operations running smoothly.</p>
+
+  <div class="dev-timeline">
+    <div class="phase">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Week 3–4</div>
+      <div class="phase-title">Scale supply and demand together</div>
+      <div class="phase-deliverables">
+        <div class="deliverable"><strong>Grow to 12 providers</strong>Approve inbound applications. Proactively recruit beauty and tech providers to fill category gaps.</div>
+        <div class="deliverable"><strong>Google My Business</strong>Register, optimise listing, ask first customers for Google reviews. Start appearing in local search results.</div>
+        <div class="deliverable"><strong>Launch referral programme</strong>Customer refers friend → both get £5 off. Track with referral codes in Google Sheets.</div>
+        <div class="deliverable"><strong>Purchase domain</strong>Buy clipservices.co.uk, connect to Vercel. Professional URL for all marketing materials.</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-dot"></div>
+      <div class="phase-label">End of Month 1 — Check-in</div>
+      <div class="phase-title">Review metrics and adjust</div>
+      <div class="phase-desc">
+        By end of Month 1, check: How many bookings completed? What's the repeat rate? Which categories get the most demand? Are providers responding fast enough? Is commission revenue covering the £40 ICO fee and flyer costs? Which marketing channel drove the most traffic?
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="month2-3">
+  <h3>Month 2–3 — Scale & Systemise</h3>
+  <p>Goal: 25 providers, self-sustaining booking flow, revenue covers all costs.</p>
+
+  <div class="dev-timeline">
+    <div class="phase">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Month 2</div>
+      <div class="phase-title">Platform becomes self-sustaining</div>
+      <div class="phase-deliverables">
+        <div class="deliverable"><strong>25 active providers</strong>Inbound applications should be flowing. Maintain 50–60% approval rate to protect quality.</div>
+        <div class="deliverable"><strong>B2B outreach</strong>Visit MediaCityUK offices. Offer bulk booking packages with monthly invoicing for businesses.</div>
+        <div class="deliverable"><strong>Featured placement revenue</strong>Offer top listing position to providers for £20–50/month. Second revenue stream.</div>
+        <div class="deliverable"><strong>Email backup system</strong>Set up Mailchimp free tier. Collect emails. Send booking confirmations via email as WhatsApp backup.</div>
+      </div>
+    </div>
+
+    <div class="phase future">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Month 3</div>
+      <div class="phase-title">Automate and professionalise</div>
+      <div class="phase-deliverables">
+        <div class="deliverable"><strong>Stripe Connect research</strong>Begin Stripe Connect onboarding. Understand KYC requirements. Plan migration from manual to auto payments.</div>
+        <div class="deliverable"><strong>Provider WhatsApp Community</strong>Create community channel for all approved providers. Post available jobs, share tips, celebrate milestones.</div>
+        <div class="deliverable"><strong>Hire VA / part-time assistant</strong>If bookings exceed 50/week, Sonia needs help. Hire someone for booking confirmations and payment transfers.</div>
+        <div class="deliverable"><strong>Consider Ltd company</strong>If monthly revenue exceeds £1,000, forming a Ltd company becomes tax-efficient. Consult an accountant.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="month4-6">
+  <h3>Month 4–6 — Automate & Expand</h3>
+  <p>Goal: 50+ providers, Stripe payments live, expanding beyond Salford Quays.</p>
+
+  <div class="dev-timeline">
+    <div class="phase future">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Month 4–5</div>
+      <div class="phase-title">Payment automation and territory expansion</div>
+      <div class="phase-deliverables">
+        <div class="deliverable"><strong>Stripe Connect live</strong>Automatic commission splits. Customer pays once, provider gets 85%, Sonia gets 15%. Zero manual work per transaction.</div>
+        <div class="deliverable"><strong>Provider dashboard</strong>Simple web page where providers can see upcoming bookings, earnings history, and profile stats.</div>
+        <div class="deliverable"><strong>Expand coverage area</strong>Target Trafford, Manchester city centre, Didsbury. Update marketing and provider recruitment for new zones.</div>
+        <div class="deliverable"><strong>Automated review system</strong>Post-job WhatsApp message with review link. Reviews auto-publish to provider profile.</div>
+      </div>
+    </div>
+
+    <div class="phase future">
+      <div class="phase-dot"></div>
+      <div class="phase-label">Month 6</div>
+      <div class="phase-title">Platform maturity milestone</div>
+      <div class="phase-deliverables">
+        <div class="deliverable"><strong>50+ active providers</strong>Full category coverage. Multiple providers per category means customers always find someone available.</div>
+        <div class="deliverable"><strong>Monthly revenue £7,500+</strong>Commission-based income fully established. Business generates income while Sonia sleeps.</div>
+        <div class="deliverable"><strong>Loyalty programme</strong>"Clip Regulars" — 5% discount after 5 bookings. Increases retention and LTV.</div>
+        <div class="deliverable"><strong>Evaluate mobile app</strong>If usage justifies it, begin React Native app planning. Until then, the website + WhatsApp combo works.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DEPENDENCIES -->
+<div class="section" id="dependencies">
+  <h2><span class="snum">08</span>Dependencies & Blockers</h2>
+  <div class="sdiv"></div>
+
+  <table>
+    <thead><tr><th>Task</th><th>Blocked by</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td class="td-name">Replace sample providers with real data</td><td>Recruiting and approving first 5 providers</td><td class="td-red">Blocked</td></tr>
+      <tr><td class="td-name">Distribute flyers</td><td>Real WhatsApp number on site + forms working</td><td class="td-red">Blocked</td></tr>
+      <tr><td class="td-name">First booking</td><td>Real providers live + booking form connected</td><td class="td-red">Blocked</td></tr>
+      <tr><td class="td-name">Provider application processing</td><td>Application form connected to backend + provider agreement drafted</td><td class="td-amber">Blocked</td></tr>
+      <tr><td class="td-name">Google reviews</td><td>Google My Business setup + completed bookings</td><td class="td-amber">Pending</td></tr>
+      <tr><td class="td-name">Referral programme</td><td>At least 10 completed bookings to have something to refer to</td><td class="td-amber">Pending</td></tr>
+      <tr><td class="td-name">Stripe Connect</td><td>50+ bookings/week (manual payments become unsustainable)</td><td class="td-cyan">Future</td></tr>
+      <tr><td class="td-name">Part-time assistant</td><td>Revenue exceeding £1,000/month to justify the cost</td><td class="td-cyan">Future</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- COST BREAKDOWN -->
+<div class="section" id="costs">
+  <h2><span class="snum">09</span>Launch Cost Breakdown</h2>
+  <div class="sdiv"></div>
+
+  <table>
+    <thead><tr><th>Item</th><th>Cost</th><th>When</th><th>Recurring?</th></tr></thead>
+    <tbody>
+      <tr><td class="td-name">ICO registration</td><td class="td-cyan">£40</td><td>Week 1</td><td>Annual</td></tr>
+      <tr><td class="td-name">Domain (clipservices.co.uk)</td><td class="td-cyan">£10</td><td>Week 3</td><td>Annual</td></tr>
+      <tr><td class="td-name">Flyer printing (50–100)</td><td class="td-cyan">£15</td><td>Week 2</td><td>As needed</td></tr>
+      <tr><td class="td-name">Public liability insurance</td><td class="td-cyan">~£20/month</td><td>Month 1</td><td>Monthly</td></tr>
+      <tr><td class="td-name">DBS checks (per provider)</td><td class="td-cyan">£23 each</td><td>Ongoing</td><td>Per provider</td></tr>
+      <tr><td class="td-name">Vercel hosting</td><td class="td-green">Free</td><td>Now</td><td>—</td></tr>
+      <tr><td class="td-name">WhatsApp Business</td><td class="td-green">Free</td><td>Week 1</td><td>—</td></tr>
+      <tr><td class="td-name">Monzo Business</td><td class="td-green">Free</td><td>Week 1</td><td>—</td></tr>
+      <tr><td class="td-name">Google Sheets</td><td class="td-green">Free</td><td>Week 1</td><td>—</td></tr>
+      <tr><td class="td-name">Google My Business</td><td class="td-green">Free</td><td>Month 1</td><td>—</td></tr>
+      <tr><td class="td-name">Instagram / TikTok</td><td class="td-green">Free</td><td>Week 1</td><td>—</td></tr>
+      <tr><td class="td-name">Canva</td><td class="td-green">Free</td><td>Week 1</td><td>—</td></tr>
+      <tr><td class="td-name">Google Analytics</td><td class="td-green">Free</td><td>Week 1</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout green">
+    <p><strong>Total launch investment: ~£88 + £23 per DBS check.</strong> With 5 founding providers needing DBS checks: ~£203 total. First month commission revenue (projected ~£300) covers the entire launch cost. Everything after that is profit.</p>
+  </div>
+
+  <div class="callout amber" style="margin-top:12px;">
+    <p><strong>Next action:</strong> Start with the 11 critical tasks in the Pre-Launch section. Once those are done, the marketplace is ready for real users. Everything else can be built iteratively as the business grows.</p>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+const sections = document.querySelectorAll('.section');
+const links = document.querySelectorAll('.sidebar a');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const a = document.querySelector(`.sidebar a[href="#${e.target.id}"]`);
+      if (a) a.classList.add('active');
+    }
+  });
+}, { threshold: 0.25 });
+sections.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>
