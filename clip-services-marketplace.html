@@ -826,22 +826,22 @@ footer{background:var(--navy2);border-top:1px solid var(--border);padding:56px 5
           <div class="form-group form-full">
             <label>What services do you offer? (select all that apply)</label>
             <div class="char-tags" id="serviceTags">
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="runner">🏃 Runner & Errands</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="cleaning">🧹 Flat Cleaning</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="deep-clean">🧽 Deep Cleaning</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="handyman">🔧 Handyman & Repairs</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="flatpack">📦 Flat-pack Assembly</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="dog">🐕 Dog Walking</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="petsit">🐾 Pet Sitting</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="grocery">🛒 Grocery Runs</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="pharmacy">💊 Pharmacy Runs</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="delivery">🚗 Delivery & Pickup</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="nails">💅 Nail Technician</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="lashes">👁 Lashes & Brows</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="hair">💇 Mobile Hair</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="tech">💻 Tech Support</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="ironing">👕 Ironing & Laundry</label>
-              <label class="char-tag" onclick="toggleTag(this)"><input type="checkbox" value="other">✦ Other</label>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="runner">🏃 Runner & Errands</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="cleaning">🧹 Flat Cleaning</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="deep-clean">🧽 Deep Cleaning</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="handyman">🔧 Handyman & Repairs</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="flatpack">📦 Flat-pack Assembly</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="dog">🐕 Dog Walking</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="petsit">🐾 Pet Sitting</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="grocery">🛒 Grocery Runs</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="pharmacy">💊 Pharmacy Runs</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="delivery">🚗 Delivery & Pickup</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="nails">💅 Nail Technician</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="lashes">👁 Lashes & Brows</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="hair">💇 Mobile Hair</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="tech">💻 Tech Support</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="ironing">👕 Ironing & Laundry</div>
+              <div class="char-tag" onclick="toggleTag(this)" data-value="other">✦ Other</div>
             </div>
           </div>
 
@@ -865,13 +865,13 @@ footer{background:var(--navy2);border-top:1px solid var(--border);padding:56px 5
 
           <div class="form-group form-full">
             <label>Your availability</label>
-            <div class="char-tags">
-              <label class="char-tag" onclick="toggleTag(this)">Mon–Fri mornings</label>
-              <label class="char-tag" onclick="toggleTag(this)">Mon–Fri afternoons</label>
-              <label class="char-tag" onclick="toggleTag(this)">Mon–Fri evenings</label>
-              <label class="char-tag" onclick="toggleTag(this)">Weekends</label>
-              <label class="char-tag" onclick="toggleTag(this)">Late nights (10pm–2am)</label>
-              <label class="char-tag" onclick="toggleTag(this)">Flexible / anytime</label>
+            <div class="char-tags" id="availTags">
+              <div class="char-tag" onclick="toggleTag(this)">Mon–Fri mornings</div>
+              <div class="char-tag" onclick="toggleTag(this)">Mon–Fri afternoons</div>
+              <div class="char-tag" onclick="toggleTag(this)">Mon–Fri evenings</div>
+              <div class="char-tag" onclick="toggleTag(this)">Weekends</div>
+              <div class="char-tag" onclick="toggleTag(this)">Late nights (10pm–2am)</div>
+              <div class="char-tag" onclick="toggleTag(this)">Flexible / anytime</div>
             </div>
           </div>
 
@@ -1266,6 +1266,7 @@ async function handleBook(e) {
 function toggleTag(el) {
   el.classList.toggle('selected');
 }
+
 function selectRate(el, val) {
   document.querySelectorAll('.rate-opt').forEach(r=>r.classList.remove('active'));
   el.classList.add('active');
@@ -1279,9 +1280,9 @@ async function handleApply(e) {
   btn.disabled = true;
   btn.textContent = 'Submitting…';
 
-  const services = [...document.querySelectorAll('#serviceTags .char-tag.selected input')]
-    .map(i => i.value).join(', ');
-  const availability = [...document.querySelectorAll('#applyForm .char-tags:last-of-type .char-tag.selected')]
+  const services = [...document.querySelectorAll('#serviceTags .char-tag.selected')]
+    .map(el => el.dataset.value).join(', ');
+  const availability = [...document.querySelectorAll('#availTags .char-tag.selected')]
     .map(t => t.textContent.trim()).join(', ');
   const rateEl = document.querySelector('.rate-opt.active');
   const rate = rateEl ? rateEl.dataset.selectedRate || rateEl.textContent.trim() : '';
