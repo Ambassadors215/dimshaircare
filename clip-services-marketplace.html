@@ -580,10 +580,10 @@ footer{background:var(--navy2);border-top:1px solid var(--border);padding:56px 5
       </div>
       <div class="pay-card">
         <span class="pay-icon">💎</span>
-        <div class="pay-name">Card Payment</div>
-        <div class="pay-desc">Pay by debit or credit card through a secure Stripe checkout page. Automatic receipt sent to your email.</div>
-        <div class="pay-detail">Stripe-powered secure checkout. All major cards accepted. Coming in our next platform update.</div>
-        <span class="pay-badge pb-soon">Coming soon</span>
+        <div class="pay-name">Card Payment (Stripe)</div>
+        <div class="pay-desc">When you book a provider, you can pay by debit or credit card on our secure Stripe checkout page. Email receipt from Stripe.</div>
+        <div class="pay-detail">Available when you click “Continue to secure card payment” on the booking form. Major cards accepted.</div>
+        <span class="pay-badge pb-fast">At booking</span>
       </div>
     </div>
 
@@ -738,7 +738,7 @@ footer{background:var(--navy2);border-top:1px solid var(--border);padding:56px 5
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">What payment methods do you accept? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>We currently accept bank transfers (Faster Payments) and payment links (Monzo.me or similar). You'll receive payment details via WhatsApp after your booking is confirmed. Card payments via Stripe are coming soon. All payments go through Clip Services — never directly to a provider.</p></div>
+        <div class="faq-a"><p>You can pay by card when you book — we use Stripe Checkout (secure, receipt by email). We also accept bank transfers and payment links (Monzo.me or similar) via WhatsApp if you prefer. All payments go through Clip Services — never directly to a provider.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">When do I pay — before or after the service? <span class="faq-icon">+</span></button>
@@ -1061,6 +1061,11 @@ footer{background:var(--navy2);border-top:1px solid var(--border);padding:56px 5
           <label>Service needed</label>
           <input type="text" id="bf-service" placeholder="e.g. Weekly flat clean, 2-bed apartment" required>
         </div>
+        <div>
+          <label>Agreed service total (£)</label>
+          <input type="number" id="bf-subtotal" name="subtotal" min="5" max="5000" step="0.01" inputmode="decimal" placeholder="e.g. 45.00" required>
+          <p class="form-note" id="bf-pay-summary" style="margin-top:8px;">Enter the price you agreed with the provider (their rate only). We add 15% platform fee at checkout.</p>
+        </div>
         <div class="form-row">
           <div>
             <label>Preferred date</label>
@@ -1083,8 +1088,8 @@ footer{background:var(--navy2);border-top:1px solid var(--border);padding:56px 5
           <input type="checkbox" id="bf-consent" required style="width:auto;margin-top:3px;">
           <label for="bf-consent" style="font-size:12px;color:var(--muted);text-transform:none;letter-spacing:0;line-height:1.5;cursor:pointer;">I agree to Clip Services' <a href="/terms" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Terms of Service</a>, <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Privacy Policy</a>, and <a href="/disclaimer" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Disclaimer</a>. I consent to receiving booking confirmations via WhatsApp and email.</label>
         </div>
-        <button type="submit" class="btn-p" id="bookBtn" style="width:100%;justify-content:center;">Confirm Booking Request →</button>
-        <p style="font-size:12px;color:var(--faint);text-align:center;margin-top:8px;">We'll confirm via WhatsApp within 30 minutes. Clip Services platform fee (15%) added at checkout.</p>
+        <button type="submit" class="btn-p" id="bookBtn" style="width:100%;justify-content:center;">Continue to secure card payment →</button>
+        <p style="font-size:12px;color:var(--faint);text-align:center;margin-top:8px;">You’ll pay securely with Stripe (card). If card checkout isn’t active yet, we’ll save your request and send bank / Monzo payment details on WhatsApp.</p>
       </form>
     </div>
   </div>
@@ -1281,8 +1286,25 @@ function openModal(id) {
   dateInput.value = '';
   document.getElementById('bookingForm').reset();
   document.getElementById('bf-provider').value = p.name + ' — ' + p.role;
+  const sub = document.getElementById('bf-subtotal');
+  if (sub) sub.value = '';
+  updateBookingPaySummary();
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow='hidden';
+}
+
+function updateBookingPaySummary() {
+  const el = document.getElementById('bf-subtotal');
+  const out = document.getElementById('bf-pay-summary');
+  if (!el || !out) return;
+  const v = parseFloat(el.value);
+  if (Number.isNaN(v) || v < 5) {
+    out.textContent = 'Enter the agreed service total in pounds (minimum £5). The 15% platform fee is added on top.';
+    return;
+  }
+  const fee = Math.round(v * 0.15 * 100) / 100;
+  const total = Math.round((v + fee) * 100) / 100;
+  out.innerHTML = 'Platform fee (15%): <strong style="color:var(--cyan);">£' + fee.toFixed(2) + '</strong> · Total to pay: <strong style="color:var(--white);">£' + total.toFixed(2) + '</strong>';
 }
 
 function closeModal(e) {
@@ -1297,17 +1319,26 @@ async function handleBook(e) {
   const btn = document.getElementById('bookBtn');
   const origText = btn.textContent;
   btn.disabled = true;
-  btn.textContent = 'Submitting…';
+  btn.textContent = 'Starting checkout…';
 
   const provider = document.getElementById('bf-provider').value;
   const address = document.getElementById('bf-address').value;
   const notes = document.getElementById('bf-notes').value;
   const fullNotes = `Provider: ${provider}\nAddress: ${address}${notes ? '\n' + notes : ''}`;
 
+  const subtotal = parseFloat(document.getElementById('bf-subtotal').value);
+  if (Number.isNaN(subtotal) || subtotal < 5) {
+    showToast('⚠ Enter a valid service total (minimum £5).');
+    btn.disabled = false;
+    btn.textContent = origText;
+    return;
+  }
+
+  const fee = Math.round(subtotal * 0.15 * 100) / 100;
+  const total = Math.round((subtotal + fee) * 100) / 100;
+
   const payload = {
     service: document.getElementById('bf-service').value,
-    price: '',
-    dur: '',
     date: document.getElementById('bf-date').value,
     time: document.getElementById('bf-time').value,
     firstName: document.getElementById('bf-first').value,
@@ -1315,24 +1346,56 @@ async function handleBook(e) {
     phone: document.getElementById('bf-phone').value,
     email: document.getElementById('bf-email').value,
     notes: fullNotes,
-    consent: document.getElementById('bf-consent').checked
+    consent: document.getElementById('bf-consent').checked,
+    subtotalGBP: subtotal
   };
 
   try {
-    const res = await fetch('/api/booking', {
+    const res = await fetch('/api/stripe-checkout', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
-    if (data.ok) {
-      document.getElementById('modalOverlay').classList.remove('open');
-      document.body.style.overflow = '';
-      document.getElementById('bookingForm').reset();
-      showToast(`✓ Booking request sent! Ref: ${data.ref} — We'll confirm via WhatsApp within 30 minutes.`);
-    } else {
-      showToast('⚠ ' + (data.error || 'Something went wrong. Please try again.'));
+
+    if (data.ok && data.url) {
+      window.location.href = data.url;
+      return;
     }
+
+    if (data.code === 'NO_STRIPE') {
+      btn.textContent = 'Sending request…';
+      const fallback = {
+        service: payload.service,
+        price: `£${total.toFixed(2)} (incl. 15% fee) — pay via WhatsApp / bank`,
+        dur: '',
+        date: payload.date,
+        time: payload.time,
+        firstName: payload.firstName,
+        lastName: payload.lastName,
+        phone: payload.phone,
+        email: payload.email,
+        notes: fullNotes + `\nPayment: Service £${subtotal.toFixed(2)} + 15% fee £${fee.toFixed(2)} = £${total.toFixed(2)}. Online card checkout not configured — customer to pay via agreed method.`,
+        consent: payload.consent
+      };
+      const res2 = await fetch('/api/booking', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(fallback)
+      });
+      const d2 = await res2.json();
+      if (d2.ok) {
+        document.getElementById('modalOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+        document.getElementById('bookingForm').reset();
+        showToast(`✓ Request saved (ref: ${d2.ref}). Pay via WhatsApp — card checkout coming soon.`);
+      } else {
+        showToast('⚠ ' + (d2.error || 'Could not save booking.'));
+      }
+      return;
+    }
+
+    showToast('⚠ ' + (data.error || 'Something went wrong. Please try again.'));
   } catch {
     showToast('⚠ Network error — please try again or message us on WhatsApp.');
   } finally {
@@ -1454,6 +1517,21 @@ function closeMobileMenu(){
 }
 
 renderProviders(providers);
+
+document.getElementById('bf-subtotal')?.addEventListener('input', updateBookingPaySummary);
+
+(function bookingReturnToast() {
+  const p = new URLSearchParams(location.search);
+  const b = p.get('booking');
+  if (b === 'paid') {
+    const ref = p.get('ref') || '';
+    showToast('✓ Payment successful' + (ref ? ' — ref ' + ref : '') + '. We’ll WhatsApp you to confirm your booking.');
+    history.replaceState({}, '', location.pathname);
+  } else if (b === 'cancel') {
+    showToast('Payment was cancelled. Message us on WhatsApp if you still want the booking — ref ' + (p.get('ref') || 'on file') + '.');
+    history.replaceState({}, '', location.pathname);
+  }
+})();
 </script>
 </body>
 </html>

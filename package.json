@@ -1,18 +1,9 @@
 {
-  "name": "dimshaircare",
-  "version": "1.0.0",
+  "name": "clip-services",
   "private": true,
-  "description": "Dimshaircare marketing + booking landing page",
-  "main": "server.js",
   "type": "module",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js"
-  },
-  "engines": {
-    "node": ">=18"
-  },
   "dependencies": {
-    "ioredis": "^5.4.1"
+    "ioredis": "^5.4.2",
+    "stripe": "^17.5.0"
   }
 }

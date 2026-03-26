@@ -231,6 +231,10 @@
         border-color: rgba(162, 75, 75, 0.32);
         background: rgba(162, 75, 75, 0.08);
       }
+      .badge.warn {
+        border-color: rgba(200, 150, 60, 0.35);
+        background: rgba(200, 150, 60, 0.1);
+      }
       .mono {
         font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
           monospace;
@@ -290,7 +294,7 @@
                 <button class="btn btn-ghost" id="testAuthBtn">Test connection</button>
               </div>
               <p class="muted" style="margin-bottom: 0">
-                If this fails, ensure Vercel has <span class="mono">ADMIN_TOKEN</span> and <span class="mono">KV_REDIS_URL</span> set in the Clip Services project (Storage tab).
+                If this fails, ensure Vercel has <span class="mono">ADMIN_TOKEN</span> and <span class="mono">KV_REDIS_URL</span> set. For card payments: <span class="mono">STRIPE_SECRET_KEY</span>, <span class="mono">STRIPE_WEBHOOK_SECRET</span>, and <span class="mono">SITE_URL</span> (e.g. https://clips-service.vercel.app).
               </p>
             </div>
           </section>
@@ -439,7 +443,14 @@
           .map((b) => {
             const client = `${b.firstName || ""} ${b.lastName || ""}`.trim();
             const status = b.status || "new";
-            const badgeClass = status === "confirmed" ? "success" : status === "cancelled" ? "danger" : "";
+            const badgeClass =
+              status === "confirmed" || status === "paid"
+                ? "success"
+                : status === "cancelled"
+                  ? "danger"
+                  : status === "awaiting_payment"
+                    ? "warn"
+                    : "";
             return `
               <tr>
                 <td class="mono">${b.ref || "—"}</td>
@@ -461,7 +472,7 @@
                 <td>
                   <div class="actions">
                     <select class="select" data-ref="${b.ref}" data-action="status">
-                      ${["new", "confirmed", "completed", "cancelled"]
+                      ${["new", "awaiting_payment", "paid", "confirmed", "completed", "cancelled"]
                         .map((s) => `<option value="${s}" ${s === status ? "selected" : ""}>${s}</option>`)
                         .join("")}
                     </select>
