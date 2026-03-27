@@ -340,6 +340,23 @@ footer{background:var(--navy2);border-top:1px solid var(--border);padding:56px 5
 .push-bar{bottom:0;border-bottom:none;}
 #pwa-bar:not([hidden]) ~ .push-bar{bottom:56px;border-bottom:1px solid var(--border);}
 
+/* iOS install guide overlay */
+.ios-guide-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9500;display:none;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(6px);}
+.ios-guide-overlay.open{display:flex;}
+.ios-guide{background:var(--card);border-top-left-radius:20px;border-top-right-radius:20px;width:100%;max-width:420px;padding:28px 24px 36px;padding-bottom:max(36px,env(safe-area-inset-bottom));animation:iosSlide .35s ease;}
+@keyframes iosSlide{from{transform:translateY(100%)}to{transform:none}}
+.ios-guide-close{float:right;background:none;border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;}
+.ios-guide h3{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px;clear:both;}
+.ios-guide h3 span{color:var(--cyan);}
+.ios-guide>p{color:var(--muted);font-size:13px;margin-bottom:24px;line-height:1.6;}
+.ios-steps{list-style:none;counter-reset:ios;padding:0;margin:0;}
+.ios-steps li{counter-increment:ios;display:flex;gap:14px;align-items:flex-start;margin-bottom:20px;font-size:14px;color:var(--white);line-height:1.5;}
+.ios-steps li::before{content:counter(ios);flex-shrink:0;width:28px;height:28px;background:var(--cyan);color:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;}
+.ios-steps .step-icon{font-size:20px;display:inline;}
+.ios-steps .step-sub{color:var(--muted);font-size:12px;display:block;margin-top:2px;}
+.ios-guide-arrow{text-align:center;margin-top:16px;font-size:28px;animation:bounce 1.5s ease infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
 /* Modal: mobile-first scroll + sticky actions */
 .modal{display:flex;flex-direction:column;max-height:min(94vh,900px);}
 .modal-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
@@ -485,14 +502,41 @@ input[type="checkbox"]{min-width:20px;min-height:20px;}
 </div>
 
 <div id="pwa-bar" class="pwa-bar" hidden>
-  <span>Install Clip Services on your phone — book in one tap</span>
+  <span id="pwa-bar-text">Install Clip Services on your phone — book in one tap</span>
   <button type="button" class="pwa-bar-btn" id="pwa-install-btn">Install</button>
   <button type="button" class="pwa-bar-close" id="pwa-bar-dismiss" aria-label="Dismiss">×</button>
 </div>
 <div id="push-prompt" class="pwa-bar push-bar" hidden>
-  <span>Get booking &amp; payment alerts on this device</span>
+  <span id="push-prompt-text">Get booking &amp; payment alerts on this device</span>
   <button type="button" class="pwa-bar-btn" id="push-enable-btn">Enable alerts</button>
   <button type="button" class="pwa-bar-close" id="push-dismiss" aria-label="Dismiss">×</button>
+</div>
+
+<!-- iOS install guide -->
+<div class="ios-guide-overlay" id="iosGuide">
+  <div class="ios-guide">
+    <button class="ios-guide-close" id="iosGuideClose" aria-label="Close">×</button>
+    <h3>Install <span>Clip Services</span></h3>
+    <p>Add to your home screen for the full app experience — fast loading, offline access, and booking notifications.</p>
+    <ol class="ios-steps">
+      <li>
+        <div>Tap the <span class="step-icon">⬆️</span> <strong>Share</strong> button at the bottom of Safari
+          <span class="step-sub">(the square with an arrow pointing up)</span>
+        </div>
+      </li>
+      <li>
+        <div>Scroll down and tap <strong>"Add to Home Screen"</strong>
+          <span class="step-sub">It has a <span class="step-icon">➕</span> icon next to it</span>
+        </div>
+      </li>
+      <li>
+        <div>Tap <strong>"Add"</strong> in the top right
+          <span class="step-sub">Clip Services will appear on your home screen like a real app</span>
+        </div>
+      </li>
+    </ol>
+    <div class="ios-guide-arrow">⬇</div>
+  </div>
 </div>
 
 <!-- NAV -->
@@ -1844,6 +1888,10 @@ async function subscribeCustomerPush() {
   }
 }
 
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
 let deferredInstallPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
@@ -1853,12 +1901,23 @@ window.addEventListener('beforeinstallprompt', (e) => {
 });
 
 document.getElementById('pwa-install-btn')?.addEventListener('click', async () => {
+  if (isIOS) {
+    document.getElementById('iosGuide')?.classList.add('open');
+    return;
+  }
   if (!deferredInstallPrompt) return;
   deferredInstallPrompt.prompt();
   await deferredInstallPrompt.userChoice;
   deferredInstallPrompt = null;
   const bar = document.getElementById('pwa-bar');
   if (bar) bar.hidden = true;
+});
+
+document.getElementById('iosGuideClose')?.addEventListener('click', () => {
+  document.getElementById('iosGuide')?.classList.remove('open');
+});
+document.getElementById('iosGuide')?.addEventListener('click', (e) => {
+  if (e.target.id === 'iosGuide') e.target.classList.remove('open');
 });
 
 document.getElementById('pwa-bar-dismiss')?.addEventListener('click', () => {
@@ -1868,6 +1927,11 @@ document.getElementById('pwa-bar-dismiss')?.addEventListener('click', () => {
 });
 
 document.getElementById('push-enable-btn')?.addEventListener('click', () => {
+  if (isIOS && !isStandalone) {
+    document.getElementById('iosGuide')?.classList.add('open');
+    showToast('Add Clip Services to your home screen first, then enable alerts from the app.');
+    return;
+  }
   subscribeCustomerPush();
   const p = document.getElementById('push-prompt');
   if (p) p.hidden = true;
@@ -1879,11 +1943,28 @@ document.getElementById('push-dismiss')?.addEventListener('click', () => {
   if (p) p.hidden = true;
 });
 
+if (isIOS && !isStandalone && !localStorage.getItem('cs_pwa_dismiss')) {
+  setTimeout(() => {
+    const bar = document.getElementById('pwa-bar');
+    const txt = document.getElementById('pwa-bar-text');
+    const btn = document.getElementById('pwa-install-btn');
+    if (bar) bar.hidden = false;
+    if (txt) txt.textContent = 'Add Clip Services to your home screen for the best experience';
+    if (btn) btn.textContent = 'How to install';
+  }, 5000);
+}
+
+if (isIOS && isStandalone) {
+  const pushText = document.getElementById('push-prompt-text');
+  if (pushText) pushText.innerHTML = 'Enable booking &amp; payment alerts <strong style="color:var(--green);">(iOS 16.4+)</strong>';
+}
+
 registerClipServiceWorker().then(() => {
   setTimeout(async () => {
+    if (isIOS && !isStandalone) return;
     if (!('Notification' in window) || Notification.permission !== 'default') return;
     if (localStorage.getItem('cs_push_dismiss')) return;
-    const v = await fetch('/api/push-vapid').then((r) => r.json());
+    const v = await fetch('/api/push-vapid').then((r) => r.json()).catch(() => ({}));
     if (!v.configured) return;
     const pr = document.getElementById('push-prompt');
     if (pr) pr.hidden = false;
