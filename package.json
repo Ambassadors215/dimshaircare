@@ -1,7 +1,13 @@
 {
   "name": "clip-services",
+  "version": "1.0.0",
+  "description": "Two-sided local service marketplace PWA with booking, payments, and notifications",
+  "author": "Sonia Chidinma Otikpa",
   "private": true,
   "type": "module",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "ioredis": "^5.4.2",
     "nodemailer": "^6.9.16",
