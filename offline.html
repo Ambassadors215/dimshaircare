@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#07101F">
+<title>Offline — Clip Services</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#07101F;color:#EEF3FF;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;}
+.icon{font-size:64px;margin-bottom:24px;opacity:.6;}
+h1{font-size:clamp(24px,5vw,36px);font-weight:700;margin-bottom:12px;letter-spacing:-.02em;}
+h1 span{color:#00C8F0;}
+p{color:#8A9DC0;font-size:15px;max-width:400px;line-height:1.7;margin-bottom:28px;}
+.retry{background:#00C8F0;color:#07101F;border:none;padding:14px 32px;font-size:14px;font-weight:600;border-radius:4px;cursor:pointer;font-family:inherit;min-height:44px;transition:background .2s;}
+.retry:hover{background:#0099BB;}
+.wa{margin-top:20px;color:#8A9DC0;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.wa:hover{color:#25D366;}
+</style>
+</head>
+<body>
+<div class="icon">📡</div>
+<h1><span>Clip</span>Services</h1>
+<p>You're offline right now. Check your Wi-Fi or mobile data, then tap Retry. Your bookings are safe — we'll process everything once you're back online.</p>
+<button class="retry" onclick="location.reload()">Retry connection</button>
+<a class="wa" href="https://wa.me/447487588706">💬 Or message us on WhatsApp</a>
+</body>
+</html>

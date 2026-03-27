@@ -1,13 +1,19 @@
-/* Clip Services — v2 */
-const CACHE = "clip-services-v2";
+/* Clip Services — v3 */
+const CACHE = "clip-services-v3";
+const OFFLINE_PAGE = "/offline.html";
+const PRECACHE = [
+  "/clip-services-marketplace.html",
+  "/manifest.webmanifest",
+  "/icons/icon-192.svg",
+  "/icons/icon-512.svg",
+  OFFLINE_PAGE,
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches
       .open(CACHE)
-      .then((cache) =>
-        cache.addAll(["/clip-services-marketplace.html", "/manifest.webmanifest"]).catch(() => {})
-      )
+      .then((cache) => cache.addAll(PRECACHE).catch(() => {}))
       .then(() => self.skipWaiting())
   );
 });
@@ -62,6 +68,22 @@ self.addEventListener("fetch", (event) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.pathname.startsWith("/api/")) return;
+
+  if (req.mode === "navigate") {
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone();
+          if (res.ok) caches.open(CACHE).then((c) => c.put(req, copy));
+          return res;
+        })
+        .catch(() =>
+          caches.match(req).then((c) => c || caches.match(OFFLINE_PAGE))
+        )
+    );
+    return;
+  }
+
   event.respondWith(
     fetch(req)
       .then((res) => {
@@ -71,6 +93,6 @@ self.addEventListener("fetch", (event) => {
         }
         return res;
       })
-      .catch(() => caches.match(req).then((c) => c || caches.match("/clip-services-marketplace.html")))
+      .catch(() => caches.match(req))
   );
 });

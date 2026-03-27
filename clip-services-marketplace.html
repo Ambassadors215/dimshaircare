@@ -342,11 +342,32 @@ footer{background:var(--navy2);border-top:1px solid var(--border);padding:56px 5
 /* Modal: mobile-first scroll + sticky actions */
 .modal{display:flex;flex-direction:column;max-height:min(94vh,900px);}
 .modal-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
-.book-fieldset{border:1px solid var(--border);border-radius:8px;padding:18px 16px;margin-bottom:16px;background:rgba(0,200,240,.04);}
+.book-fieldset{border:1px solid var(--border);border-radius:8px;padding:18px 16px;margin-bottom:16px;background:rgba(0,200,240,.04);transition:border-color .25s;}
+.book-fieldset:focus-within{border-color:rgba(0,200,240,.35);}
 .book-fieldset legend{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);padding:0 10px;}
 .field-error{font-size:11px;color:var(--red);margin-top:6px;display:none;}
-.field-error.show{display:block;}
-input.user-invalid,select.user-invalid,textarea.user-invalid{border-color:var(--red)!important;}
+.field-error.show{display:block;animation:shake .35s ease;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
+input.user-invalid,select.user-invalid,textarea.user-invalid{border-color:var(--red)!important;box-shadow:0 0 0 2px rgba(239,68,68,.15);}
+input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(0,200,240,.12);}
+
+/* Step progress bar */
+.form-progress{display:flex;gap:0;margin-bottom:20px;}
+.form-progress-step{flex:1;text-align:center;padding:10px 4px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);border-bottom:3px solid var(--border);transition:all .3s;}
+.form-progress-step.active{color:var(--cyan);border-bottom-color:var(--cyan);}
+.form-progress-step.done{color:var(--green);border-bottom-color:var(--green);}
+
+/* Sticky mobile submit */
+.booking-submit-wrap{position:sticky;bottom:0;background:var(--card);padding:16px 0 0;margin:0 -16px;padding-left:16px;padding-right:16px;z-index:5;border-top:1px solid var(--border);margin-top:auto;}
+
+/* Improved touch targets */
+.btn-p,.btn-s,.btn-ghost,.book-btn,.pwa-bar-btn,.search-btn,.nav-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;}
+.faq-q{min-height:48px;}
+.char-tag{min-height:44px;}
+.rate-opt{min-height:48px;}
+.cat{min-height:40px;}
+.pcard{-webkit-tap-highlight-color:transparent;}
+input[type="checkbox"]{min-width:20px;min-height:20px;}
 
 /* ===== TABLET (max 900px) ===== */
 @media(max-width:900px){
@@ -354,7 +375,8 @@ input.user-invalid,select.user-invalid,textarea.user-invalid{border-color:var(--
   nav.scrolled{padding:10px 20px;}
   .nav-links{display:none!important;}
   .nav-links.mobile-open{display:flex!important;flex-direction:column;position:fixed;top:120px;right:20px;background:var(--card);border:1px solid var(--border);padding:20px;border-radius:4px;gap:16px;z-index:300;}
-  .nav-toggle{display:block;}
+  .nav-links.mobile-open a{padding:10px 0;font-size:15px;}
+  .nav-toggle{display:block;min-width:44px;min-height:44px;}
   .mode-bar{padding:0 20px;}
   .mode-tab{padding:12px 16px;font-size:12px;}
   section{padding:64px 20px;}
@@ -363,7 +385,7 @@ input.user-invalid,select.user-invalid,textarea.user-invalid{border-color:var(--
   .search-hero{flex-wrap:wrap;padding:16px;gap:10px;}
   .search-hero input{min-width:100%;order:1;}
   .search-hero select{flex:1;min-width:0;order:2;}
-  .search-btn{order:3;}
+  .search-btn{order:3;width:100%;}
   .search-icon{order:0;}
   .how-grid,.provider-how{grid-template-columns:1fr 1fr;}
   .benefits-grid{grid-template-columns:1fr;}
@@ -373,11 +395,14 @@ input.user-invalid,select.user-invalid,textarea.user-invalid{border-color:var(--
   .footer-grid{grid-template-columns:1fr 1fr;gap:28px;}
   footer{padding:40px 20px 28px;}
   .providers-grid{grid-template-columns:1fr;}
-  .modal-overlay{padding:20px 12px;}
-  .modal-head{padding:28px 20px 20px;}
-  .modal-body{padding:20px;}
-  .modal-foot{padding:20px;}
-  .modal-title{font-size:20px;}
+  .modal-overlay{padding:0;align-items:stretch;}
+  .modal{max-width:100%;max-height:100vh;border-radius:0;border:none;}
+  .modal-head{padding:20px 16px 16px;position:sticky;top:0;background:var(--card);z-index:6;border-bottom:1px solid var(--border);}
+  .modal-body{padding:16px;flex:1;overflow-y:auto;}
+  .modal-close{top:12px;right:12px;width:40px;height:40px;z-index:7;}
+  .modal-foot{padding:16px;}
+  .modal-title{font-size:18px;}
+  .booking-submit-wrap{margin:0 -16px;padding:12px 16px;position:sticky;bottom:0;}
   .app-form-wrap{padding:28px 20px;}
   .earnings-display{flex-direction:column;}
   .earn-num{font-size:32px;}
@@ -391,9 +416,13 @@ input.user-invalid,select.user-invalid,textarea.user-invalid{border-color:var(--
   .pf-step::after{display:none;}
   .pay-trust{grid-template-columns:repeat(2,1fr);}
   .pay-breakdown{max-width:100%;}
-  .toast{white-space:normal;max-width:90vw;text-align:center;}
+  .toast{white-space:normal;max-width:90vw;text-align:center;bottom:70px;}
   .sbar{font-size:11px;padding:6px 12px;gap:8px;}
   .wa{width:50px;height:50px;font-size:22px;bottom:calc(72px + env(safe-area-inset-bottom));right:16px;}
+  .pwa-bar{padding:10px 12px;gap:8px;font-size:12px;}
+  .pwa-bar-btn{padding:10px 14px;font-size:12px;}
+  .pcard-foot{flex-direction:column;gap:12px;align-items:stretch;}
+  .pcard-foot .book-btn{width:100%;text-align:center;padding:12px 16px;}
 }
 
 /* ===== SMALL PHONE (max 480px) ===== */
@@ -402,8 +431,9 @@ input.user-invalid,select.user-invalid,textarea.user-invalid{border-color:var(--
   .c-hero h1{font-size:clamp(32px,10vw,44px);}
   .hero-badge{font-size:10px;padding:5px 10px;}
   .search-hero select,.search-btn{width:100%;}
-  .cats{gap:6px;}
-  .cat{padding:7px 12px;font-size:12px;}
+  .cats{gap:6px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;}
+  .cats::-webkit-scrollbar{display:none;}
+  .cat{padding:7px 12px;font-size:12px;white-space:nowrap;flex-shrink:0;}
   .how-grid,.provider-how{grid-template-columns:1fr;}
   .footer-grid{grid-template-columns:1fr;}
   .cat-cards{grid-template-columns:1fr;}
@@ -434,6 +464,11 @@ input.user-invalid,select.user-invalid,textarea.user-invalid{border-color:var(--
   .rate-options{grid-template-columns:repeat(3,1fr);gap:6px;}
   .rate-opt{padding:10px 8px;}
   .rate-opt-val{font-size:16px;}
+  .hero-acts{flex-direction:column;width:100%;}
+  .hero-acts .btn-p,.hero-acts .btn-s{width:100%;text-align:center;justify-content:center;}
+  .form-progress-step{font-size:8px;padding:8px 2px;}
+  .char-tags{gap:6px;}
+  .char-tag{font-size:11px;padding:6px 10px;}
 }
 </style>
 </head>
@@ -904,19 +939,19 @@ input.user-invalid,select.user-invalid,textarea.user-invalid{border-color:var(--
         <div class="form-grid">
           <div class="form-group">
             <label>Your full name</label>
-            <input type="text" id="af-name" placeholder="First and last name" required>
+            <input type="text" id="af-name" placeholder="First and last name" required autocomplete="name">
           </div>
           <div class="form-group">
             <label>WhatsApp number</label>
-            <input type="tel" id="af-phone" placeholder="+44 7700 000 000" required>
+            <input type="tel" id="af-phone" placeholder="+44 7700 000 000" required inputmode="tel" autocomplete="tel" maxlength="22">
           </div>
           <div class="form-group">
             <label>Email address</label>
-            <input type="email" id="af-email" placeholder="you@email.com" required>
+            <input type="email" id="af-email" placeholder="you@email.com" required autocomplete="email">
           </div>
           <div class="form-group">
             <label>Your postcode</label>
-            <input type="text" id="af-postcode" placeholder="e.g. M50 3XP" required>
+            <input type="text" id="af-postcode" placeholder="e.g. M50 3XP" required autocomplete="postal-code" maxlength="10" style="text-transform:uppercase;">
           </div>
 
           <div class="form-group form-full">
@@ -1070,7 +1105,12 @@ input.user-invalid,select.user-invalid,textarea.user-invalid{border-color:var(--
       <h4>Book this provider</h4>
       <form class="booking-form" id="bookingForm" onsubmit="handleBook(event)" novalidate>
         <input type="hidden" id="bf-provider" value="">
-        <fieldset class="book-fieldset">
+        <div class="form-progress" id="formProgress">
+          <div class="form-progress-step active" data-step="1">1 · Your details</div>
+          <div class="form-progress-step" data-step="2">2 · Service &amp; payment</div>
+          <div class="form-progress-step" data-step="3">3 · Confirm</div>
+        </div>
+        <fieldset class="book-fieldset" data-step="1">
           <legend>Step 1 · Your details</legend>
           <div class="form-row">
             <div>
@@ -1098,7 +1138,7 @@ input.user-invalid,select.user-invalid,textarea.user-invalid{border-color:var(--
             </div>
           </div>
         </fieldset>
-        <fieldset class="book-fieldset">
+        <fieldset class="book-fieldset" data-step="2">
           <legend>Step 2 · Service &amp; payment</legend>
           <div>
             <label for="bf-service">Service needed</label>
@@ -1137,8 +1177,10 @@ input.user-invalid,select.user-invalid,textarea.user-invalid{border-color:var(--
           <input type="checkbox" id="bf-consent" required style="width:auto;margin-top:3px;">
           <label for="bf-consent" style="font-size:12px;color:var(--muted);text-transform:none;letter-spacing:0;line-height:1.5;cursor:pointer;">I agree to Clip Services' <a href="/terms" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Terms of Service</a>, <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Privacy Policy</a>, and <a href="/disclaimer" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Disclaimer</a>. I consent to receiving booking confirmations via WhatsApp and email.</label>
         </div>
-        <button type="submit" class="btn-p" id="bookBtn" style="width:100%;justify-content:center;">Continue to secure card payment →</button>
-        <p style="font-size:12px;color:var(--faint);text-align:center;margin-top:8px;">You’ll pay securely with Stripe (card). If card checkout isn’t active yet, we’ll save your request and send bank / Monzo payment details on WhatsApp.</p>
+        <div class="booking-submit-wrap">
+          <button type="submit" class="btn-p" id="bookBtn" style="width:100%;justify-content:center;">Continue to secure card payment →</button>
+          <p style="font-size:12px;color:var(--faint);text-align:center;margin-top:8px;">Secure Stripe checkout. If card isn’t active, we’ll send payment details on WhatsApp.</p>
+        </div>
       </form>
     </div>
   </div>
@@ -1495,8 +1537,39 @@ function selectRate(el, val) {
   el.dataset.selectedRate = val;
 }
 
+function validateApplyForm() {
+  let ok = true;
+  const name = document.getElementById('af-name').value.trim();
+  const phone = document.getElementById('af-phone').value.replace(/\D/g, '');
+  const email = document.getElementById('af-email').value.trim();
+  const postcode = document.getElementById('af-postcode').value.trim();
+  const consent = document.getElementById('af-consent').checked;
+  const fields = [
+    { el: 'af-name', valid: name.length >= 2 },
+    { el: 'af-phone', valid: phone.length >= 10 },
+    { el: 'af-email', valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) },
+    { el: 'af-postcode', valid: postcode.length >= 3 },
+  ];
+  fields.forEach(f => {
+    const el = document.getElementById(f.el);
+    if (el) el.classList.toggle('user-invalid', !f.valid);
+    if (!f.valid) ok = false;
+  });
+  if (!consent) {
+    showToast('Please agree to the Terms, Privacy Policy, and Disclaimer.');
+    ok = false;
+  }
+  if (!ok) {
+    const first = document.querySelector('#applyForm .user-invalid');
+    if (first) { first.focus(); first.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    showToast('Please fill in all required fields.');
+  }
+  return ok;
+}
+
 async function handleApply(e) {
   e.preventDefault();
+  if (!validateApplyForm()) return;
   const btn = document.getElementById('applyBtn');
   const origText = btn.textContent;
   btn.disabled = true;
@@ -1600,6 +1673,115 @@ function closeMobileMenu(){
 renderProviders(providers);
 
 document.getElementById('bf-subtotal')?.addEventListener('input', updateBookingPaySummary);
+
+(function smartFormInit() {
+  const phoneInput = document.getElementById('bf-phone');
+  if (phoneInput) {
+    phoneInput.addEventListener('input', function () {
+      let raw = this.value.replace(/[^\d+]/g, '');
+      if (raw.startsWith('+44')) {
+        const digits = raw.slice(3);
+        let formatted = '+44';
+        if (digits.length > 0) formatted += ' ' + digits.slice(0, 4);
+        if (digits.length > 4) formatted += ' ' + digits.slice(4, 7);
+        if (digits.length > 7) formatted += ' ' + digits.slice(7, 10);
+        this.value = formatted;
+      } else if (raw.startsWith('07') || raw.startsWith('00')) {
+        let formatted = raw.slice(0, 5);
+        if (raw.length > 5) formatted += ' ' + raw.slice(5, 8);
+        if (raw.length > 8) formatted += ' ' + raw.slice(8, 11);
+        this.value = formatted;
+      }
+    });
+  }
+
+  function updateStepProgress() {
+    const steps = document.querySelectorAll('.form-progress-step');
+    if (!steps.length) return;
+    const s1 = !!(
+      document.getElementById('bf-first')?.value.trim() &&
+      document.getElementById('bf-last')?.value.trim() &&
+      document.getElementById('bf-phone')?.value.replace(/\D/g, '').length >= 10 &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('bf-email')?.value.trim() || '')
+    );
+    const s2 = !!(
+      document.getElementById('bf-service')?.value.trim() &&
+      !Number.isNaN(parseFloat(document.getElementById('bf-subtotal')?.value)) &&
+      parseFloat(document.getElementById('bf-subtotal')?.value) >= 5 &&
+      document.getElementById('bf-date')?.value &&
+      document.getElementById('bf-time')?.value &&
+      document.getElementById('bf-address')?.value.trim()
+    );
+    steps[0].classList.toggle('done', s1);
+    steps[0].classList.toggle('active', !s1);
+    steps[1].classList.toggle('done', s1 && s2);
+    steps[1].classList.toggle('active', s1 && !s2);
+    steps[2].classList.toggle('active', s1 && s2);
+  }
+
+  document.querySelectorAll('#bookingForm input, #bookingForm textarea, #bookingForm select').forEach(function (el) {
+    el.addEventListener('input', updateStepProgress);
+    el.addEventListener('change', updateStepProgress);
+    el.addEventListener('blur', function () {
+      if (!this.value && !this.required) return;
+      const id = this.id;
+      const errId = 'bf-err-' + id.replace('bf-', '');
+      const errEl = document.getElementById(errId);
+      if (!errEl) return;
+      let isValid = true;
+      if (id === 'bf-first' || id === 'bf-last' || id === 'bf-service' || id === 'bf-address') {
+        isValid = !!this.value.trim();
+      } else if (id === 'bf-phone') {
+        isValid = this.value.replace(/\D/g, '').length >= 10;
+      } else if (id === 'bf-email') {
+        isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim());
+      } else if (id === 'bf-subtotal') {
+        const n = parseFloat(this.value);
+        isValid = !Number.isNaN(n) && n >= 5 && n <= 5000;
+      } else if (id === 'bf-date' || id === 'bf-time') {
+        isValid = !!this.value;
+      }
+      this.classList.toggle('user-invalid', !isValid);
+      errEl.classList.toggle('show', !isValid);
+    });
+  });
+
+  const dateInput = document.getElementById('bf-date');
+  if (dateInput) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    dateInput.min = tomorrow.toISOString().split('T')[0];
+  }
+
+  function formatUKPhone(input) {
+    input.addEventListener('input', function () {
+      let raw = this.value.replace(/[^\d+]/g, '');
+      if (raw.startsWith('+44')) {
+        const digits = raw.slice(3);
+        let f = '+44';
+        if (digits.length > 0) f += ' ' + digits.slice(0, 4);
+        if (digits.length > 4) f += ' ' + digits.slice(4, 7);
+        if (digits.length > 7) f += ' ' + digits.slice(7, 10);
+        this.value = f;
+      } else if (raw.startsWith('07') || raw.startsWith('00')) {
+        let f = raw.slice(0, 5);
+        if (raw.length > 5) f += ' ' + raw.slice(5, 8);
+        if (raw.length > 8) f += ' ' + raw.slice(8, 11);
+        this.value = f;
+      }
+    });
+  }
+
+  const afPhone = document.getElementById('af-phone');
+  if (afPhone) formatUKPhone(afPhone);
+
+  document.querySelectorAll('#applyForm input, #applyForm textarea, #applyForm select').forEach(function (el) {
+    el.addEventListener('blur', function () {
+      if (!this.value && !this.required) return;
+      this.classList.remove('user-invalid');
+    });
+  });
+})();
 
 (function bookingReturnToast() {
   const p = new URLSearchParams(location.search);
