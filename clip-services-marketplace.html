@@ -237,7 +237,7 @@ textarea{resize:vertical;min-height:80px;}
 .char-tag{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:7px 14px;border-radius:3px;font-size:12px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:6px;}
 .char-tag.selected{background:rgba(0,200,240,.1);border-color:var(--cyan);color:var(--cyan);}
 .char-tag input{display:none;}
-.kyc-divider{grid-column:1/-1;border:none;border-top:1px solid var(--border);margin:20px 0 8px;}
+.kyc-divider{grid-column:1/-1;height:0;border-top:1px solid var(--border);margin:20px 0 8px;}
 .kyc-heading{grid-column:1/-1;font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin:0 0 4px;display:flex;align-items:center;gap:10px;}
 .kyc-heading .kyc-badge{font-size:9px;letter-spacing:.1em;font-weight:600;background:var(--cyan);color:var(--navy);padding:3px 10px;border-radius:20px;text-transform:uppercase;}
 .kyc-note{grid-column:1/-1;font-size:12px;color:var(--muted);line-height:1.6;margin:-4px 0 8px;}
@@ -1038,9 +1038,9 @@ input[type="checkbox"]{min-width:20px;min-height:20px;}
             <textarea id="af-experience" placeholder="How long have you been offering this service? Any relevant experience, qualifications, or tools you have? Why would customers love working with you?" style="min-height:110px;"></textarea>
           </div>
 
-          <hr class="kyc-divider">
+          <div class="kyc-divider"></div>
           <div class="kyc-heading">Identity Verification <span class="kyc-badge">Required</span></div>
-          <p class="kyc-note">We verify every provider before they're listed. This information is kept private and used only for verification purposes.</p>
+          <div class="kyc-note">We verify every provider before they're listed. This information is kept private and used only for verification purposes.</div>
 
           <div class="form-group">
             <label>Date of birth</label>
@@ -1121,7 +1121,7 @@ input[type="checkbox"]{min-width:20px;min-height:20px;}
             <input type="tel" id="af-emergency-phone" placeholder="+44 7xxx xxxxxx" required inputmode="tel" maxlength="22">
           </div>
 
-          <hr class="kyc-divider">
+          <div class="kyc-divider"></div>
 
           <div class="form-group form-full">
             <label>Your availability</label>
