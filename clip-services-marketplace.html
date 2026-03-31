@@ -1469,6 +1469,7 @@ function filterProviders() {
      p.bio.toLowerCase().includes(q) || p.services.some(s=>s.toLowerCase().includes(q)))
   );
   renderProviders(filtered);
+  if (q || activeCategory) scrollToProviders();
 }
 
 function filterCat(cat, el) {
