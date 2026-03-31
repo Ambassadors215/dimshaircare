@@ -49,8 +49,8 @@ body{background:var(--navy);color:var(--white);font-family:'DM Sans',sans-serif;
 body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.02;pointer-events:none;z-index:9999;}
 
 /* ===== NAV ===== */
-nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:20px 56px;display:flex;align-items:center;justify-content:space-between;transition:all 0.35s;}
-nav.scrolled{background:rgba(7,16,31,0.96);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);padding:16px 56px;}
+nav{position:fixed;top:38px;left:0;right:0;z-index:200;padding:20px 56px;display:flex;align-items:center;justify-content:space-between;transition:all 0.35s;}
+nav.scrolled{background:rgba(7,16,31,0.96);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);padding:16px 56px;top:0;}
 .logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.02em;text-decoration:none;color:var(--white);display:flex;align-items:center;gap:10px;}
 .logo-c{color:var(--cyan);}
 .pulse{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s ease infinite;}
@@ -63,14 +63,14 @@ nav.scrolled{background:rgba(7,16,31,0.96);border-bottom:1px solid var(--border)
 .nav-toggle{display:none;background:none;border:1px solid var(--border);color:var(--muted);padding:8px 12px;cursor:pointer;font-size:18px;border-radius:4px;}
 
 /* ===== TABS (USER / PROVIDER) ===== */
-.mode-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 56px;display:flex;align-items:center;gap:0;position:fixed;top:70px;left:0;right:0;z-index:199;transition:top .35s;}
+.mode-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 56px;display:flex;align-items:center;gap:0;position:fixed;top:108px;left:0;right:0;z-index:199;transition:top .35s;}
 nav.scrolled + .mode-bar{top:62px;}
-.mode-tab{padding:14px 28px;font-size:14px;letter-spacing:.05em;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
+.mode-tab{padding:16px 32px;font-size:16px;font-weight:600;letter-spacing:.03em;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
 .mode-tab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
 .mode-tab:hover{color:var(--white);}
 
 /* Views */
-.view{display:none;padding-top:136px;}
+.view{display:none;padding-top:168px;}
 .view.active{display:block;}
 
 /* ===== SHARED ===== */
@@ -337,8 +337,9 @@ footer{background:var(--navy2);border-top:1px solid var(--border);padding:56px 5
 .pt-label{font-size:11px;color:var(--muted);line-height:1.5;}
 
 /* STATUS BAR */
-.sbar{background:var(--cyan);color:var(--navy);text-align:center;font-size:13px;font-weight:600;letter-spacing:.05em;padding:10px 16px;display:flex;align-items:center;justify-content:center;gap:14px;}
+.sbar{background:var(--cyan);color:var(--navy);text-align:center;font-size:13px;font-weight:600;letter-spacing:.05em;padding:10px 16px;display:flex;align-items:center;justify-content:center;gap:14px;position:fixed;top:0;left:0;right:0;z-index:201;transition:opacity .3s;}
 .sbar-close{background:none;border:none;color:var(--navy);cursor:pointer;font-size:16px;padding:0 4px;}
+.sbar-spacer{height:38px;}
 
 /* PWA install + push prompts */
 .pwa-bar{position:fixed;bottom:0;left:0;right:0;z-index:480;background:var(--card);border-top:1px solid var(--border);padding:12px 16px;padding-bottom:max(12px,env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;box-shadow:0 -8px 32px rgba(0,0,0,.35);}
@@ -404,11 +405,11 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
   nav{padding:14px 20px;}
   nav.scrolled{padding:10px 20px;}
   .nav-links{display:none!important;}
-  .nav-links.mobile-open{display:flex!important;flex-direction:column;position:fixed;top:130px;right:20px;background:var(--card);border:1px solid var(--border);padding:20px;border-radius:4px;gap:16px;z-index:300;}
+  .nav-links.mobile-open{display:flex!important;flex-direction:column;position:fixed;top:160px;right:20px;background:var(--card);border:1px solid var(--border);padding:20px;border-radius:4px;gap:16px;z-index:300;}
   .nav-links.mobile-open a{padding:10px 0;font-size:15px;}
   .nav-toggle{display:block;min-width:44px;min-height:44px;}
   .mode-bar{padding:0 20px;}
-  .mode-tab{padding:12px 16px;font-size:12px;}
+  .mode-tab{padding:14px 18px;font-size:14px;font-weight:600;}
   section{padding:64px 20px;}
   .c-hero,.p-hero{padding:60px 20px;}
   .c-hero{min-height:auto;padding-top:40px;padding-bottom:40px;}
@@ -456,7 +457,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
 
 /* ===== SMALL PHONE (max 480px) ===== */
 @media(max-width:480px){
-  .mode-tab{padding:10px 12px;font-size:11px;}
+  .mode-tab{padding:12px 14px;font-size:13px;font-weight:600;}
   .c-hero h1{font-size:clamp(32px,10vw,44px);}
   .hero-badge{font-size:10px;padding:5px 10px;}
   .search-hero select,.search-btn{width:100%;}
@@ -509,8 +510,9 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
 <div class="sbar" id="sbar">
   <span>🟢</span>
   <span>Clip Services is live — Clippers Quays & Salford Quays · Manchester</span>
-  <button class="sbar-close" onclick="document.getElementById('sbar').style.display='none'">×</button>
+  <button class="sbar-close" onclick="document.getElementById('sbar').style.display='none';document.getElementById('sbar-spacer').style.display='none';document.getElementById('nav').style.top='0';document.getElementById('modebar').style.top='70px';">×</button>
 </div>
+<div class="sbar-spacer" id="sbar-spacer"></div>
 
 <div id="pwa-bar" class="pwa-bar" hidden>
   <span id="pwa-bar-text">Install Clip Services on your phone — book in one tap</span>
@@ -833,7 +835,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">What if I'm unhappy with the service? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Message us on WhatsApp immediately. We mediate all disputes and will either arrange a redo or issue a full refund of the platform fee. Provider ratings are public — repeated complaints result in removal from the platform.</p></div>
+        <div class="faq-a"><p>Message us on WhatsApp immediately. We mediate all disputes and will either arrange a redo or find a resolution that works for you. Provider ratings are public — repeated complaints result in removal from the platform.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Can I book the same provider regularly? <span class="faq-icon">+</span></button>
@@ -1852,7 +1854,14 @@ function switchView(v, anchor) {
 }
 
 window.addEventListener('scroll',()=>{
-  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>40);
+  const scrolled = window.scrollY > 40;
+  document.getElementById('nav').classList.toggle('scrolled', scrolled);
+  const sbar = document.getElementById('sbar');
+  const spacer = document.getElementById('sbar-spacer');
+  if (sbar && sbar.style.display !== 'none') {
+    sbar.style.opacity = scrolled ? '0' : '1';
+    sbar.style.pointerEvents = scrolled ? 'none' : '';
+  }
 });
 
 function showToast(msg){
