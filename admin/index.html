@@ -3,261 +3,154 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#faf8f3" />
+    <meta name="theme-color" content="#0A0E1A" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>Clip Services Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
       :root {
-        --gold: #b8955a;
-        --ink: #1a1a18;
-        --ink-soft: #7a7a72;
-        --cream: #faf8f3;
-        --sand: #ede8df;
-        --white: #ffffff;
-        --success: #4a7c5c;
-        --danger: #a24b4b;
-        --radius: 14px;
-        --shadow: 0 8px 48px rgba(26, 26, 24, 0.12);
+        --bg: #0A0E1A;
+        --bg2: #0F1424;
+        --card: #131A2E;
+        --card2: #182040;
+        --border: #1C2848;
+        --border-glow: rgba(0,200,240,.15);
+        --text: #E0E8F8;
+        --muted-text: #6B7FA0;
+        --faint: #3A4D6E;
+        --cyan: #00C8F0;
+        --cyan2: #0099BB;
+        --green: #10B981;
+        --amber: #F59E0B;
+        --red: #EF4444;
+        --purple: #8B5CF6;
+        --radius: 16px;
       }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        font-family: "DM Sans", sans-serif;
-        color: var(--ink);
-        background: linear-gradient(180deg, var(--cream), #ffffff);
-      }
-      header {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background: rgba(250, 248, 243, 0.92);
-        backdrop-filter: blur(10px);
-        border-bottom: 1px solid rgba(184, 149, 90, 0.18);
-      }
-      .wrap {
-        max-width: 1120px;
-        margin: 0 auto;
-        padding: 18px 18px;
-      }
-      .topbar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 14px;
-      }
-      .brand {
-        display: flex;
-        align-items: baseline;
-        gap: 10px;
-      }
-      .brand h1 {
-        margin: 0;
-        font-family: "Cormorant Garamond", serif;
-        font-weight: 500;
-        letter-spacing: 0.04em;
-        font-size: 22px;
-      }
-      .brand h1 span {
-        color: var(--gold);
-      }
-      .pill {
-        font-size: 12px;
-        border: 1px solid rgba(184, 149, 90, 0.28);
-        padding: 6px 10px;
-        border-radius: 999px;
-        color: var(--ink-soft);
-        background: rgba(184, 149, 90, 0.06);
-        white-space: nowrap;
-      }
-      main .wrap {
-        padding-top: 22px;
-        padding-bottom: 48px;
-      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--bg); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-      .grid {
-        display: grid;
-        grid-template-columns: 360px 1fr;
-        gap: 18px;
-      }
-      @media (max-width: 980px) {
-        .grid {
-          grid-template-columns: 1fr;
-        }
-      }
-      .card {
-        background: var(--white);
-        border: 1px solid rgba(184, 149, 90, 0.14);
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        overflow: hidden;
-      }
-      .card-head {
-        padding: 16px 16px;
-        background: var(--sand);
-        border-bottom: 1px solid rgba(184, 149, 90, 0.14);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-      }
-      .card-title {
-        margin: 0;
-        font-size: 13px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-        color: var(--ink-soft);
-        font-weight: 500;
-      }
-      .card-body {
-        padding: 16px;
-      }
-      .row {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      .input {
-        width: 100%;
-        border: 1px solid rgba(184, 149, 90, 0.22);
-        border-radius: 12px;
-        padding: 12px 12px;
-        font-size: 14px;
-        background: var(--cream);
-        outline: none;
-      }
-      .input:focus {
-        border-color: var(--gold);
-        box-shadow: 0 0 0 3px rgba(184, 149, 90, 0.14);
-        background: var(--white);
-      }
-      .btn {
-        border: none;
-        border-radius: 999px;
-        padding: 10px 14px;
-        cursor: pointer;
-        font-size: 13px;
-        font-weight: 500;
-        letter-spacing: 0.04em;
-      }
-      .btn-primary {
-        background: var(--gold);
-        color: var(--white);
-      }
-      .btn-ghost {
-        background: transparent;
-        border: 1px solid rgba(26, 26, 24, 0.18);
-        color: var(--ink);
-      }
-      .btn-danger {
-        background: var(--danger);
-        color: var(--white);
-      }
-      .muted {
-        color: var(--ink-soft);
-        font-size: 13px;
-      }
-      .status {
-        font-size: 13px;
-        min-height: 18px;
-      }
-      .status.ok {
-        color: var(--success);
-      }
-      .status.err {
-        color: var(--danger);
-      }
+      /* HEADER */
+      header { position: sticky; top: 0; z-index: 10; background: rgba(10,14,26,.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+      .wrap { max-width: 1200px; margin: 0 auto; padding: 16px 20px; }
+      .topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+      .brand { display: flex; align-items: center; gap: 12px; }
+      .brand h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.02em; }
+      .brand h1 span { color: var(--cyan); }
+      .brand-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s ease infinite; }
+      @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+      .header-actions { display: flex; gap: 8px; align-items: center; }
 
-      .tabs {
-        display: flex;
-        gap: 10px;
-      }
-      .tab {
-        border: 1px solid rgba(184, 149, 90, 0.24);
-        background: rgba(184, 149, 90, 0.06);
-        color: var(--ink);
-        padding: 8px 12px;
-        border-radius: 999px;
-        cursor: pointer;
-        font-size: 13px;
-      }
-      .tab.active {
-        background: var(--gold);
-        border-color: var(--gold);
-        color: var(--white);
-      }
+      /* WORKSPACE BANNER */
+      .workspace-banner { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 20px; }
+      .workspace-label { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--cyan); margin-bottom: 4px; }
+      .workspace-name { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+      .workspace-desc { font-size: 13px; color: var(--muted-text); line-height: 1.5; }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
+      /* DASHBOARD GRID */
+      .dash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+      .dash-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: border-color .25s, box-shadow .25s; cursor: default; position: relative; overflow: hidden; }
+      .dash-card:hover { border-color: var(--border-glow); box-shadow: 0 0 24px rgba(0,200,240,.06); }
+      .dash-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: 0; transition: opacity .3s; }
+      .dash-card:hover::before { opacity: .5; }
+      .dash-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+      .dash-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+      .dash-label.c-cyan { color: var(--cyan); }
+      .dash-label.c-green { color: var(--green); }
+      .dash-label.c-amber { color: var(--amber); }
+      .dash-label.c-purple { color: var(--purple); }
+      .dash-value { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; margin-bottom: 2px; }
+      .dash-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted-text); }
+      .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+      .dot-green { background: var(--green); }
+      .dot-amber { background: var(--amber); }
+      .dot-red { background: var(--red); }
+      .dot-pulse { animation: pulse 2s ease infinite; }
+
+      /* AUTH + PUSH SECTION */
+      .config-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+      .config-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+      .config-card h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+      .config-card h3 svg { width: 18px; height: 18px; stroke: var(--cyan); }
+
+      /* MAIN DATA PANEL */
+      .data-panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+      .panel-head { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+      .panel-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+      .panel-body { padding: 0; }
+
+      /* TABS */
+      .tabs { display: flex; gap: 0; }
+      .tab { padding: 10px 18px; font-size: 13px; font-weight: 500; color: var(--muted-text); border-bottom: 2px solid transparent; cursor: pointer; transition: all .2s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+      .tab:hover { color: var(--text); }
+      .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+
+      /* INPUTS & BUTTONS */
+      .input { width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; font-size: 14px; color: var(--text); outline: none; font-family: 'DM Sans', sans-serif; transition: border-color .2s; }
+      .input:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,200,240,.1); }
+      .input::placeholder { color: var(--faint); }
+      .btn { border: none; border-radius: 10px; padding: 10px 16px; cursor: pointer; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: all .2s; display: inline-flex; align-items: center; gap: 6px; }
+      .btn-primary { background: var(--cyan); color: var(--bg); }
+      .btn-primary:hover { background: var(--cyan2); }
+      .btn-ghost { background: rgba(255,255,255,.04); border: 1px solid var(--border); color: var(--muted-text); }
+      .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+      .btn-danger { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.25); color: var(--red); }
+
+      /* TABLE */
+      table { width: 100%; border-collapse: collapse; }
+      th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 13px; }
+      th { font-size: 11px; color: var(--faint); letter-spacing: .1em; text-transform: uppercase; font-weight: 500; background: var(--bg2); position: sticky; top: 0; }
+      tr:hover td { background: rgba(0,200,240,.02); }
+
+      /* BADGES */
+      .badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 500; letter-spacing: .03em; white-space: nowrap; }
+      .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+      .badge.success { background: rgba(16,185,129,.1); color: #6EE7B7; border: 1px solid rgba(16,185,129,.2); }
+      .badge.success::before { background: var(--green); }
+      .badge.danger { background: rgba(239,68,68,.1); color: #FCA5A5; border: 1px solid rgba(239,68,68,.2); }
+      .badge.danger::before { background: var(--red); }
+      .badge.warn { background: rgba(245,158,11,.1); color: #FCD34D; border: 1px solid rgba(245,158,11,.2); }
+      .badge.warn::before { background: var(--amber); }
+      .badge.neutral { background: rgba(99,130,180,.08); color: var(--muted-text); border: 1px solid var(--border); }
+      .badge.neutral::before { background: var(--faint); }
+
+      /* SELECT */
+      .select { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: var(--text); font-family: 'DM Sans', sans-serif; outline: none; cursor: pointer; }
+      .select:focus { border-color: var(--cyan); }
+
+      /* STATUS & UTILITY */
+      .muted { color: var(--muted-text); font-size: 13px; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; color: var(--cyan); }
+      .status { font-size: 13px; min-height: 18px; margin-top: 8px; }
+      .status.ok { color: var(--green); }
+      .status.err { color: var(--red); }
+      .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+      .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+      .hide { display: none !important; }
+      .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+      a { color: var(--cyan); }
+
+      /* SCROLLBAR */
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+      ::-webkit-scrollbar-thumb:hover { background: var(--faint); }
+
+      /* RESPONSIVE */
+      @media (max-width: 900px) {
+        .dash-grid { grid-template-columns: repeat(2, 1fr); }
+        .config-row { grid-template-columns: 1fr; }
+        .panel-head { flex-direction: column; align-items: stretch; }
+        .tabs { overflow-x: auto; }
       }
-      th,
-      td {
-        text-align: left;
-        padding: 10px 10px;
-        border-bottom: 1px solid rgba(184, 149, 90, 0.12);
-        vertical-align: top;
-        font-size: 13px;
-      }
-      th {
-        font-size: 12px;
-        color: var(--ink-soft);
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        font-weight: 500;
-      }
-      .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        border-radius: 999px;
-        padding: 6px 10px;
-        border: 1px solid rgba(184, 149, 90, 0.22);
-        background: rgba(184, 149, 90, 0.06);
-        font-size: 12px;
-        white-space: nowrap;
-      }
-      .badge.success {
-        border-color: rgba(74, 124, 92, 0.32);
-        background: rgba(74, 124, 92, 0.08);
-      }
-      .badge.danger {
-        border-color: rgba(162, 75, 75, 0.32);
-        background: rgba(162, 75, 75, 0.08);
-      }
-      .badge.warn {
-        border-color: rgba(200, 150, 60, 0.35);
-        background: rgba(200, 150, 60, 0.1);
-      }
-      .mono {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-          monospace;
-        font-size: 12px;
-      }
-      .actions {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-      .select {
-        border: 1px solid rgba(184, 149, 90, 0.22);
-        border-radius: 999px;
-        padding: 8px 10px;
-        font-size: 13px;
-        background: var(--white);
-      }
-      .hide {
-        display: none !important;
+      @media (max-width: 600px) {
+        .dash-grid { grid-template-columns: 1fr; }
+        .brand h1 { font-size: 18px; }
+        th, td { padding: 10px 12px; font-size: 12px; }
+        .panel-tools { width: 100%; }
+        .panel-tools .input { width: 100% !important; }
       }
     </style>
   </head>
@@ -266,128 +159,153 @@
       <div class="wrap">
         <div class="topbar">
           <div class="brand">
-            <h1>Clip<span>Services</span> Admin</h1>
-            <span class="pill">Bookings · Provider Applications · Status</span>
+            <h1>Clip<span>Services</span></h1>
+            <span class="brand-dot"></span>
           </div>
-          <div class="row">
-            <button class="btn btn-ghost" id="logoutBtn">Log out</button>
+          <div class="header-actions">
+            <button class="btn btn-ghost" id="logoutBtn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+              Log out
+            </button>
           </div>
         </div>
       </div>
     </header>
 
     <main>
-      <div class="wrap">
-        <div class="grid">
-          <section class="card" id="authCard">
-            <div class="card-head">
-              <h2 class="card-title">Admin Access</h2>
+      <div class="wrap" style="padding-top:24px;padding-bottom:48px;">
+
+        <!-- WORKSPACE BANNER -->
+        <div class="workspace-banner">
+          <div class="workspace-label">Admin Dashboard</div>
+          <div class="workspace-name">Clip Services</div>
+          <div class="workspace-desc">Manage bookings, provider applications, Stripe Connect, and push notifications.</div>
+        </div>
+
+        <!-- DASHBOARD STATS -->
+        <div class="dash-grid" id="dashGrid">
+          <div class="dash-card">
+            <span class="dash-icon">📋</span>
+            <div class="dash-label c-cyan">Bookings</div>
+            <div class="dash-value" id="statBookings">—</div>
+            <div class="dash-status"><span class="dot dot-green dot-pulse"></span> Live</div>
+          </div>
+          <div class="dash-card">
+            <span class="dash-icon">📨</span>
+            <div class="dash-label c-purple">Applications</div>
+            <div class="dash-value" id="statContacts">—</div>
+            <div class="dash-status"><span class="dot dot-green dot-pulse"></span> Live</div>
+          </div>
+          <div class="dash-card">
+            <span class="dash-icon">💳</span>
+            <div class="dash-label c-green">Providers</div>
+            <div class="dash-value" id="statProviders">—</div>
+            <div class="dash-status"><span class="dot dot-amber"></span> Stripe Connect</div>
+          </div>
+        </div>
+
+        <!-- AUTH + PUSH -->
+        <div class="config-row">
+          <div class="config-card">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              Authentication
+            </h3>
+            <p class="muted" style="margin-bottom:12px">Enter your admin token. Stored locally in this browser only.</p>
+            <div class="row" style="margin-bottom:8px">
+              <input class="input" id="tokenInput" placeholder="Admin token" type="password" autocomplete="off" />
+              <button class="btn btn-primary" id="saveTokenBtn">Save</button>
             </div>
-            <div class="card-body">
-              <p class="muted" style="margin-top: 0">
-                Enter your admin token (stored locally in this browser). Keep it private.
-              </p>
-              <div class="row">
-                <input class="input" id="tokenInput" placeholder="Admin token" type="password" autocomplete="off" />
-                <button class="btn btn-primary" id="saveTokenBtn">Save token</button>
-              </div>
-              <div class="status" id="authStatus"></div>
-              <hr style="border: none; border-top: 1px solid rgba(184, 149, 90, 0.15); margin: 16px 0" />
-              <div class="row">
-                <button class="btn btn-ghost" id="testAuthBtn">Test connection</button>
-              </div>
-              <p class="muted" style="margin-bottom: 0">
-                If this fails, ensure Vercel has <span class="mono">ADMIN_TOKEN</span> and <span class="mono">KV_REDIS_URL</span> set. For card payments: <span class="mono">STRIPE_SECRET_KEY</span>, <span class="mono">STRIPE_WEBHOOK_SECRET</span>, and <span class="mono">SITE_URL</span> (e.g. https://clips-service.vercel.app). For push: <span class="mono">VAPID_PUBLIC_KEY</span> / <span class="mono">VAPID_PRIVATE_KEY</span>.
-              </p>
-              <hr style="border: none; border-top: 1px solid rgba(184, 149, 90, 0.15); margin: 16px 0" />
-              <p class="muted" style="margin-top: 0">
-                Optional: browser push for new bookings, awaiting payment, paid, and provider applications (same device only).
-              </p>
-              <div class="row">
-                <button class="btn btn-primary" type="button" id="adminPushBtn">Enable push alerts</button>
-              </div>
-              <div class="status" id="pushStatus"></div>
+            <div class="status" id="authStatus"></div>
+            <hr class="divider" />
+            <div class="row">
+              <button class="btn btn-ghost" id="testAuthBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                Test connection
+              </button>
             </div>
-          </section>
+            <p class="muted" style="margin-top:12px;font-size:11px;line-height:1.6;">
+              Requires <span class="mono">ADMIN_TOKEN</span>, <span class="mono">KV_REDIS_URL</span>, <span class="mono">STRIPE_SECRET_KEY</span>, <span class="mono">STRIPE_WEBHOOK_SECRET</span>, <span class="mono">SITE_URL</span>, <span class="mono">VAPID_PUBLIC_KEY</span>, <span class="mono">VAPID_PRIVATE_KEY</span> on Vercel.
+            </p>
+          </div>
 
-          <section class="card" id="dataCard">
-            <div class="card-head">
-              <div class="row" style="justify-content: space-between; width: 100%">
-                <div class="tabs" role="tablist">
-                  <button class="tab active" data-tab="bookings">Bookings</button>
-                  <button class="tab" data-tab="contacts">Applications</button>
-                  <button class="tab" data-tab="providers">Providers (Stripe)</button>
-                </div>
-                <div class="row">
-                  <input class="input" id="searchInput" placeholder="Search (name, email, ref…)" style="width: 260px" />
-                  <button class="btn btn-ghost" id="refreshBtn">Refresh</button>
-                  <button class="btn btn-ghost" id="exportBtn">Export CSV</button>
-                </div>
-              </div>
+          <div class="config-card">
+            <h3>
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+              Push Notifications
+            </h3>
+            <p class="muted" style="margin-bottom:12px">Receive browser alerts for new bookings, payments, and provider applications.</p>
+            <div class="row">
+              <button class="btn btn-primary" type="button" id="adminPushBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                Enable push alerts
+              </button>
             </div>
-            <div class="card-body">
-              <div class="status" id="dataStatus"></div>
+            <div class="status" id="pushStatus"></div>
+            <hr class="divider" />
+            <p class="muted" style="font-size:11px;line-height:1.6;">Push alerts are device-specific. Enable on each device where you want notifications.</p>
+          </div>
+        </div>
 
-              <div id="bookingsView">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Ref</th>
-                      <th>Created</th>
-                      <th>Client</th>
-                      <th>Service</th>
-                      <th>Slot</th>
-                      <th>Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody id="bookingsTbody"></tbody>
-                </table>
-              </div>
+        <!-- DATA PANEL -->
+        <div class="data-panel">
+          <div class="panel-head">
+            <div class="tabs" role="tablist">
+              <button class="tab active" data-tab="bookings">Bookings</button>
+              <button class="tab" data-tab="contacts">Applications</button>
+              <button class="tab" data-tab="providers">Providers</button>
+            </div>
+            <div class="panel-tools">
+              <input class="input" id="searchInput" placeholder="Search…" style="width:200px" />
+              <button class="btn btn-ghost" id="refreshBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
+                Refresh
+              </button>
+              <button class="btn btn-ghost" id="exportBtn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Export
+              </button>
+            </div>
+          </div>
+          <div class="panel-body">
+            <div class="status" id="dataStatus" style="padding:12px 20px;"></div>
 
-              <div id="contactsView" class="hide">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Date</th>
-                      <th>Applicant</th>
-                      <th>Details</th>
-                    </tr>
-                  </thead>
-                  <tbody id="contactsTbody"></tbody>
-                </table>
-              </div>
+            <div id="bookingsView" style="overflow-x:auto;">
+              <table>
+                <thead><tr><th>Ref</th><th>Created</th><th>Client</th><th>Service</th><th>Slot</th><th>Status</th><th>Actions</th></tr></thead>
+                <tbody id="bookingsTbody"></tbody>
+              </table>
+            </div>
 
-              <div id="providersView" class="hide">
-                <p class="muted" style="margin-top:0;margin-bottom:16px;">
-                  Connect each provider's bank account via Stripe Express. Once connected, their share is sent automatically when a customer pays.
-                </p>
-                <div id="providersStatus" class="status"></div>
+            <div id="contactsView" class="hide" style="overflow-x:auto;">
+              <table>
+                <thead><tr><th>Date</th><th>Applicant</th><th>Details</th></tr></thead>
+                <tbody id="contactsTbody"></tbody>
+              </table>
+            </div>
+
+            <div id="providersView" class="hide" style="padding:20px;">
+              <p class="muted" style="margin-top:0;margin-bottom:16px;">Connect provider bank accounts via Stripe Express. Their share is sent automatically on each booking payment.</p>
+              <div id="providersStatus" class="status"></div>
+              <div style="overflow-x:auto;">
                 <table>
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Provider</th>
-                      <th>Email</th>
-                      <th>Stripe Status</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
+                  <thead><tr><th>ID</th><th>Provider</th><th>Email</th><th>Stripe Status</th><th>Actions</th></tr></thead>
                   <tbody id="providersTbody"></tbody>
                 </table>
-                <hr style="border:none;border-top:1px solid rgba(184,149,90,.15);margin:24px 0 16px" />
-                <h3 style="font-size:15px;margin-bottom:12px;">Add new provider to Stripe Connect</h3>
-                <div class="row" style="flex-wrap:wrap;gap:8px;">
-                  <input class="input" id="cpId" placeholder="Provider ID (e.g. 1)" style="width:80px" />
-                  <input class="input" id="cpName" placeholder="Provider name" style="width:180px" />
-                  <input class="input" id="cpEmail" placeholder="Provider email" style="width:220px" type="email" />
-                  <button class="btn btn-primary" id="connectProviderBtn">Connect to Stripe</button>
-                </div>
-                <div id="connectResult" class="status" style="margin-top:12px;"></div>
               </div>
+              <hr class="divider" style="margin:24px 0 16px" />
+              <h3 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:12px;">Add Provider to Stripe Connect</h3>
+              <div class="row" style="flex-wrap:wrap;gap:8px;">
+                <input class="input" id="cpId" placeholder="Provider ID" style="width:90px" />
+                <input class="input" id="cpName" placeholder="Name" style="width:180px" />
+                <input class="input" id="cpEmail" placeholder="Email" style="width:220px" type="email" />
+                <button class="btn btn-primary" id="connectProviderBtn">Connect</button>
+              </div>
+              <div id="connectResult" class="status" style="margin-top:12px;"></div>
             </div>
-          </section>
+          </div>
         </div>
+
       </div>
     </main>
 
@@ -422,7 +340,10 @@
         providersTbody: document.getElementById("providersTbody"),
         providersStatus: document.getElementById("providersStatus"),
         connectProviderBtn: document.getElementById("connectProviderBtn"),
-        connectResult: document.getElementById("connectResult")
+        connectResult: document.getElementById("connectResult"),
+        statBookings: document.getElementById("statBookings"),
+        statContacts: document.getElementById("statContacts"),
+        statProviders: document.getElementById("statProviders")
       };
 
       el.tokenInput.value = state.token;
@@ -433,19 +354,13 @@
         if (kind) target.classList.add(kind);
       }
 
-      function getToken() {
-        return state.token;
-      }
+      function getToken() { return state.token; }
 
       async function api(path, options = {}) {
         const token = getToken();
         const res = await fetch(path, {
           ...options,
-          headers: {
-            "content-type": "application/json",
-            ...(options.headers || {}),
-            "x-admin-token": token
-          }
+          headers: { "content-type": "application/json", ...(options.headers || {}), "x-admin-token": token }
         });
         const data = await res.json().catch(() => ({}));
         if (!res.ok) throw new Error(data.error || `Request failed (${res.status})`);
@@ -463,11 +378,8 @@
         const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+        a.href = url; a.download = filename;
+        document.body.appendChild(a); a.click(); a.remove();
         URL.revokeObjectURL(url);
       }
 
@@ -477,8 +389,25 @@
         return list.filter((x) => JSON.stringify(x).toLowerCase().includes(q));
       }
 
+      function updateDashStats() {
+        el.statBookings.textContent = state.bookings.length;
+        el.statContacts.textContent = state.contacts.length;
+        el.statProviders.textContent = Object.keys(state.providers).length;
+      }
+
+      function timeAgo(dateStr) {
+        if (!dateStr) return '';
+        const diff = Date.now() - new Date(dateStr).getTime();
+        const mins = Math.floor(diff / 60000);
+        if (mins < 1) return 'just now';
+        if (mins < 60) return mins + 'm ago';
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return hrs + 'h ago';
+        const days = Math.floor(hrs / 24);
+        return days + 'd ago';
+      }
+
       function render() {
-        // tabs
         document.querySelectorAll(".tab").forEach((t) => {
           t.classList.toggle("active", t.dataset.tab === state.tab);
         });
@@ -486,91 +415,57 @@
         el.contactsView.classList.toggle("hide", state.tab !== "contacts");
         el.providersView.classList.toggle("hide", state.tab !== "providers");
 
-        // bookings
         const bookings = filterRows(state.bookings);
-        el.bookingsTbody.innerHTML = bookings
-          .map((b) => {
+        el.bookingsTbody.innerHTML = bookings.length === 0
+          ? '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--faint)">No bookings yet</td></tr>'
+          : bookings.map((b) => {
             const client = `${b.firstName || ""} ${b.lastName || ""}`.trim();
             const status = b.status || "new";
-            const badgeClass =
-              status === "confirmed" || status === "paid"
-                ? "success"
-                : status === "cancelled"
-                  ? "danger"
-                  : status === "awaiting_payment"
-                    ? "warn"
-                    : "";
+            const badgeClass = status === "confirmed" || status === "paid" ? "success" : status === "cancelled" ? "danger" : status === "awaiting_payment" ? "warn" : "neutral";
             return `
               <tr>
                 <td class="mono">${b.ref || "—"}</td>
-                <td>${b.createdAt ? new Date(b.createdAt).toLocaleString() : "—"}</td>
-                <td>
-                  <div style="font-weight:500">${client || "—"}</div>
-                  <div class="muted">${b.email || ""}</div>
-                  <div class="muted">${b.phone || ""}</div>
-                </td>
-                <td>
-                  <div style="font-weight:500">${b.service || "—"}</div>
-                  <div class="muted">£${b.price || "—"} · ${b.dur || ""}</div>
-                </td>
-                <td>
-                  <div style="font-weight:500">${b.date || "—"}</div>
-                  <div class="muted">${b.time || ""}</div>
-                </td>
+                <td><div>${timeAgo(b.createdAt)}</div><div class="muted" style="font-size:11px">${b.createdAt ? new Date(b.createdAt).toLocaleDateString() : ""}</div></td>
+                <td><div style="font-weight:500">${client || "—"}</div><div class="muted" style="font-size:11px">${b.email || ""}</div></td>
+                <td><div style="font-weight:500">${b.service || "—"}</div><div class="muted" style="font-size:11px">£${b.price || "—"} · ${b.dur || ""}</div></td>
+                <td><div style="font-weight:500">${b.date || "—"}</div><div class="muted" style="font-size:11px">${b.time || ""}</div></td>
                 <td><span class="badge ${badgeClass}">${status}</span></td>
-                <td>
-                  <div class="actions">
-                    <select class="select" data-ref="${b.ref}" data-action="status">
-                      ${["new", "awaiting_payment", "paid", "confirmed", "completed", "cancelled"]
-                        .map((s) => `<option value="${s}" ${s === status ? "selected" : ""}>${s}</option>`)
-                        .join("")}
-                    </select>
-                    <button class="btn btn-ghost" data-ref="${b.ref}" data-action="save">Save</button>
-                  </div>
-                </td>
-              </tr>
-            `;
-          })
-          .join("");
+                <td><div class="actions">
+                  <select class="select" data-ref="${b.ref}" data-action="status">
+                    ${["new","awaiting_payment","paid","confirmed","completed","cancelled"].map((s) => `<option value="${s}" ${s===status?"selected":""}>${s}</option>`).join("")}
+                  </select>
+                  <button class="btn btn-ghost" data-ref="${b.ref}" data-action="save" style="font-size:12px;padding:6px 12px">Save</button>
+                </div></td>
+              </tr>`;
+          }).join("");
 
-        // contacts
         const contacts = filterRows(state.contacts);
-        el.contactsTbody.innerHTML = contacts
-          .map((c) => {
-            return `
+        el.contactsTbody.innerHTML = contacts.length === 0
+          ? '<tr><td colspan="3" style="text-align:center;padding:40px;color:var(--faint)">No applications yet</td></tr>'
+          : contacts.map((c) => `
               <tr>
-                <td>${c.createdAt ? new Date(c.createdAt).toLocaleString() : "—"}</td>
-                <td>
-                  <div style="font-weight:500">${c.name || "—"}</div>
-                  <div class="muted">${c.email || ""}</div>
-                </td>
-                <td style="white-space:pre-wrap;max-width:420px;font-size:12px;line-height:1.6">${c.message || ""}</td>
-              </tr>
-            `;
-          })
-          .join("");
+                <td><div>${timeAgo(c.createdAt)}</div><div class="muted" style="font-size:11px">${c.createdAt ? new Date(c.createdAt).toLocaleDateString() : ""}</div></td>
+                <td><div style="font-weight:500">${c.name || "—"}</div><div class="muted" style="font-size:11px">${c.email || ""}</div></td>
+                <td style="white-space:pre-wrap;max-width:420px;font-size:12px;line-height:1.6;color:var(--muted-text)">${c.message || ""}</td>
+              </tr>`).join("");
 
-        // providers
         const provEntries = Object.entries(state.providers);
         el.providersTbody.innerHTML = provEntries.length === 0
-          ? '<tr><td colspan="5" class="muted" style="text-align:center;padding:24px">No providers connected yet. Use the form below to connect a provider to Stripe.</td></tr>'
+          ? '<tr><td colspan="5" class="muted" style="text-align:center;padding:24px">No providers connected yet</td></tr>'
           : provEntries.map(([id, p]) => {
-            const statusBadge = p.onboarded
-              ? '<span class="badge success">Connected</span>'
-              : '<span class="badge warn">Pending onboarding</span>';
-            return `
-              <tr>
+            const statusBadge = p.onboarded ? '<span class="badge success">Connected</span>' : '<span class="badge warn">Pending</span>';
+            return `<tr>
                 <td class="mono">${id}</td>
                 <td style="font-weight:500">${p.name || "—"}</td>
                 <td class="muted">${p.email || "—"}</td>
                 <td>${statusBadge}</td>
-                <td>
-                  <button class="btn btn-ghost" data-provider-id="${id}" data-action="check-status" style="font-size:12px">Check status</button>
-                  ${!p.onboarded ? `<button class="btn btn-ghost" data-provider-id="${id}" data-action="resend-link" style="font-size:12px">New link</button>` : ''}
-                </td>
-              </tr>
-            `;
+                <td><div class="actions">
+                  <button class="btn btn-ghost" data-provider-id="${id}" data-action="check-status" style="font-size:11px;padding:6px 10px">Check</button>
+                  ${!p.onboarded ? `<button class="btn btn-ghost" data-provider-id="${id}" data-action="resend-link" style="font-size:11px;padding:6px 10px">New link</button>` : ''}
+                </div></td></tr>`;
           }).join("");
+
+        updateDashStats();
       }
 
       async function refreshAll() {
@@ -584,8 +479,7 @@
           state.bookings = bookings.items || [];
           state.contacts = contacts.items || [];
           state.providers = provData.providers || {};
-          const provCount = Object.keys(state.providers).length;
-          setStatus(el.dataStatus, `Loaded ${state.bookings.length} bookings · ${state.contacts.length} applications · ${provCount} providers`, "ok");
+          setStatus(el.dataStatus, `${state.bookings.length} bookings · ${state.contacts.length} applications · ${Object.keys(state.providers).length} providers`, "ok");
           render();
         } catch (e) {
           setStatus(el.dataStatus, e?.message || "Failed to load", "err");
@@ -608,15 +502,11 @@
         setStatus(el.authStatus, "Token saved.", "ok");
       });
 
-      el.testAuthBtn.addEventListener("click", async () => {
-        await testAuth();
-        await refreshAll();
-      });
+      el.testAuthBtn.addEventListener("click", async () => { await testAuth(); await refreshAll(); });
 
       el.logoutBtn.addEventListener("click", () => {
         localStorage.removeItem(STORAGE_KEY);
-        state.token = "";
-        el.tokenInput.value = "";
+        state.token = ""; el.tokenInput.value = "";
         setStatus(el.authStatus, "Logged out.", "ok");
       });
 
@@ -624,43 +514,21 @@
       el.searchInput.addEventListener("input", render);
 
       document.querySelectorAll(".tab").forEach((t) => {
-        t.addEventListener("click", () => {
-          state.tab = t.dataset.tab;
-          render();
-        });
+        t.addEventListener("click", () => { state.tab = t.dataset.tab; render(); });
       });
 
       el.exportBtn.addEventListener("click", () => {
         if (state.tab === "bookings") {
-          const rows = [
-            ["ref", "createdAt", "status", "service", "price", "dur", "date", "time", "firstName", "lastName", "phone", "email", "notes"],
-            ...filterRows(state.bookings).map((b) => [
-              b.ref,
-              b.createdAt,
-              b.status || "new",
-              b.service,
-              b.price,
-              b.dur,
-              b.date,
-              b.time,
-              b.firstName,
-              b.lastName,
-              b.phone,
-              b.email,
-              b.notes
-            ])
-          ];
-          downloadCsv(`bookings-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+          const rows = [["ref","createdAt","status","service","price","dur","date","time","firstName","lastName","phone","email","notes"],
+            ...filterRows(state.bookings).map((b) => [b.ref,b.createdAt,b.status||"new",b.service,b.price,b.dur,b.date,b.time,b.firstName,b.lastName,b.phone,b.email,b.notes])];
+          downloadCsv(`bookings-${new Date().toISOString().slice(0,10)}.csv`, rows);
         } else {
-          const rows = [
-            ["createdAt", "name", "email", "details"],
-            ...filterRows(state.contacts).map((c) => [c.createdAt, c.name, c.email, c.message])
-          ];
-          downloadCsv(`applications-${new Date().toISOString().slice(0, 10)}.csv`, rows);
+          const rows = [["createdAt","name","email","details"],
+            ...filterRows(state.contacts).map((c) => [c.createdAt,c.name,c.email,c.message])];
+          downloadCsv(`applications-${new Date().toISOString().slice(0,10)}.csv`, rows);
         }
       });
 
-      // booking row actions
       el.bookingsTbody.addEventListener("click", async (e) => {
         const btn = e.target.closest("button[data-action='save']");
         if (!btn) return;
@@ -668,53 +536,36 @@
         const select = el.bookingsTbody.querySelector(`select[data-action='status'][data-ref='${ref}']`);
         const status = select?.value;
         if (!ref || !status) return;
-        btn.disabled = true;
-        btn.textContent = "Saving…";
+        btn.disabled = true; btn.textContent = "…";
         try {
           await api("/api/admin/update-booking", { method: "POST", body: JSON.stringify({ ref, status }) });
           const i = state.bookings.findIndex((b) => b.ref === ref);
           if (i >= 0) state.bookings[i] = { ...state.bookings[i], status };
           setStatus(el.dataStatus, "Saved.", "ok");
           render();
-        } catch (err) {
-          setStatus(el.dataStatus, err?.message || "Save failed", "err");
-        } finally {
-          btn.disabled = false;
-          btn.textContent = "Save";
-        }
+        } catch (err) { setStatus(el.dataStatus, err?.message || "Save failed", "err"); }
+        finally { btn.disabled = false; btn.textContent = "Save"; }
       });
 
-      // Provider Stripe Connect handlers
       el.connectProviderBtn.addEventListener("click", async () => {
         const providerId = document.getElementById("cpId").value.trim();
         const providerName = document.getElementById("cpName").value.trim();
         const providerEmail = document.getElementById("cpEmail").value.trim();
-        if (!providerId || !providerName || !providerEmail) {
-          setStatus(el.connectResult, "Fill in all fields: ID, name, and email.", "err");
-          return;
-        }
+        if (!providerId || !providerName || !providerEmail) { setStatus(el.connectResult, "Fill in all fields.", "err"); return; }
         setStatus(el.connectResult, "Creating Stripe account…");
         el.connectProviderBtn.disabled = true;
         try {
-          const data = await api("/api/connect", {
-            method: "POST",
-            body: JSON.stringify({ providerId, providerName, providerEmail })
-          });
+          const data = await api("/api/connect", { method: "POST", body: JSON.stringify({ providerId, providerName, providerEmail }) });
           if (data.ok && data.url) {
-            setStatus(el.connectResult, "Account created. Send the onboarding link to the provider:", "ok");
+            setStatus(el.connectResult, "Account created. Onboarding link:", "ok");
             const linkEl = document.createElement("div");
-            linkEl.style.cssText = "margin-top:8px;word-break:break-all;font-size:12px;padding:12px;background:var(--sand);border-radius:8px;";
+            linkEl.style.cssText = "margin-top:8px;word-break:break-all;font-size:12px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;";
             linkEl.innerHTML = `<a href="${data.url}" target="_blank" rel="noopener">${data.url}</a>`;
             el.connectResult.after(linkEl);
             await refreshProviders();
-          } else {
-            setStatus(el.connectResult, data.error || "Failed", "err");
-          }
-        } catch (e) {
-          setStatus(el.connectResult, e.message || "Error creating account", "err");
-        } finally {
-          el.connectProviderBtn.disabled = false;
-        }
+          } else { setStatus(el.connectResult, data.error || "Failed", "err"); }
+        } catch (e) { setStatus(el.connectResult, e.message || "Error", "err"); }
+        finally { el.connectProviderBtn.disabled = false; }
       });
 
       el.providersTbody.addEventListener("click", async (e) => {
@@ -723,64 +574,37 @@
         const providerId = btn.dataset.providerId;
         const action = btn.dataset.action;
         if (!providerId) return;
-
         if (action === "check-status") {
-          btn.disabled = true;
-          btn.textContent = "Checking…";
+          btn.disabled = true; btn.textContent = "…";
           try {
             const data = await api(`/api/connect?id=${encodeURIComponent(providerId)}`);
-            if (data.onboarded) {
-              state.providers[providerId] = { ...state.providers[providerId], onboarded: true };
-              setStatus(el.providersStatus, `Provider ${providerId}: fully connected and ready for payouts.`, "ok");
-            } else if (data.connected) {
-              setStatus(el.providersStatus, `Provider ${providerId}: account created but onboarding not complete. Send them the onboarding link.`, "err");
-            } else {
-              setStatus(el.providersStatus, `Provider ${providerId}: not connected yet.`, "err");
-            }
+            if (data.onboarded) { state.providers[providerId] = { ...state.providers[providerId], onboarded: true }; setStatus(el.providersStatus, `Provider ${providerId}: connected and ready.`, "ok"); }
+            else if (data.connected) { setStatus(el.providersStatus, `Provider ${providerId}: onboarding incomplete.`, "err"); }
+            else { setStatus(el.providersStatus, `Provider ${providerId}: not connected.`, "err"); }
             render();
-          } catch (err) {
-            setStatus(el.providersStatus, err.message || "Check failed", "err");
-          } finally {
-            btn.disabled = false;
-            btn.textContent = "Check status";
-          }
+          } catch (err) { setStatus(el.providersStatus, err.message || "Check failed", "err"); }
+          finally { btn.disabled = false; btn.textContent = "Check"; }
         }
-
         if (action === "resend-link") {
-          btn.disabled = true;
-          btn.textContent = "Creating…";
+          btn.disabled = true; btn.textContent = "…";
           try {
             const p = state.providers[providerId];
-            const data = await api("/api/connect", {
-              method: "POST",
-              body: JSON.stringify({ providerId, providerName: p?.name || "", providerEmail: p?.email || "" })
-            });
+            const data = await api("/api/connect", { method: "POST", body: JSON.stringify({ providerId, providerName: p?.name || "", providerEmail: p?.email || "" }) });
             if (data.ok && data.url) {
-              setStatus(el.providersStatus, `New onboarding link for provider ${providerId}:`, "ok");
+              setStatus(el.providersStatus, `New link for ${providerId}:`, "ok");
               const linkEl = document.createElement("div");
-              linkEl.style.cssText = "margin-top:8px;word-break:break-all;font-size:12px;padding:12px;background:var(--sand);border-radius:8px;";
+              linkEl.style.cssText = "margin-top:8px;word-break:break-all;font-size:12px;padding:12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;";
               linkEl.innerHTML = `<a href="${data.url}" target="_blank" rel="noopener">${data.url}</a>`;
               el.providersStatus.after(linkEl);
-            } else {
-              setStatus(el.providersStatus, data.error || "Failed", "err");
-            }
-          } catch (err) {
-            setStatus(el.providersStatus, err.message || "Error", "err");
-          } finally {
-            btn.disabled = false;
-            btn.textContent = "New link";
-          }
+            } else { setStatus(el.providersStatus, data.error || "Failed", "err"); }
+          } catch (err) { setStatus(el.providersStatus, err.message || "Error", "err"); }
+          finally { btn.disabled = false; btn.textContent = "New link"; }
         }
       });
 
       async function refreshProviders() {
-        try {
-          const data = await api("/api/admin/providers");
-          state.providers = data.providers || {};
-          render();
-        } catch (e) {
-          console.warn("Could not load providers", e);
-        }
+        try { const data = await api("/api/admin/providers"); state.providers = data.providers || {}; render(); }
+        catch (e) { console.warn("Could not load providers", e); }
       }
 
       function urlBase64ToUint8Array(base64String) {
@@ -794,61 +618,34 @@
 
       async function registerAdminServiceWorker() {
         if (!("serviceWorker" in navigator)) return null;
-        try {
-          return await navigator.serviceWorker.register("/sw.js", { scope: "/" });
-        } catch (e) {
-          console.warn("SW register failed", e);
-          return null;
-        }
+        try { return await navigator.serviceWorker.register("/sw.js", { scope: "/" }); }
+        catch (e) { console.warn("SW register failed", e); return null; }
       }
 
       async function subscribeAdminPush() {
         const token = getToken();
-        if (!token) {
-          setStatus(el.pushStatus, "Save your admin token first, then try again.", "err");
-          return;
-        }
+        if (!token) { setStatus(el.pushStatus, "Save your admin token first.", "err"); return; }
         setStatus(el.pushStatus, "Requesting permission…");
         try {
           await registerAdminServiceWorker();
           const reg = await navigator.serviceWorker.ready;
           const v = await fetch("/api/push-vapid").then((r) => r.json());
-          if (!v.configured || !v.publicKey) {
-            setStatus(el.pushStatus, "Push not configured on server (VAPID keys).", "err");
-            return;
-          }
+          if (!v.configured || !v.publicKey) { setStatus(el.pushStatus, "VAPID keys not configured on server.", "err"); return; }
           const permission = await Notification.requestPermission();
-          if (permission !== "granted") {
-            setStatus(el.pushStatus, "Notifications blocked — allow them in browser settings.", "err");
-            return;
-          }
-          const sub = await reg.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(v.publicKey)
-          });
-          const res = await fetch("/api/push-subscribe", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ role: "admin", adminToken: token, subscription: sub.toJSON() })
-          });
+          if (permission !== "granted") { setStatus(el.pushStatus, "Notifications blocked in browser settings.", "err"); return; }
+          const sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(v.publicKey) });
+          const res = await fetch("/api/push-subscribe", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ role: "admin", adminToken: token, subscription: sub.toJSON() }) });
           const data = await res.json().catch(() => ({}));
-          if (res.ok && data.ok) setStatus(el.pushStatus, "Push alerts enabled on this device.", "ok");
-          else setStatus(el.pushStatus, data.error || "Subscribe failed — check token.", "err");
-        } catch (e) {
-          console.warn(e);
-          setStatus(el.pushStatus, e?.message || "Could not enable push.", "err");
-        }
+          if (res.ok && data.ok) setStatus(el.pushStatus, "Push alerts enabled.", "ok");
+          else setStatus(el.pushStatus, data.error || "Subscribe failed.", "err");
+        } catch (e) { console.warn(e); setStatus(el.pushStatus, e?.message || "Could not enable push.", "err"); }
       }
 
       el.adminPushBtn?.addEventListener("click", subscribeAdminPush);
       registerAdminServiceWorker();
 
-      // init
       render();
-      if (state.token) {
-        testAuth().then(refreshAll);
-      }
+      if (state.token) { testAuth().then(refreshAll); }
     </script>
   </body>
 </html>
-
