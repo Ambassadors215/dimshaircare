@@ -589,7 +589,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
     <div class="search-hero r rd2">
       <span class="search-icon" id="si-search"></span>
       <input type="text" placeholder="What service do you need? e.g. grocery run, cleaning..." id="searchInput" oninput="filterProviders()">
-      <select id="catFilter" onchange="filterCat(this.value,null)">
+      <select id="catFilter" onchange="filterCat(this.value)">
         <option value="">All categories</option>
         <option value="runner">Runner</option>
         <option value="cleaning">Cleaning</option>
@@ -603,24 +603,13 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       <button class="search-btn" onclick="filterProviders();scrollToProviders()">Search</button>
     </div>
 
-    <div class="cats r rd3" id="catPills">
-      <div class="cat active" data-cat="" onclick="filterCat('',this)">All</div>
-      <div class="cat" data-cat="runner" onclick="filterCat('runner',this)">🏃 Runner</div>
-      <div class="cat" data-cat="cleaning" onclick="filterCat('cleaning',this)">🧹 Cleaning</div>
-      <div class="cat" data-cat="handyman" onclick="filterCat('handyman',this)">🔧 Handyman</div>
-      <div class="cat" data-cat="dog" onclick="filterCat('dog',this)">🐕 Dog Walking</div>
-      <div class="cat" data-cat="grocery" onclick="filterCat('grocery',this)">🛒 Grocery</div>
-      <div class="cat" data-cat="beauty" onclick="filterCat('beauty',this)">💇 Hair & Beauty</div>
-      <div class="cat" data-cat="tech" onclick="filterCat('tech',this)">💻 Tech Help</div>
-      <div class="cat" data-cat="delivery" onclick="filterCat('delivery',this)">🚗 Delivery</div>
-    </div>
   </div>
 
   <!-- SERVICES LISTING -->
-  <section style="background:var(--navy2);border-top:1px solid var(--border);padding-top:64px;">
-    <div class="eyebrow">Available services</div>
-    <h2 class="stitle r">Services you can <em>book</em><br>right now.</h2>
-    <p class="sdesc r">Browse the services available in Salford Quays & MediaCityUK. Pick a service, tell us what you need, and we'll match you with a verified provider.</p>
+  <section id="servicesSection" style="background:var(--navy2);border-top:1px solid var(--border);padding-top:64px;display:none;">
+    <div class="eyebrow">Search results</div>
+    <h2 class="stitle r v">Services matching <em>your search</em></h2>
+    <p class="sdesc r v">Pick a service, tell us what you need, and we'll match you with a verified provider.</p>
     <div class="providers-grid" id="providersGrid"></div>
     <div style="text-align:center;margin-top:40px;display:flex;flex-direction:column;align-items:center;gap:14px;">
       <button class="btn-s" onclick="switchView('provider')">Are you a service provider? Join the platform →</button>
@@ -770,37 +759,37 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
     <h2 class="stitle r">All the help<br><em>you need.</em></h2>
     <p class="sdesc r">From everyday errands to specialist services — Clip Services connects you with local experts for everything.</p>
     <div class="cat-cards">
-      <div class="cat-card r" onclick="filterCat('runner',null);scrollToProviders()">
+      <div class="cat-card r" onclick="filterCat('runner')">
         <span class="cat-icon" id="ci-runner"></span>
         <div class="cat-name">Runner & Errands</div>
         <div class="cat-count">Grocery, pharmacy, parcels</div>
       </div>
-      <div class="cat-card r rd1" onclick="filterCat('cleaning',null);scrollToProviders()">
+      <div class="cat-card r rd1" onclick="filterCat('cleaning')">
         <span class="cat-icon" id="ci-cleaning"></span>
         <div class="cat-name">Cleaning</div>
         <div class="cat-count">Flat, deep clean, end-of-tenancy</div>
       </div>
-      <div class="cat-card r rd2" onclick="filterCat('handyman',null);scrollToProviders()">
+      <div class="cat-card r rd2" onclick="filterCat('handyman')">
         <span class="cat-icon" id="ci-handyman"></span>
         <div class="cat-name">Handyman</div>
         <div class="cat-count">Flat-pack, repairs, plumbing</div>
       </div>
-      <div class="cat-card r" onclick="filterCat('dog',null);scrollToProviders()">
+      <div class="cat-card r" onclick="filterCat('dog')">
         <span class="cat-icon" id="ci-dog"></span>
         <div class="cat-name">Dog Walking</div>
         <div class="cat-count">Daily walks, pet sitting</div>
       </div>
-      <div class="cat-card r rd1" onclick="filterCat('beauty',null);scrollToProviders()">
+      <div class="cat-card r rd1" onclick="filterCat('beauty')">
         <span class="cat-icon" id="ci-beauty"></span>
         <div class="cat-name">Hair & Beauty</div>
         <div class="cat-count">Braids, wigs, nails, lashes</div>
       </div>
-      <div class="cat-card r rd2" onclick="filterCat('tech',null);scrollToProviders()">
+      <div class="cat-card r rd2" onclick="filterCat('tech')">
         <span class="cat-icon" id="ci-tech"></span>
         <div class="cat-name">Tech Help</div>
         <div class="cat-count">Setup, repairs, WiFi, printing</div>
       </div>
-      <div class="cat-card r" onclick="filterCat('delivery',null);scrollToProviders()">
+      <div class="cat-card r" onclick="filterCat('delivery')">
         <span class="cat-icon" id="ci-delivery"></span>
         <div class="cat-name">Delivery & Pickup</div>
         <div class="cat-count">Furniture, appliances, IKEA</div>
@@ -1327,10 +1316,10 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
     </div>
     <div class="fcol">
       <h4>For customers</h4>
-      <a href="#" onclick="switchView('customer');setTimeout(()=>{filterCat('runner',null);scrollToProviders()},100);return false;">Runner services</a>
-      <a href="#" onclick="switchView('customer');setTimeout(()=>{filterCat('cleaning',null);scrollToProviders()},100);return false;">Cleaning</a>
-      <a href="#" onclick="switchView('customer');setTimeout(()=>{filterCat('handyman',null);scrollToProviders()},100);return false;">Handyman</a>
-      <a href="#" onclick="switchView('customer');setTimeout(()=>{filterCat('beauty',null);scrollToProviders()},100);return false;">Beauty</a>
+      <a href="#" onclick="switchView('customer');setTimeout(()=>filterCat('runner'),100);return false;">Runner services</a>
+      <a href="#" onclick="switchView('customer');setTimeout(()=>filterCat('cleaning'),100);return false;">Cleaning</a>
+      <a href="#" onclick="switchView('customer');setTimeout(()=>filterCat('handyman'),100);return false;">Handyman</a>
+      <a href="#" onclick="switchView('customer');setTimeout(()=>filterCat('beauty'),100);return false;">Beauty</a>
       <a href="#" onclick="switchView('customer','payment');return false;">Payment</a>
       <a href="#" onclick="switchView('customer','faq-c');return false;">FAQ</a>
     </div>
@@ -1428,7 +1417,6 @@ const providers = [
   },
 ];
 
-let activeCategory = '';
 
 function renderProviders(list) {
   const grid = document.getElementById('providersGrid');
@@ -1463,31 +1451,31 @@ function renderProviders(list) {
 
 function filterProviders() {
   const q = document.getElementById('searchInput').value.toLowerCase();
-  const filtered = providers.filter(p =>
-    (!activeCategory || p.category === activeCategory) &&
-    (!q || p.role.toLowerCase().includes(q) ||
-     p.bio.toLowerCase().includes(q) || p.services.some(s=>s.toLowerCase().includes(q)))
-  );
-  renderProviders(filtered);
-  if (q || activeCategory) scrollToProviders();
+  const cat = document.getElementById('catFilter').value;
+  const hasQuery = q || cat;
+  const section = document.getElementById('servicesSection');
+  if (hasQuery) {
+    const filtered = providers.filter(p =>
+      (!cat || p.category === cat) &&
+      (!q || p.role.toLowerCase().includes(q) ||
+       p.bio.toLowerCase().includes(q) || p.services.some(s=>s.toLowerCase().includes(q)))
+    );
+    renderProviders(filtered);
+    section.style.display = '';
+    scrollToProviders();
+  } else {
+    section.style.display = 'none';
+  }
 }
 
-function filterCat(cat, el) {
-  activeCategory = cat;
+function filterCat(cat) {
   document.getElementById('catFilter').value = cat;
-  document.querySelectorAll('.cat').forEach(c=>c.classList.remove('active'));
-  if (el) {
-    el.classList.add('active');
-  } else {
-    const match = document.querySelector('.cat[data-cat="'+cat+'"]');
-    if (match) match.classList.add('active');
-  }
   filterProviders();
 }
 
 function scrollToProviders() {
-  const grid = document.getElementById('providersGrid');
-  if (grid) grid.scrollIntoView({behavior:'smooth',block:'start'});
+  const el = document.getElementById('servicesSection');
+  if (el) el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function openModal(id) {
@@ -1891,8 +1879,6 @@ function toggleMobileMenu(){
 function closeMobileMenu(){
   document.querySelector('.nav-links').classList.remove('mobile-open');
 }
-
-renderProviders(providers);
 
 // Inject SVG icons into static category cards and search icon
 ['runner','cleaning','handyman','dog','beauty','tech','delivery','plus'].forEach(k => {
