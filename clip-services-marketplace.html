@@ -112,7 +112,6 @@ h2.stitle em{font-style:italic;color:var(--cyan);}
 .search-hero input{background:none;border:none;outline:none;color:var(--white);font-size:15px;font-family:'DM Sans',sans-serif;flex:1;}
 .search-hero input::placeholder{color:var(--faint);}
 .search-hero select{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:8px 12px;border-radius:4px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;cursor:pointer;}
-.search-btn{background:var(--cyan);color:var(--navy);border:none;padding:10px 20px;border-radius:4px;font-weight:500;font-size:13px;cursor:pointer;white-space:nowrap;font-family:'DM Sans',sans-serif;}
 
 /* CATEGORY PILLS */
 .cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:56px;}
@@ -389,7 +388,7 @@ input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(0,200,240,.12)
 .booking-submit-wrap{position:sticky;bottom:0;background:var(--card);padding:16px 0 0;margin:0 -16px;padding-left:16px;padding-right:16px;z-index:5;border-top:1px solid var(--border);margin-top:auto;}
 
 /* Improved touch targets */
-.btn-p,.btn-s,.btn-ghost,.book-btn,.pwa-bar-btn,.search-btn,.nav-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;}
+.btn-p,.btn-s,.btn-ghost,.book-btn,.pwa-bar-btn,.nav-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;}
 .faq-q{min-height:48px;}
 .char-tag{min-height:44px;}
 .rate-opt{min-height:48px;}
@@ -416,7 +415,6 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
   .search-hero{flex-wrap:wrap;padding:16px;gap:10px;}
   .search-hero input{min-width:100%;order:1;}
   .search-hero select{flex:1;min-width:0;order:2;}
-  .search-btn{order:3;width:100%;}
   .search-icon{order:0;}
   .how-grid,.provider-how{grid-template-columns:1fr 1fr;}
   .benefits-grid{grid-template-columns:1fr;}
@@ -460,7 +458,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
   .mode-tab{padding:12px 14px;font-size:13px;font-weight:600;}
   .c-hero h1{font-size:clamp(32px,10vw,44px);}
   .hero-badge{font-size:10px;padding:5px 10px;}
-  .search-hero select,.search-btn{width:100%;}
+  .search-hero select{width:100%;}
   .cats{gap:6px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;}
   .cats::-webkit-scrollbar{display:none;}
   .cat{padding:7px 12px;font-size:12px;white-space:nowrap;flex-shrink:0;}
@@ -591,7 +589,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
     <div class="search-hero r rd2">
       <span class="search-icon" id="si-search"></span>
       <input type="text" placeholder="What service do you need? e.g. grocery run, cleaning..." id="searchInput" oninput="filterProviders()">
-      <select id="catFilter" onchange="filterCat(this.value)">
+      <select id="catFilter" onchange="filterProviders()">
         <option value="">All categories</option>
         <option value="runner">Runner</option>
         <option value="cleaning">Cleaning</option>
@@ -602,7 +600,6 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
         <option value="beauty">Hair & Beauty</option>
         <option value="tech">Tech Help</option>
       </select>
-      <button class="search-btn" onclick="filterProviders();scrollToProviders()">Search</button>
     </div>
 
   </div>

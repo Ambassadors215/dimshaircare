@@ -1,5 +1,5 @@
-/* Clip Services — v3 */
-const CACHE = "clip-services-v3";
+/* Clip Services — v4 */
+const CACHE = "clip-services-v4";
 const OFFLINE_PAGE = "/offline.html";
 const PRECACHE = [
   "/clip-services-marketplace.html",
@@ -45,12 +45,17 @@ self.addEventListener("push", (event) => {
       badge: "/icons/icon-192.svg",
       data: { url: data.url || "/clip-services-marketplace.html" },
       vibrate: [100, 50, 100],
+      actions: [
+        { action: "open", title: "Open" },
+        { action: "dismiss", title: "Dismiss" },
+      ],
     })
   );
 });
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
+  if (event.action === "dismiss") return;
   const raw = event.notification.data?.url || "/clip-services-marketplace.html";
   const url = /^https?:\/\//i.test(raw) ? raw : new URL(raw, self.location.origin).href;
   event.waitUntil(
@@ -80,6 +85,19 @@ self.addEventListener("fetch", (event) => {
         .catch(() =>
           caches.match(req).then((c) => c || caches.match(OFFLINE_PAGE))
         )
+    );
+    return;
+  }
+
+  const isFont = url.hostname.includes("fonts.googleapis.com") || url.hostname.includes("fonts.gstatic.com");
+
+  if (isFont) {
+    event.respondWith(
+      caches.match(req).then((cached) => cached || fetch(req).then((res) => {
+        const copy = res.clone();
+        if (res.ok) caches.open(CACHE).then((c) => c.put(req, copy));
+        return res;
+      }))
     );
     return;
   }
