@@ -131,8 +131,9 @@ Dual-channel notifications (email + PWA push) cover the full booking lifecycle:
 | `KV_REDIS_URL` | Yes | Redis connection string (Vercel KV) |
 | `ADMIN_TOKEN` | Yes | Admin dashboard auth token (32+ chars recommended) |
 | `SITE_URL` | Yes | Production URL (e.g. `https://clips-service.vercel.app`) |
-| `STRIPE_SECRET_KEY` | Yes | Stripe API secret key |
-| `STRIPE_WEBHOOK_SECRET` | Yes | Stripe webhook signing secret |
+| `STRIPE_PUBLISHABLE_KEY` | Optional | Only if you add Stripe.js on the frontend (Checkout uses server secret only) |
+| `STRIPE_SECRET_KEY` | Yes | Stripe API secret key (`sk_test_…` or `sk_live_…`) |
+| `STRIPE_WEBHOOK_SECRET` | Yes | Webhook signing secret (`whsec_…`) from Stripe Dashboard or API |
 | `BREVO_SMTP_USER` | Yes | Brevo SMTP login |
 | `BREVO_SMTP_KEY` | Yes | Brevo SMTP API key |
 | `EMAIL_FROM` | Yes | Sender email address |

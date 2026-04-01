@@ -13,10 +13,11 @@
 - [ ] **Switch from test keys to live keys** in Vercel environment variables
   - `STRIPE_SECRET_KEY` → live key (`sk_live_...`)
   - Update `STRIPE_WEBHOOK_SECRET` for the production webhook endpoint
-- [ ] **Create a webhook endpoint** in Stripe Dashboard:
+- [ ] **Webhook endpoint** (do this in **Test** and again in **Live** when you go live):
   - URL: `https://clips-service.vercel.app/api/stripe-webhook`
   - Events: `checkout.session.completed`, `account.updated`
-  - Copy the signing secret → set as `STRIPE_WEBHOOK_SECRET` on Vercel
+  - Copy the signing secret (`whsec_…`) → set as `STRIPE_WEBHOOK_SECRET` on Vercel (must match the same mode as `STRIPE_SECRET_KEY`: test `whsec_` with `sk_test_`, live `whsec_` with `sk_live_`)
+  - A **test-mode** endpoint can be created via Stripe Dashboard → Developers → Webhooks → Add endpoint, or with the Stripe API
 - [ ] **Test a real payment** (£5 minimum) end-to-end on live keys
 - [ ] **Verify refund process** — confirm you can issue refunds from Stripe Dashboard
 - [ ] **Check Stripe Connect** — ensure provider onboarding flow works with live keys
