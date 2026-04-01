@@ -19,6 +19,6 @@ export default async function handler(req, res) {
     return endJson(res, 200, { ok: true, providers });
   } catch (e) {
     console.error("ADMIN_PROVIDERS_ERROR", e);
-    return endJson(res, 500, { ok: false, error: e.message });
+    return endJson(res, 500, { ok: false, error: "Failed to load providers" });
   }
 }

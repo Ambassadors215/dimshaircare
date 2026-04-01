@@ -29,6 +29,10 @@ function safeText(s, max = 5000) {
   return s.trim().slice(0, max);
 }
 
+function escapeHtml(s) {
+  return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
 function endJson(res, statusCode, obj) {
   res.statusCode = statusCode;
   res.setHeader("content-type", "application/json; charset=utf-8");
@@ -80,7 +84,7 @@ export default async function handler(req, res) {
           }));
 
         if (emailAttachments.length > 0) {
-          const kycLines = message.split("\n").filter((l) => l.includes(":")).map((l) => `<li>${l.replace(":", ":</strong>").replace(/^/, "<strong>")}</li>`).join("");
+          const kycLines = message.split("\n").filter((l) => l.includes(":")).map((l) => { const safe = escapeHtml(l); return `<li>${safe.replace(":", ":</strong>").replace(/^/, "<strong>")}</li>`; }).join("");
           void sendEmail({
             to: adminInbox(),
             subject: `[Clip Services] KYC Documents — ${name}`,

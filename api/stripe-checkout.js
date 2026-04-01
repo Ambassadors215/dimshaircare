@@ -113,8 +113,9 @@ export default async function handler(req, res) {
   const origin = siteOrigin();
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+  const VALID_PROVIDER_IDS = ["1","2","3","4","5","6","7","8"];
   let connectedAccountId = null;
-  if (providerId) {
+  if (providerId && VALID_PROVIDER_IDS.includes(String(providerId))) {
     try {
       const providerRecord = await getProvider(providerId);
       if (providerRecord?.stripeAccountId && providerRecord?.onboarded) {

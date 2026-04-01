@@ -66,7 +66,7 @@ async function handleStatus(req, res) {
     });
   } catch (e) {
     console.error("CONNECT_STATUS_ERROR", e);
-    return endJson(res, 500, { ok: false, error: e.message });
+    return endJson(res, 500, { ok: false, error: "Failed to check provider status" });
   }
 }
 
@@ -118,6 +118,6 @@ async function handleOnboard(req, res) {
     return endJson(res, 200, { ok: true, url: accountLink.url, accountId });
   } catch (e) {
     console.error("CONNECT_ONBOARD_ERROR", e);
-    return endJson(res, 500, { ok: false, error: e.message || "Failed to create Connect account" });
+    return endJson(res, 500, { ok: false, error: "Failed to create Connect account" });
   }
 }

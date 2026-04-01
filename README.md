@@ -4,24 +4,41 @@
 
 **Live:** [clips-service.vercel.app](https://clips-service.vercel.app)
 
+---
+
 ## Overview
 
-Clip Services is a full-stack Progressive Web App (PWA) that lets customers browse, book, and pay for local services — from cleaning and errands to dog walking and handyman tasks. Providers can apply to join the platform, and an admin dashboard manages bookings, contacts, and provider applications in real time.
+Clip Services is a full-stack Progressive Web App (PWA) that lets customers browse, book, and pay for local services — from cleaning and errands to dog walking, handyman tasks, and hair & beauty. Providers apply through a KYC-verified onboarding process, and a real-time admin dashboard manages bookings, applications, Stripe Connect payouts, and push notifications.
 
-Built as a solo end-to-end project covering product strategy, UX design, full-stack development, and deployment.
+Built as a solo end-to-end project covering product strategy, UX design, full-stack development, payment integration, and production deployment.
 
 ## Features
 
-- **Service marketplace** with category filtering, search, and detailed service cards
-- **Multi-step booking flow** with real-time validation, date/time pickers, and smart form UX
-- **Stripe Checkout** integration for secure card payments with webhook confirmation
-- **PWA** — installable on iOS and Android with offline support and custom install guides
-- **Push notifications** (Web Push via VAPID) for customers and admins
-- **Transactional email** via Brevo SMTP for booking confirmations, payment receipts, and status updates
-- **Admin dashboard** — view/search/filter bookings, update statuses, export CSV, manage contacts
-- **Provider application** workflow with email acknowledgement
-- **Responsive design** optimised for mobile-first with touch-friendly interactions
-- **Legal compliance** — Terms of Service, Privacy Policy, and Disclaimer pages
+### Customer Experience
+- **Service marketplace** — category filtering, instant search, detailed service cards with SVG icons
+- **Multi-step booking flow** — real-time validation, date/time pickers, phone auto-formatting, step progress indicator
+- **Stripe Checkout** — secure card payments with automatic 15% platform fee calculation
+- **Booking confirmations** — email receipt + push notification on payment
+- **PWA** — installable on iOS and Android with offline support, custom iOS install guide
+
+### Provider Experience
+- **Provider application** — comprehensive form with service selection, rate setting, availability
+- **KYC verification** — ID upload, selfie with ID, DBS status, right-to-work check, emergency contact
+- **Automated onboarding** — email confirmation to applicant + admin notification with attached documents
+- **Stripe Connect** — automated payment splitting (provider gets 85%, platform keeps 15%)
+
+### Admin Dashboard
+- **Dark-themed dashboard** — WADESK-inspired UI with stat cards, glowing borders, and responsive grid
+- **Booking management** — search, filter, status updates, CSV export
+- **Provider management** — Stripe Connect onboarding, status monitoring, link generation
+- **Push notifications** — real-time browser alerts for new bookings, payments, and applications
+
+### Security
+- **Security headers** — HSTS, X-Frame-Options, CSP, X-Content-Type-Options
+- **Input sanitisation** — HTML escaping, text truncation, email validation on all endpoints
+- **Constant-time auth** — timing-safe admin token comparison
+- **No secrets in code** — all credentials via Vercel environment variables
+- **Stripe webhook verification** — signature validation on all payment events
 
 ## Tech Stack
 
@@ -30,38 +47,47 @@ Built as a solo end-to-end project covering product strategy, UX design, full-st
 | Frontend | HTML, CSS, vanilla JavaScript (single-page architecture) |
 | Backend | Node.js serverless functions (Vercel) |
 | Database | Redis via Vercel KV (ioredis) |
-| Payments | Stripe Checkout + Webhooks |
+| Payments | Stripe Checkout + Connect + Webhooks |
 | Email | Brevo SMTP (nodemailer) |
 | Push | Web Push API (web-push + VAPID) |
 | Hosting | Vercel (auto-deploy from GitHub) |
-| PWA | Service Worker, Web App Manifest, offline fallback |
+| PWA | Service Worker v4, Web App Manifest, offline fallback |
 
 ## Project Structure
 
 ```
-├── clip-services-marketplace.html   # Main marketplace UI
+├── clip-services-marketplace.html   # Main marketplace UI (customer + provider views)
 ├── admin/index.html                 # Admin dashboard
 ├── api/                             # Serverless API routes
 │   ├── booking.js                   #   POST /api/booking
-│   ├── contact.js                   #   POST /api/contact
+│   ├── contact.js                   #   POST /api/contact (provider applications)
+│   ├── connect.js                   #   GET/POST /api/connect (Stripe Connect)
 │   ├── stripe-checkout.js           #   POST /api/stripe-checkout
 │   ├── stripe-webhook.js            #   POST /api/stripe-webhook
-│   ├── push-vapid.js                #   GET  /api/push-vapid
+│   ├── push-vapid.js                #   GET /api/push-vapid
 │   ├── push-subscribe.js            #   POST /api/push-subscribe
-│   └── admin/                       #   Admin CRUD endpoints
+│   └── admin/                       #   Admin endpoints (auth-protected)
+│       ├── _utils.js                #   Shared auth + helpers
+│       ├── bookings.js              #   GET /api/admin/bookings
+│       ├── contacts.js              #   GET /api/admin/contacts
+│       ├── providers.js             #   GET /api/admin/providers
+│       ├── update-booking.js        #   POST /api/admin/update-booking
+│       └── ping.js                  #   GET /api/admin/ping
 ├── lib/                             # Shared backend modules
 │   ├── email.js                     #   Brevo SMTP transport
-│   ├── push.js                      #   Web Push configuration
+│   ├── push.js                      #   Web Push (VAPID)
 │   ├── notify.js                    #   Notification orchestration
 │   └── kv-store.js                  #   Redis data layer
-├── sw.js                            # Service Worker
+├── sw.js                            # Service Worker (v4, font caching, push actions)
 ├── manifest.webmanifest             # PWA manifest
 ├── offline.html                     # Offline fallback page
+├── vercel.json                      # Vercel config (security headers, clean URLs)
 ├── terms.html                       # Terms of Service
 ├── privacy-policy.html              # Privacy Policy
 ├── disclaimer.html                  # Legal disclaimer
-├── clip-services-prd-v2.html        # Product Requirements Document
-└── clip-services-notifications.md   # Notification matrix
+├── SECURITY-STATUS-REPORT.md        # Security audit & status report
+├── LAUNCH-PLAN.md                   # Pre-launch checklist & launch plan
+└── .env.example                     # Environment variable template
 ```
 
 ## Notification System
@@ -74,7 +100,8 @@ Dual-channel notifications (email + PWA push) cover the full booking lifecycle:
 | Checkout started | Email + Push | Email + Push |
 | Payment confirmed | Email + Push | Email + Push |
 | Status change (confirmed/completed/cancelled) | Email + Push | — |
-| Provider application | Email | Email + Push |
+| Provider application submitted | Email | Email + Push |
+| Stripe Connect account updated | — | Email |
 
 ## Local Development
 
@@ -94,16 +121,39 @@ Dual-channel notifications (email + PWA push) cover the full booking lifecycle:
 
 1. Connect this repo to a Vercel project
 2. Add a **KV (Redis)** database under Vercel Storage
-3. Set environment variables as listed in `.env.example`
+3. Set all environment variables listed in `.env.example`
 4. Push to `main` — Vercel auto-deploys
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `KV_REDIS_URL` | Yes | Redis connection string (Vercel KV) |
+| `ADMIN_TOKEN` | Yes | Admin dashboard auth token (32+ chars recommended) |
+| `SITE_URL` | Yes | Production URL (e.g. `https://clips-service.vercel.app`) |
+| `STRIPE_SECRET_KEY` | Yes | Stripe API secret key |
+| `STRIPE_WEBHOOK_SECRET` | Yes | Stripe webhook signing secret |
+| `BREVO_SMTP_USER` | Yes | Brevo SMTP login |
+| `BREVO_SMTP_KEY` | Yes | Brevo SMTP API key |
+| `EMAIL_FROM` | Yes | Sender email address |
+| `ADMIN_EMAIL` | Yes | Admin notification inbox |
+| `VAPID_PUBLIC_KEY` | Yes | Web Push VAPID public key |
+| `VAPID_PRIVATE_KEY` | Yes | Web Push VAPID private key |
+| `VAPID_CONTACT_EMAIL` | Yes | VAPID contact email |
 
 ## Project Documents
 
-- **Product Requirements Document** — [`clip-services-prd-v2.html`](clip-services-prd-v2.html) covers market analysis, user personas, feature specifications, go-to-market strategy, and strategic recommendations
-- **Notification Matrix** — [`clip-services-notifications.md`](clip-services-notifications.md) documents every notification trigger, channel, and recipient
+- **Security & Status Report** — [`SECURITY-STATUS-REPORT.md`](SECURITY-STATUS-REPORT.md)
+- **Launch Plan** — [`LAUNCH-PLAN.md`](LAUNCH-PLAN.md)
+- **Product Requirements Document** — [`clip-services-prd-v2.html`](clip-services-prd-v2.html)
+- **Notification Matrix** — [`clip-services-notifications.md`](clip-services-notifications.md)
 
 ## Author
 
 **Sonia Chidinma Otikpa**
 
 Built as a demonstration of end-to-end product management and full-stack development — from PRD to production deployment.
+
+## License
+
+All rights reserved. This project is proprietary.
