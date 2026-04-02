@@ -1077,21 +1077,6 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
             </div>
           </div>
 
-          <div class="form-group form-full">
-            <label>Upload a selfie holding your ID</label>
-            <div class="upload-zone" id="uzSelfie">
-              <input type="file" id="af-selfie-file" accept="image/*" aria-label="Upload selfie with ID">
-              <div class="uz-icon">🤳</div>
-              <div class="uz-label">Tap or drag to upload your selfie</div>
-              <div class="uz-hint">A clear photo of you holding the same ID. Face and ID must be visible.</div>
-            </div>
-            <div class="upload-preview" id="previewSelfie">
-              <img id="previewSelfieImg" alt="Selfie preview">
-              <button type="button" class="up-remove" onclick="clearUpload('Selfie')">&times;</button>
-              <div class="up-name" id="previewSelfieName"></div>
-            </div>
-          </div>
-
           <div class="form-group">
             <label>Right to work in the UK</label>
             <select id="af-right-to-work" required>
@@ -1717,7 +1702,6 @@ function validateApplyForm() {
   const emergencyName = document.getElementById('af-emergency-name').value.trim();
   const emergencyPhone = document.getElementById('af-emergency-phone').value.replace(/\D/g, '');
   const idFile = document.getElementById('af-id-file').files[0];
-  const selfieFile = document.getElementById('af-selfie-file').files[0];
   const consent = document.getElementById('af-consent').checked;
 
   const fields = [
@@ -1740,17 +1724,15 @@ function validateApplyForm() {
 
   if (!idFile) { ok = false; document.getElementById('uzId')?.classList.add('user-invalid'); }
   else { document.getElementById('uzId')?.classList.remove('user-invalid'); }
-  if (!selfieFile) { ok = false; document.getElementById('uzSelfie')?.classList.add('user-invalid'); }
-  else { document.getElementById('uzSelfie')?.classList.remove('user-invalid'); }
 
   if (!consent) ok = false;
   if (!ok) {
     const first = document.querySelector('#applyForm .user-invalid');
     if (first) { first.scrollIntoView({ block: 'center', behavior: 'smooth' }); setTimeout(() => first.focus(), 350); }
-    if (!consent && fields.every(f => f.valid) && idFile && selfieFile) {
+    if (!consent && fields.every(f => f.valid) && idFile) {
       showToast('Please agree to the Terms, Privacy Policy, and Disclaimer.');
-    } else if (!idFile || !selfieFile) {
-      showToast('Please upload your ID photo and a selfie holding your ID.');
+    } else if (!idFile) {
+      showToast('Please upload a clear photo of your ID (front).');
     } else if (dob && (new Date().getFullYear() - new Date(dob).getFullYear()) < 18) {
       showToast('You must be 18 or over to apply.');
     } else {
@@ -1809,17 +1791,14 @@ async function handleApply(e) {
     `Right to Work: ${rtwLabels[rightToWork] || rightToWork}`,
     `DBS Status: ${dbsLabels[dbs] || dbs}`,
     `Emergency Contact: ${emergencyName} — ${emergencyPhone}`,
-    `ID Document: attached`,
-    `Selfie with ID: attached`
+    `ID Document: attached`
   ].join('\n');
 
   btn.textContent = 'Compressing documents…';
   let attachments = [];
   try {
     const idFile = document.getElementById('af-id-file').files[0];
-    const selfieFile = document.getElementById('af-selfie-file').files[0];
     if (idFile) attachments.push(await compressImage(idFile));
-    if (selfieFile) attachments.push(await compressImage(selfieFile));
   } catch { /* proceed without attachments */ }
 
   btn.textContent = 'Submitting application…';
@@ -1827,7 +1806,7 @@ async function handleApply(e) {
     const res = await fetch('/api/contact', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ name, email, message, attachments })
+      body: JSON.stringify({ name, email, phone, message, applicationType: 'provider', attachments })
     });
     const data = await res.json();
     if (data.ok) {
@@ -1836,7 +1815,6 @@ async function handleApply(e) {
       document.querySelectorAll('.char-tag').forEach(t => t.classList.remove('selected'));
       document.querySelectorAll('.rate-opt').forEach(r => r.classList.remove('active'));
       clearUpload('Id');
-      clearUpload('Selfie');
     } else {
       showToast('⚠ ' + (data.error || 'Something went wrong. Please try again.'));
     }
@@ -2014,7 +1992,6 @@ document.getElementById('bf-subtotal')?.addEventListener('input', updateBookingP
   if (afEmergencyPhone) formatUKPhone(afEmergencyPhone);
 
   setupUploadZone('af-id-file', 'Id');
-  setupUploadZone('af-selfie-file', 'Selfie');
 
   document.querySelectorAll('#applyForm input, #applyForm textarea, #applyForm select').forEach(function (el) {
     el.addEventListener('blur', function () {

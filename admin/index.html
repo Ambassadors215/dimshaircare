@@ -277,11 +277,16 @@
               </table>
             </div>
 
-            <div id="contactsView" class="hide" style="overflow-x:auto;">
+            <div id="contactsView" class="hide">
+              <p class="muted" style="margin:0;padding:14px 20px;font-size:12px;line-height:1.55;border-bottom:1px solid var(--border);background:rgba(0,200,240,.04);">
+                <strong style="color:var(--cyan)">Provider applications</strong> are saved here and in Redis (same database as bookings). Open the <strong>Applications</strong> tab and click <strong>Refresh</strong> to load the latest. You should also get an email at the address set as <span class="mono">ADMIN_EMAIL</span> on Vercel (Brevo must be configured). <strong>WhatsApp is not sent automatically</strong> for applications — use <em>Open WhatsApp</em> beside the applicant’s number.
+              </p>
+              <div style="overflow-x:auto;">
               <table>
-                <thead><tr><th>Date</th><th>Applicant</th><th>Details</th></tr></thead>
+                <thead><tr><th>Date</th><th>Applicant</th><th>Full application</th></tr></thead>
                 <tbody id="contactsTbody"></tbody>
               </table>
+              </div>
             </div>
 
             <div id="providersView" class="hide" style="padding:20px;">
@@ -389,6 +394,21 @@
         return list.filter((x) => JSON.stringify(x).toLowerCase().includes(q));
       }
 
+      function escHtml(s) {
+        return String(s ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function waLink(phone) {
+        let d = String(phone || "").replace(/\D/g, "");
+        if (d.startsWith("0")) d = "44" + d.slice(1);
+        if (d.length < 10) return "";
+        return "https://wa.me/" + d;
+      }
+
       function updateDashStats() {
         el.statBookings.textContent = state.bookings.length;
         el.statContacts.textContent = state.contacts.length;
@@ -441,13 +461,23 @@
 
         const contacts = filterRows(state.contacts);
         el.contactsTbody.innerHTML = contacts.length === 0
-          ? '<tr><td colspan="3" style="text-align:center;padding:40px;color:var(--faint)">No applications yet</td></tr>'
-          : contacts.map((c) => `
+          ? '<tr><td colspan="3" style="text-align:center;padding:40px;color:var(--faint)">No applications yet. If you expected rows here, click <strong>Refresh</strong> and confirm Vercel <span class="mono">KV_PREFIX</span> matches the key your site uses (default <span class="mono">cs</span>).</td></tr>'
+          : contacts.map((c) => {
+            const phone = c.phone || "";
+            const wa = waLink(phone);
+            return `
               <tr>
                 <td><div>${timeAgo(c.createdAt)}</div><div class="muted" style="font-size:11px">${c.createdAt ? new Date(c.createdAt).toLocaleDateString() : ""}</div></td>
-                <td><div style="font-weight:500">${c.name || "—"}</div><div class="muted" style="font-size:11px">${c.email || ""}</div></td>
-                <td style="white-space:pre-wrap;max-width:420px;font-size:12px;line-height:1.6;color:var(--muted-text)">${c.message || ""}</td>
-              </tr>`).join("");
+                <td style="min-width:160px">
+                  <div style="font-weight:500">${escHtml(c.name || "—")}</div>
+                  <div class="muted" style="font-size:11px">${c.email ? `<a href="mailto:${escHtml(c.email)}" style="color:var(--cyan)">${escHtml(c.email)}</a>` : "—"}</div>
+                  ${phone ? `<div class="muted" style="font-size:11px;margin-top:6px">${escHtml(phone)} ${wa ? `<a href="${escHtml(wa)}" target="_blank" rel="noopener" style="color:var(--cyan);white-space:nowrap">· WhatsApp</a>` : ""}</div>` : ""}
+                </td>
+                <td style="max-width:min(560px,92vw);vertical-align:top">
+                  <pre style="margin:0;font-family:ui-monospace,monospace;font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:360px;overflow:auto;color:var(--muted-text);background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--border)">${escHtml(c.message || "")}</pre>
+                </td>
+              </tr>`;
+          }).join("");
 
         const provEntries = Object.entries(state.providers);
         el.providersTbody.innerHTML = provEntries.length === 0
@@ -522,10 +552,12 @@
           const rows = [["ref","createdAt","status","service","price","dur","date","time","firstName","lastName","phone","email","notes"],
             ...filterRows(state.bookings).map((b) => [b.ref,b.createdAt,b.status||"new",b.service,b.price,b.dur,b.date,b.time,b.firstName,b.lastName,b.phone,b.email,b.notes])];
           downloadCsv(`bookings-${new Date().toISOString().slice(0,10)}.csv`, rows);
-        } else {
-          const rows = [["createdAt","name","email","details"],
-            ...filterRows(state.contacts).map((c) => [c.createdAt,c.name,c.email,c.message])];
+        } else if (state.tab === "contacts") {
+          const rows = [["createdAt","name","email","phone","details"],
+            ...filterRows(state.contacts).map((c) => [c.createdAt,c.name,c.email,c.phone || "",c.message])];
           downloadCsv(`applications-${new Date().toISOString().slice(0,10)}.csv`, rows);
+        } else {
+          setStatus(el.dataStatus, "Switch to Bookings or Applications to export CSV.", "err");
         }
       });
 

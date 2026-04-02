@@ -165,7 +165,8 @@ const server = http.createServer(async (req, res) => {
 
       const name = safeText(payload?.name, 120);
       const email = safeText(payload?.email, 120);
-      const message = safeText(payload?.message, 3000);
+      const message = safeText(payload?.message, 120000);
+      const phone = safeText(payload?.phone, 40);
 
       if (!name) return json(res, 400, { ok: false, error: "Missing name" });
       if (!isValidEmail(email)) return json(res, 400, { ok: false, error: "Invalid email" });
@@ -173,6 +174,7 @@ const server = http.createServer(async (req, res) => {
 
       const createdAt = new Date().toISOString();
       const record = { createdAt, name, email, message };
+      if (phone) record.phone = phone;
       await appendJsonArray(CONTACT_FILE, record);
       return json(res, 200, { ok: true });
     }

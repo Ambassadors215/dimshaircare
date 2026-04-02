@@ -23,7 +23,7 @@ Built as a solo end-to-end project covering product strategy, UX design, full-st
 
 ### Provider Experience
 - **Provider application** — comprehensive form with service selection, rate setting, availability
-- **KYC verification** — ID upload, selfie with ID, DBS status, right-to-work check, emergency contact
+- **KYC verification** — ID document upload, DBS status, right-to-work check, emergency contact
 - **Automated onboarding** — email confirmation to applicant + admin notification with attached documents
 - **Stripe Connect** — automated payment splitting (provider gets 85%, platform keeps 15%)
 
@@ -123,6 +123,10 @@ Dual-channel notifications (email + PWA push) cover the full booking lifecycle:
 2. Add a **KV (Redis)** database under Vercel Storage
 3. Set all environment variables listed in `.env.example`
 4. Push to `main` — Vercel auto-deploys
+
+### Troubleshooting: applications not in admin
+
+Provider applications are stored in Redis under the key `{KV_PREFIX}:contacts` (default prefix `cs`). The admin **Applications** tab loads them from the same database — click **Refresh**. If the list is empty but submissions succeed, ensure **`KV_PREFIX` on Vercel matches** what was used when data was written (older deployments may have used `dhc`; set `KV_PREFIX=dhc` temporarily to see legacy rows). Confirm **Brevo** (`BREVO_SMTP_*`, `EMAIL_FROM`, `ADMIN_EMAIL`) is set for admin emails; WhatsApp is **not** sent automatically for applications — use the **WhatsApp** link next to the applicant’s phone in the admin table.
 
 ## Environment Variables
 

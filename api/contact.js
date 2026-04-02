@@ -29,6 +29,8 @@ function safeText(s, max = 5000) {
   return s.trim().slice(0, max);
 }
 
+const MAX_MESSAGE = 120000;
+
 function escapeHtml(s) {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
@@ -53,7 +55,9 @@ export default async function handler(req, res) {
 
   const name = safeText(payload?.name, 120);
   const email = safeText(payload?.email, 120);
-  const message = safeText(payload?.message, 8000);
+  const message = safeText(payload?.message, MAX_MESSAGE);
+  const phone = safeText(payload?.phone, 40);
+  const applicationType = safeText(payload?.applicationType, 40);
   const attachments = Array.isArray(payload?.attachments) ? payload.attachments : [];
 
   if (!name) return endJson(res, 400, { ok: false, error: "Missing name" });
@@ -62,6 +66,8 @@ export default async function handler(req, res) {
 
   const createdAt = new Date().toISOString();
   const record = { createdAt, name, email, message };
+  if (phone) record.phone = phone;
+  if (applicationType) record.applicationType = applicationType;
 
   try {
     await addContact(record);
