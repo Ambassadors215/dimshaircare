@@ -56,8 +56,11 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 /* ===== NAV ===== */
 nav{position:fixed;top:38px;left:0;right:0;z-index:200;padding:20px 56px;display:flex;align-items:center;justify-content:space-between;transition:all 0.35s;}
 nav.scrolled{background:rgba(10,14,26,0.94);border-bottom:1px solid var(--border);backdrop-filter:blur(24px);padding:16px 56px;top:0;}
-.logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.02em;text-decoration:none;color:var(--white);display:flex;align-items:center;gap:10px;}
+.logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.02em;text-decoration:none;color:var(--white);display:flex;align-items:center;gap:10px;line-height:0;}
 .logo-c{color:var(--cyan);}
+.logo-img{display:block;height:46px;width:auto;max-width:min(240px,52vw);object-fit:contain;border-radius:10px;flex-shrink:0;}
+nav.scrolled .logo-img{height:40px;max-width:min(220px,50vw);}
+.footer-brand .logo-img{height:56px;max-width:280px;margin-bottom:12px;}
 .pulse{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s ease infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
 .nav-links{display:flex;align-items:center;gap:28px;}
@@ -417,6 +420,8 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
   .nav-links.mobile-open{display:flex!important;flex-direction:column;position:fixed;top:160px;right:20px;background:var(--card);border:1px solid var(--border);padding:20px;border-radius:var(--radius);gap:16px;z-index:300;box-shadow:0 16px 48px rgba(0,0,0,.4),var(--glow);}
   .nav-links.mobile-open a{padding:10px 0;font-size:15px;}
   .nav-toggle{display:block;min-width:44px;min-height:44px;}
+  .logo-img{height:38px;max-width:min(200px,46vw);}
+  nav.scrolled .logo-img{height:34px;max-width:min(180px,44vw);}
   .mode-bar{padding:0 20px;}
   .mode-tab{padding:14px 18px;font-size:14px;font-weight:600;}
   section{padding:64px 20px;}
@@ -465,6 +470,9 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
 
 /* ===== SMALL PHONE (max 480px) ===== */
 @media(max-width:480px){
+  .logo-img{height:32px;max-width:min(170px,70vw);}
+  nav.scrolled .logo-img{height:30px;}
+  .footer-brand .logo-img{height:48px;max-width:100%;}
   .mode-tab{padding:12px 14px;font-size:13px;font-weight:600;}
   .c-hero h1{font-size:clamp(32px,10vw,44px);}
   .hero-badge{font-size:10px;padding:5px 10px;}
@@ -566,7 +574,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
 
 <!-- NAV -->
 <nav id="nav">
-  <a href="#" class="logo"><span class="logo-c">Clip</span>Services <span class="pulse"></span></a>
+  <a href="#" class="logo" onclick="switchView('customer');window.scrollTo({top:0,behavior:'smooth'});return false;" aria-label="Clip Services — Home"><img class="logo-img" src="/icons/clip-logo-full.svg" alt="Clip Services — Manchester" width="400" height="120" decoding="async" fetchpriority="high" /></a>
   <div class="nav-links">
     <a href="#" onclick="switchView('customer');return false;">Find a Service</a>
     <a href="#" onclick="switchView('provider');return false;">Offer Your Service</a>
@@ -1309,7 +1317,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <div class="logo" style="font-size:22px;"><span class="logo-c">Clip</span>Services <span class="pulse"></span></div>
+      <img class="logo-img" src="/icons/clip-logo-full.svg" alt="Clip Services — Manchester" width="400" height="120" decoding="async" loading="lazy" />
       <p>Manchester's local service marketplace — connecting residents and businesses with verified local providers in Salford Quays.</p>
     </div>
     <div class="fcol">
