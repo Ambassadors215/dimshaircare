@@ -1,4 +1,4 @@
-import { addBooking } from "../lib/kv-store.js";
+import { addBooking, addNegotiation, patchBooking } from "../lib/kv-store.js";
 import { notifyBookingSubmittedAdmin, notifyBookingSubmittedCustomer } from "../lib/notify.js";
 
 function readBody(req, limitBytes = 1024 * 1024) {
@@ -89,11 +89,32 @@ export default async function handler(req, res) {
 
   try {
     await addBooking(record);
+
+    const negId = `NEG-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    const neg = {
+      id: negId,
+      bookingRef: ref,
+      service,
+      customerEmail: email.toLowerCase(),
+      customerName: `${firstName} ${lastName}`,
+      customerPhone: phone,
+      providerEmail: "",
+      providerName: record.notes?.match(/Provider:\s*(.+)/)?.[1] || service,
+      providerId: safeText(payload?.providerId, 20),
+      status: "pending",
+      messages: [{ from: "customer", type: "request", text: notes || `Service request: ${service}`, ts: createdAt }],
+      agreedPrice: null,
+      createdAt,
+      updatedAt: createdAt,
+    };
+    await addNegotiation(neg);
+    await patchBooking(ref, { negotiationId: negId, status: "negotiating" });
+
     void Promise.allSettled([
       notifyBookingSubmittedCustomer(record),
       notifyBookingSubmittedAdmin(record),
     ]);
-    return endJson(res, 200, { ok: true, ref });
+    return endJson(res, 200, { ok: true, ref, negotiationId: negId });
   } catch (e) {
     console.error("BOOKING_KV_ERROR", e);
     return endJson(res, 500, { ok: false, error: "Failed to save booking" });

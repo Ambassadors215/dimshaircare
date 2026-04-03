@@ -58,9 +58,9 @@ nav{position:fixed;top:38px;left:0;right:0;z-index:200;padding:20px 56px;display
 nav.scrolled{background:rgba(10,14,26,0.94);border-bottom:1px solid var(--border);backdrop-filter:blur(24px);padding:16px 56px;top:0;}
 .logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.02em;text-decoration:none;color:var(--white);display:flex;align-items:center;gap:10px;line-height:0;}
 .logo-c{color:var(--cyan);}
-.logo-img{display:block;height:46px;width:auto;max-width:min(240px,52vw);object-fit:contain;border-radius:10px;flex-shrink:0;}
-nav.scrolled .logo-img{height:40px;max-width:min(220px,50vw);}
-.footer-brand .logo-img{height:56px;max-width:280px;margin-bottom:12px;}
+.logo-img{display:block;height:58px;width:auto;max-width:min(280px,58vw);object-fit:contain;border-radius:10px;flex-shrink:0;}
+nav.scrolled .logo-img{height:50px;max-width:min(260px,55vw);}
+.footer-brand .logo-img{height:68px;max-width:320px;margin-bottom:14px;}
 .pulse{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s ease infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
 .nav-links{display:flex;align-items:center;gap:28px;}
@@ -125,6 +125,22 @@ h2.stitle em{font-style:italic;color:var(--cyan);}
 .cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:56px;}
 .cat{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:10px 20px;border-radius:var(--radius-pill);font-size:14px;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:8px;box-shadow:var(--glow);}
 .cat:hover,.cat.active{background:rgba(0,200,240,.1);border-color:rgba(0,200,240,.35);color:var(--cyan);box-shadow:var(--glow-hover);}
+
+/* FEATURED SERVICE CARDS */
+.featured-services{padding:80px 56px;position:relative;z-index:1;}
+.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:32px;}
+.svc-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;box-shadow:var(--glow);display:flex;flex-direction:column;align-items:center;aspect-ratio:1/1;justify-content:center;}
+.svc-card:hover{border-color:rgba(0,200,240,.35);transform:translateY(-4px);box-shadow:var(--glow-hover),0 16px 50px rgba(0,0,0,.25);}
+.svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity .3s;}
+.svc-card:hover::before{opacity:.6;}
+.svc-card-icon{width:64px;height:64px;border-radius:18px;background:rgba(0,200,240,.08);border:1px solid rgba(0,200,240,.15);display:flex;align-items:center;justify-content:center;margin-bottom:16px;transition:all .3s;}
+.svc-card:hover .svc-card-icon{background:rgba(0,200,240,.14);border-color:rgba(0,200,240,.3);}
+.svc-card-icon svg{width:32px;height:32px;}
+.svc-card-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:6px;}
+.svc-card-count{font-size:12px;color:var(--faint);margin-bottom:14px;}
+.svc-card-tags{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;}
+.svc-card-tag{font-size:10px;background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:6px;color:var(--muted);}
+.svc-card-badge{position:absolute;top:12px;right:12px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-pill);font-weight:600;background:rgba(245,158,11,.12);color:#FCD34D;border:1px solid rgba(245,158,11,.2);}
 
 /* PROVIDER CARDS */
 .providers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2px;}
@@ -414,14 +430,19 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
 
 /* ===== TABLET (max 900px) ===== */
 @media(max-width:900px){
+  .featured-services{padding:60px 20px;}
+  .svc-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+  .svc-card{aspect-ratio:auto;padding:20px 16px;}
+  .svc-card-icon{width:52px;height:52px;margin-bottom:12px;}
+  .svc-card-name{font-size:14px;}
   nav{padding:14px 20px;}
   nav.scrolled{padding:10px 20px;}
   .nav-links{display:none!important;}
   .nav-links.mobile-open{display:flex!important;flex-direction:column;position:fixed;top:160px;right:20px;background:var(--card);border:1px solid var(--border);padding:20px;border-radius:var(--radius);gap:16px;z-index:300;box-shadow:0 16px 48px rgba(0,0,0,.4),var(--glow);}
   .nav-links.mobile-open a{padding:10px 0;font-size:15px;}
   .nav-toggle{display:block;min-width:44px;min-height:44px;}
-  .logo-img{height:38px;max-width:min(200px,46vw);}
-  nav.scrolled .logo-img{height:34px;max-width:min(180px,44vw);}
+  .logo-img{height:48px;max-width:min(240px,52vw);}
+  nav.scrolled .logo-img{height:42px;max-width:min(220px,50vw);}
   .mode-bar{padding:0 20px;}
   .mode-tab{padding:14px 18px;font-size:14px;font-weight:600;}
   section{padding:64px 20px;}
@@ -470,9 +491,16 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
 
 /* ===== SMALL PHONE (max 480px) ===== */
 @media(max-width:480px){
-  .logo-img{height:32px;max-width:min(170px,70vw);}
-  nav.scrolled .logo-img{height:30px;}
-  .footer-brand .logo-img{height:48px;max-width:100%;}
+  .svc-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+  .svc-card{padding:16px 12px;}
+  .svc-card-icon{width:44px;height:44px;margin-bottom:10px;}
+  .svc-card-name{font-size:13px;}
+  .svc-card-count{font-size:11px;}
+  .svc-card-tags{display:none;}
+  .featured-services{padding:40px 16px;}
+  .logo-img{height:42px;max-width:min(200px,70vw);}
+  nav.scrolled .logo-img{height:36px;}
+  .footer-brand .logo-img{height:56px;max-width:100%;}
   .mode-tab{padding:12px 14px;font-size:13px;font-weight:600;}
   .c-hero h1{font-size:clamp(32px,10vw,44px);}
   .hero-badge{font-size:10px;padding:5px 10px;}
@@ -610,7 +638,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
 
     <div class="search-hero r rd2">
       <span class="search-icon" id="si-search"></span>
-      <input type="text" placeholder="What service do you need? e.g. grocery run, cleaning..." id="searchInput" oninput="filterProviders()">
+      <input type="text" placeholder="Search services… e.g. cleaning, braids, grocery run" id="searchInput" oninput="filterProviders()">
       <select id="catFilter" onchange="filterProviders()">
         <option value="">All categories</option>
         <option value="runner">Runner</option>
@@ -624,19 +652,20 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       </select>
     </div>
 
+    <div style="display:flex;gap:12px;flex-wrap:wrap;" class="r rd3">
+      <a href="/user/" class="btn-s" style="font-size:13px;">📋 My Bookings</a>
+    </div>
+
   </div>
 
-  <!-- SERVICES LISTING -->
-  <section id="servicesSection" style="background:var(--navy2);border-top:1px solid var(--border);padding-top:64px;display:none;">
-    <div class="eyebrow">Search results</div>
-    <h2 class="stitle r v">Services matching <em>your search</em></h2>
-    <p class="sdesc r v">Pick a service, tell us what you need, and we'll match you with a verified provider.</p>
-    <div class="providers-grid" id="providersGrid"></div>
-    <div style="text-align:center;margin-top:40px;display:flex;flex-direction:column;align-items:center;gap:14px;">
-      <button class="btn-s" onclick="switchView('provider')">Are you a service provider? Join the platform →</button>
-      <p style="color:var(--faint);font-size:12px;max-width:400px;">We're actively onboarding providers. When they join, they'll set their own prices, availability, and service duration.</p>
-    </div>
-  </section>
+  <!-- FEATURED SERVICES -->
+  <div class="featured-services" id="servicesSection">
+    <div class="eyebrow">Our services</div>
+    <h2 class="stitle r">Browse <em>services</em></h2>
+    <p class="sdesc r">Select a service to request it. Prices are agreed directly between you and the provider.</p>
+    <div class="svc-grid" id="svcGrid"></div>
+    <div class="providers-grid" id="providersGrid" style="margin-top:32px;"></div>
+  </div>
 
   <!-- MARQUEE -->
   <div class="mq-wrap">
@@ -697,16 +726,16 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
 
   <!-- PAYMENT METHODS -->
   <section class="divbg" id="payment">
-    <div class="eyebrow">Transparent pricing</div>
-    <h2 class="stitle r">How <em>payment</em> works</h2>
-    <p class="sdesc r">No hidden fees. No surprise charges. You see exactly what you pay and how it breaks down before confirming any booking.</p>
+    <div class="eyebrow">Secure payments</div>
+    <h2 class="stitle r">How <em>payments</em> work</h2>
+    <p class="sdesc r">All payments are handled securely through Stripe. You and your provider agree on a price, then you pay securely by card.</p>
 
     <div class="pay-methods r">
       <div class="pay-card recommended">
         <span class="pay-icon">💳</span>
         <div class="pay-name">Secure Card Payment (Stripe)</div>
         <div class="pay-desc">Pay by debit or credit card on our secure Stripe checkout page when you book. Visa, Mastercard, Amex, and more. Instant email receipt from Stripe.</div>
-        <div class="pay-detail">Click “Continue to secure card payment” on the booking form. You'll be redirected to Stripe's hosted checkout page. All major cards accepted.</div>
+        <div class="pay-detail">Submit a service request, agree a price with your provider, then pay securely through Stripe. All major cards accepted.</div>
         <span class="pay-badge pb-fast">Pay at booking</span>
       </div>
     </div>
@@ -723,7 +752,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       <div class="pf-step">
         <div class="pf-num">02</div>
         <h4>Confirm</h4>
-        <p>Review your price breakdown with 15% platform fee</p>
+        <p>Agree a price with your provider</p>
       </div>
       <div class="pf-step">
         <div class="pf-num">03</div>
@@ -740,18 +769,6 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
         <h4>Done</h4>
         <p>Provider paid within 24hrs. You leave a review</p>
       </div>
-    </div>
-
-    <h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin:40px 0 8px;">Price breakdown example</h3>
-    <p style="color:var(--muted);font-size:14px;margin-bottom:8px;max-width:520px;">Here's exactly what a 3-hour cleaning booking looks like. The provider sets their rate. We add a 15% platform fee on top.</p>
-
-    <div class="pay-breakdown r">
-      <div class="pb-row"><span class="pb-label">Provider rate (cleaning)</span><span class="pb-val">£15.00/hr</span></div>
-      <div class="pb-row"><span class="pb-label">Duration</span><span class="pb-val">3 hours</span></div>
-      <div class="pb-row"><span class="pb-label">Subtotal</span><span class="pb-val">£45.00</span></div>
-      <div class="pb-row"><span class="pb-label">Platform fee (15%)</span><span class="pb-val cyan">£6.75</span></div>
-      <div class="pb-row pb-total"><span class="pb-label" style="color:var(--white);font-weight:500;">You pay</span><span class="pb-val cyan" style="font-size:20px;">£51.75</span></div>
-      <div class="pb-row"><span class="pb-label">Provider receives</span><span class="pb-val green">£45.00</span></div>
     </div>
 
     <div class="pay-trust r">
@@ -828,12 +845,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
     <div class="commission-banner r">
       <div>
         <div class="cb-title">Are you a service provider?</div>
-        <div class="cb-sub">Join Clip Services and get bookings from hundreds of residents and businesses in Salford Quays. We handle the platform, payments, and customer trust — you just do what you're good at.</div>
-        <div class="commission-pills">
-          <div class="cpill"><div class="cpill-pct">Free</div><div class="cpill-lbl">To join</div></div>
-          <div class="cpill"><div class="cpill-pct">15%</div><div class="cpill-lbl">Platform fee</div></div>
-          <div class="cpill"><div class="cpill-pct">85%</div><div class="cpill-lbl">You keep</div></div>
-        </div>
+        <div class="cb-sub">Join Clip Services and get bookings from hundreds of residents and businesses in Salford Quays. We handle the platform, payments, and customer trust.</div>
       </div>
       <button class="btn-p" onclick="switchView('provider')" style="white-space:nowrap;">Apply to join →</button>
     </div>
@@ -846,7 +858,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
     <div class="faq-list r">
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">How do I pay for services? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Payment is handled securely through Clip Services. You pay the provider rate plus a small platform fee. We support bank transfer, Monzo, and card. You only pay once the service is confirmed — never upfront to an individual.</p></div>
+        <div class="faq-a"><p>Payment is handled securely through Clip Services via Stripe. You agree a price with the provider and pay securely by card. You only pay once the service is confirmed.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Are providers verified and safe? <span class="faq-icon">+</span></button>
@@ -866,15 +878,11 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">When do I pay — before or after the service? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>You pay when you book. The booking form shows your full price breakdown (service cost + 15% platform fee), then you pay securely by card through Stripe. Payment is confirmed instantly and your provider is notified. If anything goes wrong, we mediate and issue refunds.</p></div>
+        <div class="faq-a"><p>You pay when you and the provider agree on a price. The booking form shows your total, then you pay securely by card through Stripe.</p></div>
       </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">What does the 15% platform fee cover? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>The 15% fee covers provider verification, booking management, dispute resolution, payment protection, customer support, and marketing. It's added on top of the provider's stated rate — so when a provider says £15/hr, you pay £17.25/hr and the provider keeps the full £15. No hidden charges.</p></div>
-      </div>
-      <div class="faq-item">
+            <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Can I get a refund? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Yes. If you cancel more than 2 hours before the booking, you get a full refund. If you cancel within 2 hours, 50% goes to the provider as compensation. If the service quality is unsatisfactory, message us on WhatsApp immediately — we'll arrange a redo or issue a refund of the platform fee.</p></div>
+        <div class="faq-a"><p>Yes. If you cancel more than 2 hours before the booking, you get a full refund. If you cancel within 2 hours, 50% goes to the provider as compensation. If the service quality is unsatisfactory, message us on WhatsApp immediately and we will arrange a redo or issue a refund.</p></div>
       </div>
     </div>
   </section>
@@ -891,16 +899,12 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
   <div class="p-hero">
     <div class="eyebrow">For service providers</div>
     <h1 class="r">Turn your skills<br>into <span class="hl">income.</span></h1>
-    <p class="r rd1">Get listed on Clip Services and start receiving bookings from residents, professionals, and businesses in Salford Quays. Free to join. You keep 85% of every booking.</p>
+    <p class="r rd1">Get listed on Clip Services and start receiving bookings from residents, professionals, and businesses in Salford Quays. Free to join. You keep the majority of every booking.</p>
 
     <div class="earnings-display r rd2">
       <div class="earn-card">
         <div class="earn-num">£150–400</div>
         <div class="earn-lbl">Avg weekly earnings per provider</div>
-      </div>
-      <div class="earn-card">
-        <div class="earn-num">85%</div>
-        <div class="earn-lbl">You keep of every booking</div>
       </div>
       <div class="earn-card">
         <div class="earn-num">Free</div>
@@ -928,7 +932,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       <div class="benefit r rd1">
         <span class="benefit-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>
         <h3>You set your own rates</h3>
-        <p>Tell us your hourly rate or fixed fee per service. We add our 15% platform fee on top — customers pay more, you keep your full rate. No cuts to your income.</p>
+        <p>Tell us your hourly rate or fixed fee per service. A small platform fee is included. You keep the majority of every booking.</p>
       </div>
       <div class="benefit r rd2">
         <span class="benefit-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
@@ -976,7 +980,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       <div class="phow r rd3">
         <div class="phow-num">04</div>
         <h3>Get paid</h3>
-        <p>Complete the job. We transfer 85% of the booking fee to your account within 24 hours. No invoicing needed.</p>
+        <p>Complete the job. We transfer your share to your account within 24 hours. No invoicing needed.</p>
       </div>
     </div>
   </section>
@@ -1042,7 +1046,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
               <div class="rate-opt" onclick="selectRate(this,'Fixed per job')"><div class="rate-opt-val">Fixed</div><div class="rate-opt-lbl">per job</div></div>
               <div class="rate-opt" onclick="selectRate(this,'Custom/discuss')"><div class="rate-opt-val">Custom</div><div class="rate-opt-lbl">let's discuss</div></div>
             </div>
-            <div class="form-note">You set your own rate. Clip Services adds a 15% platform fee on top — customers pay that, not you. You keep 100% of your stated rate.</div>
+            <div class="form-note">You set your own rate. A small platform fee is included. You keep the majority of every booking.</div>
           </div>
 
           <div class="form-group form-full">
@@ -1178,7 +1182,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
     <div class="faq-list r">
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">How much does it cost to join? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Completely free. There are no joining fees, no monthly subscriptions, and no setup costs. Clip Services earns a 15% platform fee which is added on top of your stated rate — customers pay that, not you. You keep 100% of your own rate on every booking.</p></div>
+        <div class="faq-a"><p>Completely free. There are no joining fees, no monthly subscriptions, and no setup costs. A small platform fee is included in each booking, but customers pay that, not you. You keep the majority of every booking.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">How quickly will I get my first booking? <span class="faq-icon">+</span></button>
@@ -1190,7 +1194,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">When and how do I get paid? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Clip Services collects payment from the customer before or at the start of the job. Your 85% share is transferred via bank transfer within 24 hours of job completion. No chasing. No invoices. Automatic every time.</p></div>
+        <div class="faq-a"><p>Clip Services collects payment from the customer before or at the start of the job. Your share is transferred via bank transfer within 24 hours of job completion. No chasing. No invoices. Automatic every time.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">What if a customer doesn't answer or cancels last minute? <span class="faq-icon">+</span></button>
@@ -1226,15 +1230,13 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       <p class="modal-about" id="m-about"></p>
       <h4>Services offered</h4>
       <div class="modal-services-list" id="m-svcs"></div>
-      <h4>Stats</h4>
-      <div class="modal-stats" id="m-stats"></div>
       <h4>Request this service</h4>
       <form class="booking-form" id="bookingForm" onsubmit="handleBook(event)" novalidate>
         <input type="hidden" id="bf-provider" value="">
         <input type="hidden" id="bf-provider-id" value="">
         <div class="form-progress" id="formProgress">
           <div class="form-progress-step active" data-step="1">1 · Your details</div>
-          <div class="form-progress-step" data-step="2">2 · Service &amp; payment</div>
+          <div class="form-progress-step" data-step="2">2 · Service info</div>
           <div class="form-progress-step" data-step="3">3 · Confirm</div>
         </div>
         <fieldset class="book-fieldset" data-step="1">
@@ -1266,17 +1268,11 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
           </div>
         </fieldset>
         <fieldset class="book-fieldset" data-step="2">
-          <legend>Step 2 · Service &amp; payment</legend>
+          <legend>Step 2 · Service details</legend>
           <div>
-            <label for="bf-service">Service needed</label>
+            <label for="bf-service">What do you need?</label>
             <input type="text" id="bf-service" placeholder="e.g. Weekly flat clean, 2-bed apartment" required>
-            <div class="field-error" id="bf-err-service">Describe the service you’re booking.</div>
-          </div>
-          <div>
-            <label for="bf-subtotal">Agreed service total (£)</label>
-            <input type="number" id="bf-subtotal" name="subtotal" min="5" max="5000" step="0.01" inputmode="decimal" placeholder="e.g. 45.00" required>
-            <p class="form-note" id="bf-pay-summary">Enter the price you agreed with the provider (their rate only). We add 15% platform fee at checkout.</p>
-            <div class="field-error" id="bf-err-subtotal">Enter an amount between £5 and £5,000.</div>
+            <div class="field-error" id="bf-err-service">Describe what you need.</div>
           </div>
           <div class="form-row">
             <div>
@@ -1299,14 +1295,19 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
             <label for="bf-notes">Any extra details</label>
             <textarea id="bf-notes" placeholder="Access codes, parking, pets, materials…" rows="3"></textarea>
           </div>
+          <div style="background:rgba(0,200,240,.04);border:1px solid rgba(0,200,240,.15);border-radius:var(--radius-sm);padding:14px 16px;margin-top:4px;">
+            <p style="font-size:13px;color:var(--muted);line-height:1.6;margin:0;">
+              <strong style="color:var(--cyan);">How pricing works:</strong> After you submit, a provider will propose a price. You can negotiate, accept, or decline from your dashboard.
+            </p>
+          </div>
         </fieldset>
         <div style="display:flex;align-items:flex-start;gap:10px;margin-top:4px;">
           <input type="checkbox" id="bf-consent" required style="width:auto;margin-top:3px;">
           <label for="bf-consent" style="font-size:12px;color:var(--muted);text-transform:none;letter-spacing:0;line-height:1.5;cursor:pointer;">I agree to Clip Services' <a href="/terms" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Terms of Service</a>, <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Privacy Policy</a>, and <a href="/disclaimer" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Disclaimer</a>. I consent to receiving booking confirmations via WhatsApp and email.</label>
         </div>
         <div class="booking-submit-wrap">
-          <button type="submit" class="btn-p" id="bookBtn" style="width:100%;justify-content:center;">Continue to secure card payment →</button>
-          <p style="font-size:12px;color:var(--faint);text-align:center;margin-top:8px;">Secure Stripe checkout. Your card details never touch our servers.</p>
+          <button type="submit" class="btn-p" id="bookBtn" style="width:100%;justify-content:center;">Submit Service Request</button>
+          <p style="font-size:12px;color:var(--faint);text-align:center;margin-top:8px;">Your request will be sent to a provider who will propose a price. No payment required yet.</p>
         </div>
       </form>
     </div>
@@ -1328,6 +1329,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       <a href="#" onclick="switchView('customer');setTimeout(()=>filterCat('beauty'),100);return false;">Beauty</a>
       <a href="#" onclick="switchView('customer','payment');return false;">Payment</a>
       <a href="#" onclick="switchView('customer','faq-c');return false;">FAQ</a>
+      <a href="/user/">My Dashboard</a>
     </div>
     <div class="fcol">
       <h4>For providers</h4>
@@ -1335,6 +1337,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       <a href="#" onclick="switchView('provider','apply');return false;">Apply now</a>
       <a href="#" onclick="switchView('provider','faq-p');return false;">Provider FAQ</a>
       <a href="https://wa.me/447487588706" target="_blank" rel="noopener noreferrer">WhatsApp us</a>
+      <a href="/provider/">Provider Dashboard</a>
     </div>
     <div class="fcol">
       <h4>Legal</h4>
@@ -1352,7 +1355,6 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
   </div>
   <div class="footer-bottom">
     <p>© 2026 Clip Services, Clippers Quays, Salford M50. All rights reserved. · <a href="/privacy-policy" style="color:var(--faint);text-decoration:none;">Privacy Policy</a> · <a href="/terms" style="color:var(--faint);text-decoration:none;">Terms of Service</a> · <a href="/disclaimer" style="color:var(--faint);text-decoration:none;">Disclaimer</a></p>
-    <p style="color:var(--cyan);font-family:'Syne',sans-serif;font-size:13px;font-weight:700;">15% platform fee · Providers keep 85%</p>
   </div>
 </footer>
 
@@ -1455,22 +1457,36 @@ function renderProviders(list) {
   `).join('');
 }
 
+function renderServiceCards(list) {
+  const grid = document.getElementById('svcGrid');
+  if (!grid) return;
+  grid.innerHTML = list.map(p => 
+    '<div class="svc-card" onclick="openModal(' + p.id + ')">' +
+    (p.popular ? '<span class="svc-card-badge">Popular</span>' : '') +
+    '<div class="svc-card-icon">' + (SVC_ICONS[p.icon] || '') + '</div>' +
+    '<div class="svc-card-name">' + p.role + '</div>' +
+    '<div class="svc-card-count">' + p.services.length + ' services</div>' +
+    '<div class="svc-card-tags">' + p.services.slice(0,3).map(s => '<span class="svc-card-tag">' + s + '</span>').join('') + '</div>' +
+    '</div>'
+  ).join('');
+}
+
 function filterProviders() {
   const q = document.getElementById('searchInput').value.toLowerCase();
   const cat = document.getElementById('catFilter').value;
-  const hasQuery = q || cat;
-  const section = document.getElementById('servicesSection');
-  if (hasQuery) {
-    const filtered = providers.filter(p =>
-      (!cat || p.category === cat) &&
-      (!q || p.role.toLowerCase().includes(q) ||
-       p.bio.toLowerCase().includes(q) || p.services.some(s=>s.toLowerCase().includes(q)))
-    );
+  const filtered = providers.filter(p =>
+    (!cat || p.category === cat) &&
+    (!q || p.role.toLowerCase().includes(q) ||
+     p.bio.toLowerCase().includes(q) || p.services.some(s=>s.toLowerCase().includes(q)))
+  );
+  renderServiceCards(filtered);
+  if (q || cat) {
     renderProviders(filtered);
-    section.style.display = '';
+    document.getElementById('providersGrid').style.display = '';
     scrollToProviders();
   } else {
-    section.style.display = 'none';
+    document.getElementById('providersGrid').innerHTML = '';
+    document.getElementById('providersGrid').style.display = 'none';
   }
 }
 
@@ -1492,11 +1508,6 @@ function openModal(id) {
   document.getElementById('m-role').textContent = p.services.length + ' services available';
   document.getElementById('m-about').textContent = p.bio;
   document.getElementById('m-svcs').innerHTML = p.services.map(s=>`<span class="msvc">${s}</span>`).join('');
-  document.getElementById('m-stats').innerHTML = `
-    <div class="mstat"><span class="mstat-num">${p.services.length}</span><span class="mstat-lbl">Services</span></div>
-    <div class="mstat"><span class="mstat-num">TBC</span><span class="mstat-lbl">Price</span></div>
-    <div class="mstat"><span class="mstat-num">TBC</span><span class="mstat-lbl">Duration</span></div>
-  `;
   document.getElementById('bookingForm').reset();
   document.getElementById('bf-provider').value = p.role;
   document.getElementById('bf-provider-id').value = p.id;
@@ -1505,24 +1516,9 @@ function openModal(id) {
   tomorrow.setDate(tomorrow.getDate() + 1);
   dateInput.min = tomorrow.toISOString().split('T')[0];
   dateInput.value = '';
-  updateBookingPaySummary();
   clearBookingFieldErrors();
   document.getElementById('modalOverlay').classList.add('open');
   document.body.style.overflow='hidden';
-}
-
-function updateBookingPaySummary() {
-  const el = document.getElementById('bf-subtotal');
-  const out = document.getElementById('bf-pay-summary');
-  if (!el || !out) return;
-  const v = parseFloat(el.value);
-  if (Number.isNaN(v) || v < 5) {
-    out.textContent = 'Enter the agreed service total in pounds (minimum £5). The 15% platform fee is added on top.';
-    return;
-  }
-  const fee = Math.round(v * 0.15 * 100) / 100;
-  const total = Math.round((v + fee) * 100) / 100;
-  out.innerHTML = 'Platform fee (15%): <strong style="color:var(--cyan);">£' + fee.toFixed(2) + '</strong> · Total to pay: <strong style="color:var(--white);">£' + total.toFixed(2) + '</strong>';
 }
 
 function closeModal(e) {
@@ -1552,8 +1548,6 @@ function validateBookingForm() {
   const em = document.getElementById('bf-email').value.trim();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) bad('bf-email', 'bf-err-email');
   if (!document.getElementById('bf-service').value.trim()) bad('bf-service', 'bf-err-service');
-  const st = parseFloat(document.getElementById('bf-subtotal').value);
-  if (Number.isNaN(st) || st < 5 || st > 5000) bad('bf-subtotal', 'bf-err-subtotal');
   if (!document.getElementById('bf-date').value) bad('bf-date', 'bf-err-date');
   if (!document.getElementById('bf-time').value) bad('bf-time', 'bf-err-time');
   if (!document.getElementById('bf-address').value.trim()) bad('bf-address', 'bf-err-address');
@@ -1577,16 +1571,12 @@ async function handleBook(e) {
   const btn = document.getElementById('bookBtn');
   const origText = btn.textContent;
   btn.disabled = true;
-  btn.textContent = 'Starting checkout…';
+  btn.textContent = 'Submitting request...';
 
   const provider = document.getElementById('bf-provider').value;
   const address = document.getElementById('bf-address').value;
   const notes = document.getElementById('bf-notes').value;
-  const fullNotes = `Provider: ${provider}\nAddress: ${address}${notes ? '\n' + notes : ''}`;
-
-  const subtotal = parseFloat(document.getElementById('bf-subtotal').value);
-  const fee = Math.round(subtotal * 0.15 * 100) / 100;
-  const total = Math.round((subtotal + fee) * 100) / 100;
+  const fullNotes = 'Provider: ' + provider + '\nAddress: ' + address + (notes ? '\n' + notes : '');
 
   const payload = {
     service: document.getElementById('bf-service').value,
@@ -1598,26 +1588,31 @@ async function handleBook(e) {
     email: document.getElementById('bf-email').value,
     notes: fullNotes,
     consent: document.getElementById('bf-consent').checked,
-    subtotalGBP: subtotal,
     providerId: document.getElementById('bf-provider-id').value
   };
 
   try {
-    const res = await fetch('/api/stripe-checkout', {
+    const res = await fetch('/api/booking', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await res.json();
-
-    if (data.ok && data.url) {
-      window.location.href = data.url;
-      return;
+    if (data.ok) {
+      document.getElementById('modalOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+      showToast('Service request submitted! Ref: ' + data.ref + '. A provider will send you a price offer shortly.');
+      document.getElementById('bookingForm').reset();
+      setTimeout(function() {
+        if (confirm('Your request has been submitted! Would you like to view your dashboard to track price negotiations?')) {
+          window.location.href = '/user/?email=' + encodeURIComponent(payload.email);
+        }
+      }, 800);
+    } else {
+      showToast('Something went wrong: ' + (data.error || 'Please try again.'));
     }
-
-    showToast('⚠ ' + (data.error || 'Something went wrong. Please try again.'));
   } catch {
-    showToast('⚠ Network error — please try again.');
+    showToast('Network error. Please try again.');
   } finally {
     btn.disabled = false;
     btn.textContent = origText;
@@ -1894,7 +1889,7 @@ function closeMobileMenu(){
 const siEl = document.getElementById('si-search');
 if (siEl) siEl.innerHTML = SVC_ICONS.search;
 
-document.getElementById('bf-subtotal')?.addEventListener('input', updateBookingPaySummary);
+renderServiceCards(providers);
 
 (function smartFormInit() {
   const phoneInput = document.getElementById('bf-phone');
@@ -1928,8 +1923,6 @@ document.getElementById('bf-subtotal')?.addEventListener('input', updateBookingP
     );
     const s2 = !!(
       document.getElementById('bf-service')?.value.trim() &&
-      !Number.isNaN(parseFloat(document.getElementById('bf-subtotal')?.value)) &&
-      parseFloat(document.getElementById('bf-subtotal')?.value) >= 5 &&
       document.getElementById('bf-date')?.value &&
       document.getElementById('bf-time')?.value &&
       document.getElementById('bf-address')?.value.trim()
@@ -1957,9 +1950,6 @@ document.getElementById('bf-subtotal')?.addEventListener('input', updateBookingP
         isValid = this.value.replace(/\D/g, '').length >= 10;
       } else if (id === 'bf-email') {
         isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim());
-      } else if (id === 'bf-subtotal') {
-        const n = parseFloat(this.value);
-        isValid = !Number.isNaN(n) && n >= 5 && n <= 5000;
       } else if (id === 'bf-date' || id === 'bf-time') {
         isValid = !!this.value;
       }

@@ -1,0 +1,106 @@
+import {
+  getBookingsByEmail,
+  getNegotiationsByEmail,
+  getBookings,
+  getNegotiations,
+} from "../lib/kv-store.js";
+
+function endJson(res, code, obj) {
+  res.statusCode = code;
+  res.setHeader("content-type", "application/json; charset=utf-8");
+  res.setHeader("cache-control", "no-store");
+  res.end(JSON.stringify(obj));
+}
+
+function isValidEmail(email) {
+  return typeof email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
+export default async function handler(req, res) {
+  if (req.method !== "GET") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
+
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const role = url.searchParams.get("role") || "";
+  const email = (url.searchParams.get("email") || "").trim().toLowerCase();
+  const ref = url.searchParams.get("ref") || "";
+
+  if (!isValidEmail(email)) return endJson(res, 400, { ok: false, error: "Valid email required" });
+
+  try {
+    if (role === "customer") {
+      const bookings = await getBookingsByEmail(email);
+      if (!bookings.length && !ref) {
+        return endJson(res, 200, { ok: true, bookings: [], negotiations: [] });
+      }
+      const negotiations = await getNegotiationsByEmail(email);
+      const safeBookings = bookings.map((b) => ({
+        ref: b.ref,
+        service: b.service,
+        date: b.date,
+        time: b.time,
+        status: b.status,
+        createdAt: b.createdAt,
+        negotiationId: b.negotiationId || null,
+        agreedPrice: b.agreedPrice || null,
+        providerId: b.providerId || null,
+      }));
+      const safeNegotiations = negotiations.filter(
+        (n) => String(n.customerEmail).toLowerCase() === email
+      ).map((n) => ({
+        id: n.id,
+        service: n.service,
+        status: n.status,
+        agreedPrice: n.agreedPrice,
+        messages: n.messages,
+        createdAt: n.createdAt,
+        updatedAt: n.updatedAt,
+        bookingRef: n.bookingRef,
+      }));
+      return endJson(res, 200, { ok: true, bookings: safeBookings, negotiations: safeNegotiations });
+    }
+
+    if (role === "provider") {
+      const negotiations = await getNegotiationsByEmail(email);
+      const providerNegs = negotiations.filter(
+        (n) => String(n.providerEmail).toLowerCase() === email
+      ).map((n) => ({
+        id: n.id,
+        service: n.service,
+        status: n.status,
+        agreedPrice: n.agreedPrice,
+        messages: n.messages,
+        customerName: n.customerName,
+        customerPhone: n.customerPhone,
+        createdAt: n.createdAt,
+        updatedAt: n.updatedAt,
+        bookingRef: n.bookingRef,
+      }));
+
+      const allBookings = await getBookings();
+      const providerBookings = allBookings
+        .filter((b) => {
+          const negForBooking = negotiations.find(
+            (n) => n.bookingRef === b.ref && String(n.providerEmail).toLowerCase() === email
+          );
+          return !!negForBooking;
+        })
+        .map((b) => ({
+          ref: b.ref,
+          service: b.service,
+          date: b.date,
+          time: b.time,
+          status: b.status,
+          createdAt: b.createdAt,
+          agreedPrice: b.agreedPrice || null,
+          customerName: `${b.firstName || ""} ${b.lastName || ""}`.trim(),
+        }));
+
+      return endJson(res, 200, { ok: true, negotiations: providerNegs, bookings: providerBookings });
+    }
+
+    return endJson(res, 400, { ok: false, error: "role must be 'customer' or 'provider'" });
+  } catch (e) {
+    console.error("DASHBOARD_ERROR", e);
+    return endJson(res, 500, { ok: false, error: "Failed to load dashboard data" });
+  }
+}

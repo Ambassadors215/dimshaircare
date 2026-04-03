@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0A0E1A">
+<link rel="manifest" href="/manifest.webmanifest">
+<title>Customer Dashboard — Clip Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0E1A;--bg2:#0F1424;--card:#131A2E;--border:#1C2848;--text:#E0E8F8;--muted:#6B7FA0;--faint:#3A4D6E;--cyan:#00C8F0;--cyan2:#0099BB;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--radius:16px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased}
+header{position:sticky;top:0;z-index:10;background:rgba(10,14,26,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.wrap{max-width:960px;margin:0 auto;padding:16px 20px}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand h1{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:-0.02em}
+.brand h1 span{color:var(--cyan)}
+.dot{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+a{color:var(--cyan);text-decoration:none}
+.btn{border:none;border-radius:10px;padding:10px 16px;cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+.btn-p{background:var(--cyan);color:var(--bg)}
+.btn-p:hover{background:var(--cyan2)}
+.btn-ghost{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted)}
+.btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn-green{background:var(--green);color:var(--bg)}
+.btn-green:hover{background:#0ea571}
+.btn-red{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#FCA5A5}
+.btn-red:hover{background:rgba(239,68,68,.2);color:#FCA5A5}
+.btn-sm{padding:8px 12px;font-size:12px}
+.input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:11px 14px;font-size:14px;color:var(--text);outline:none;font-family:'DM Sans',sans-serif;transition:border-color .2s}
+.input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,200,240,.1)}
+.input::placeholder{color:var(--faint)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px;transition:border-color .25s}
+.card:hover{border-color:rgba(0,200,240,.15)}
+.label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:500;white-space:nowrap}
+.badge::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.b-pending{background:rgba(245,158,11,.1);color:#FCD34D;border:1px solid rgba(245,158,11,.2)}.b-pending::before{background:var(--amber)}
+.b-agreed{background:rgba(16,185,129,.1);color:#6EE7B7;border:1px solid rgba(16,185,129,.2)}.b-agreed::before{background:var(--green)}
+.b-declined{background:rgba(239,68,68,.1);color:#FCA5A5;border:1px solid rgba(239,68,68,.2)}.b-declined::before{background:var(--red)}
+.b-negotiating{background:rgba(0,200,240,.1);color:#67E8F9;border:1px solid rgba(0,200,240,.2)}.b-negotiating::before{background:var(--cyan)}
+.b-paid{background:rgba(16,185,129,.1);color:#6EE7B7;border:1px solid rgba(16,185,129,.2)}.b-paid::before{background:var(--green)}
+.empty{text-align:center;padding:48px 20px;color:var(--faint);font-size:14px}
+.msg-list{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.msg{padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.5;max-width:85%}
+.msg-customer{background:rgba(0,200,240,.08);border:1px solid rgba(0,200,240,.15);align-self:flex-end;text-align:right}
+.msg-provider{background:var(--bg2);border:1px solid var(--border);align-self:flex-start}
+.msg-meta{font-size:10px;color:var(--faint);margin-top:4px}
+.msg-amount{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;color:var(--cyan)}
+.offer-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.counter-form{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:12px}
+.counter-form .input{max-width:120px}
+.status{font-size:13px;min-height:18px;margin-top:8px}
+.status.ok{color:var(--green)}.status.err{color:var(--red)}
+.section-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.neg-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.neg-service{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
+.neg-detail{font-size:12px;color:var(--muted);margin-top:4px}
+.tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--border)}
+.tab{padding:10px 18px;font-size:13px;font-weight:500;color:var(--muted);border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif}
+.tab:hover{color:var(--text)}.tab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+.hide{display:none!important}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;text-align:center}
+.stat-num{font-family:'Syne',sans-serif;font-size:28px;font-weight:800}
+.stat-lbl{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+.waiting-msg{margin-top:12px;padding:12px;background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2);border-radius:10px;font-size:13px;color:#FCD34D}
+.agreed-box{margin-top:12px;padding:12px;background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:10px;font-size:13px;color:#6EE7B7;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+@media(max-width:600px){.stats-row{grid-template-columns:1fr}.counter-form{flex-direction:column}.counter-form .input{max-width:100%}.offer-actions{flex-direction:column;align-items:stretch}.agreed-box{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="topbar">
+      <a href="/clip-services-marketplace.html" class="brand" style="text-decoration:none;color:var(--text)"><h1>Clip<span>Services</span></h1><span class="dot"></span></a>
+      <div style="display:flex;gap:8px;align-items:center">
+        <a href="/clip-services-marketplace.html" class="btn btn-ghost btn-sm">Marketplace</a>
+      </div>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="wrap" style="padding-top:24px;padding-bottom:48px">
+
+    <div class="card" id="loginCard">
+      <div class="label">Customer Dashboard</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:8px">View your bookings</h2>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Enter the email address you used when requesting a service to view your negotiations and bookings.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input class="input" id="emailInput" placeholder="Your email address" type="email" style="max-width:320px">
+        <button class="btn btn-p" id="loginBtn">View My Bookings</button>
+      </div>
+      <div class="status" id="loginStatus"></div>
+    </div>
+
+    <div id="dashboard" class="hide">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+        <div>
+          <div class="label">Customer Dashboard</div>
+          <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700" id="welcomeText">Your Bookings</h2>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" id="refreshBtn">Refresh</button>
+          <button class="btn btn-ghost btn-sm" id="logoutBtn">Log out</button>
+        </div>
+      </div>
+
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">Total Requests</div></div>
+        <div class="stat-card"><div class="stat-num" id="statActive">0</div><div class="stat-lbl">Active</div></div>
+        <div class="stat-card"><div class="stat-num" id="statCompleted">0</div><div class="stat-lbl">Completed</div></div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="negotiations">Price Negotiations</button>
+        <button class="tab" data-tab="bookings">All Bookings</button>
+      </div>
+
+      <div id="negView"></div>
+      <div id="bookView" class="hide"></div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const STORAGE_KEY = 'cs_customer_email';
+let state = { email: localStorage.getItem(STORAGE_KEY) || '', negotiations: [], bookings: [] };
+
+const $ = id => document.getElementById(id);
+
+function setStatus(el, msg, kind) {
+  el.textContent = msg || '';
+  el.classList.remove('ok','err');
+  if (kind) el.classList.add(kind);
+}
+
+function timeAgo(d) {
+  if (!d) return '';
+  const ms = Date.now() - new Date(d).getTime();
+  const m = Math.floor(ms / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m + 'm ago';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + 'h ago';
+  return Math.floor(h / 24) + 'd ago';
+}
+
+function escHtml(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function badgeClass(status) {
+  const map = { pending:'b-pending', negotiating:'b-negotiating', agreed:'b-agreed', declined:'b-declined', paid:'b-paid', confirmed:'b-agreed', completed:'b-agreed' };
+  return map[status] || 'b-pending';
+}
+
+function renderNegotiations() {
+  const el = $('negView');
+  if (!state.negotiations.length) {
+    el.innerHTML = '<div class="empty">No negotiations yet. When you request a service and a provider responds, negotiations will appear here.</div>';
+    return;
+  }
+  el.innerHTML = state.negotiations.map(n => {
+    const msgs = (n.messages || []).map(m => {
+      const cls = m.from === 'customer' ? 'msg-customer' : 'msg-provider';
+      const amountLine = m.amount ? '<div class="msg-amount">&pound;' + Number(m.amount).toFixed(2) + '</div>' : '';
+      return '<div class="msg ' + cls + '">' + amountLine +
+        '<div>' + escHtml(m.text || m.type) + '</div>' +
+        '<div class="msg-meta">' + m.from + ' &middot; ' + timeAgo(m.ts) + '</div></div>';
+    }).join('');
+
+    const lastMsg = [...(n.messages || [])].reverse().find(m => m.type === 'offer' || m.type === 'counter');
+    const providerOffered = lastMsg && lastMsg.from === 'provider';
+    const canAct = n.status === 'pending' || n.status === 'negotiating';
+
+    let actions = '';
+    if (n.status === 'agreed') {
+      actions = '<div class="agreed-box">' +
+        '<div>Price agreed: <strong>&pound;' + Number(n.agreedPrice).toFixed(2) + '</strong></div>' +
+        '<a href="/clip-services-marketplace.html?pay=' + encodeURIComponent(n.id) + '" class="btn btn-green btn-sm">Pay Now</a>' +
+        '</div>';
+    } else if (canAct && providerOffered) {
+      actions = '<div class="offer-actions" data-neg="' + n.id + '">' +
+        '<button class="btn btn-green btn-sm" onclick="acceptOffer(\'' + n.id + '\')">Accept &pound;' + Number(lastMsg.amount).toFixed(2) + '</button>' +
+        '<button class="btn btn-ghost btn-sm" onclick="showCounterForm(\'' + n.id + '\')">Counter Offer</button>' +
+        '<button class="btn btn-red btn-sm" onclick="declineNeg(\'' + n.id + '\')">Decline</button>' +
+        '</div>' +
+        '<div class="counter-form hide" id="counter-' + n.id + '" data-neg="' + n.id + '">' +
+        '<input class="input" type="number" min="1" step="0.01" placeholder="&pound; Your price" data-field="amount">' +
+        '<input class="input" type="text" placeholder="Message (optional)" data-field="msg" style="max-width:200px">' +
+        '<button class="btn btn-p btn-sm" onclick="sendCounter(\'' + n.id + '\')">Send</button>' +
+        '<button class="btn btn-ghost btn-sm" onclick="hideCounterForm(\'' + n.id + '\')">Cancel</button>' +
+        '</div>';
+    } else if (canAct) {
+      actions = '<div class="waiting-msg">Waiting for provider response&hellip;</div>';
+    }
+
+    return '<div class="card">' +
+      '<div class="neg-header"><div><div class="neg-service">' + escHtml(n.service) + '</div>' +
+      '<div class="neg-detail">' + escHtml(n.providerName || '') + ' &middot; ' + escHtml(n.id) + ' &middot; ' + timeAgo(n.createdAt) + '</div></div>' +
+      '<span class="badge ' + badgeClass(n.status) + '">' + n.status + '</span></div>' +
+      '<div class="msg-list">' + msgs + '</div>' + actions + '</div>';
+  }).join('');
+}
+
+function renderBookings() {
+  const el = $('bookView');
+  if (!state.bookings.length) {
+    el.innerHTML = '<div class="empty">No bookings yet.</div>';
+    return;
+  }
+  el.innerHTML = state.bookings.map(b =>
+    '<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">' +
+    '<div><div style="font-family:\'Syne\',sans-serif;font-size:15px;font-weight:700">' + escHtml(b.service) + '</div>' +
+    '<div style="font-size:12px;color:var(--muted);margin-top:4px">' + escHtml(b.ref) + ' &middot; ' + escHtml(b.date || '') + ' ' + escHtml(b.time || '') + '</div></div>' +
+    '<span class="badge ' + badgeClass(b.status) + '">' + (b.status || 'new') + '</span></div>' +
+    (b.agreedPrice ? '<div style="margin-top:8px;font-family:\'Syne\',sans-serif;font-size:18px;font-weight:700;color:var(--cyan)">&pound;' + Number(b.agreedPrice).toFixed(2) + '</div>' : '') +
+    '</div>'
+  ).join('');
+}
+
+function updateStats() {
+  const allItems = [...state.negotiations, ...state.bookings];
+  $('statTotal').textContent = allItems.length;
+  $('statActive').textContent = state.negotiations.filter(n => n.status === 'pending' || n.status === 'negotiating' || n.status === 'agreed').length;
+  $('statCompleted').textContent = state.bookings.filter(b => b.status === 'paid' || b.status === 'completed' || b.status === 'confirmed').length;
+}
+
+function render() { renderNegotiations(); renderBookings(); updateStats(); }
+
+function showCounterForm(negId) {
+  const form = document.getElementById('counter-' + negId);
+  if (form) form.classList.remove('hide');
+}
+
+function hideCounterForm(negId) {
+  const form = document.getElementById('counter-' + negId);
+  if (form) form.classList.add('hide');
+}
+
+async function loadDashboard() {
+  const email = state.email;
+  if (!email) return;
+  try {
+    const res = await fetch('/api/dashboard?role=customer&email=' + encodeURIComponent(email));
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Failed');
+    state.negotiations = data.negotiations || [];
+    state.bookings = data.bookings || [];
+    $('loginCard').classList.add('hide');
+    $('dashboard').classList.remove('hide');
+    $('welcomeText').textContent = 'Your Bookings';
+    render();
+  } catch (e) {
+    setStatus($('loginStatus'), e.message || 'Could not load data', 'err');
+  }
+}
+
+async function acceptOffer(negId) {
+  try {
+    const res = await fetch('/api/negotiate', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action: 'accept', negotiationId: negId, email: state.email })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    await loadDashboard();
+  } catch (e) { alert(e.message || 'Failed'); }
+}
+
+async function sendCounter(negId) {
+  const form = document.getElementById('counter-' + negId);
+  const amount = parseFloat(form.querySelector('[data-field="amount"]').value);
+  const msg = form.querySelector('[data-field="msg"]').value;
+  if (!amount || amount < 1) { alert('Enter a valid price'); return; }
+  try {
+    const res = await fetch('/api/negotiate', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action: 'counter', negotiationId: negId, email: state.email, amount, message: msg })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    await loadDashboard();
+  } catch (e) { alert(e.message || 'Failed to send counter offer'); }
+}
+
+async function declineNeg(negId) {
+  if (!confirm('Decline this negotiation?')) return;
+  try {
+    const res = await fetch('/api/negotiate', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action: 'decline', negotiationId: negId, email: state.email })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error);
+    await loadDashboard();
+  } catch (e) { alert(e.message || 'Failed'); }
+}
+
+$('loginBtn').addEventListener('click', () => {
+  const email = $('emailInput').value.trim();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    setStatus($('loginStatus'), 'Enter a valid email', 'err'); return;
+  }
+  state.email = email;
+  localStorage.setItem(STORAGE_KEY, email);
+  loadDashboard();
+});
+
+$('emailInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') $('loginBtn').click();
+});
+
+$('refreshBtn').addEventListener('click', loadDashboard);
+
+$('logoutBtn').addEventListener('click', () => {
+  localStorage.removeItem(STORAGE_KEY);
+  state = { email: '', negotiations: [], bookings: [] };
+  $('dashboard').classList.add('hide');
+  $('loginCard').classList.remove('hide');
+  $('emailInput').value = '';
+});
+
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    $('negView').classList.toggle('hide', t.dataset.tab !== 'negotiations');
+    $('bookView').classList.toggle('hide', t.dataset.tab !== 'bookings');
+  });
+});
+
+const urlEmail = new URLSearchParams(location.search).get('email');
+if (urlEmail) { state.email = urlEmail; localStorage.setItem(STORAGE_KEY, urlEmail); }
+if (state.email) { $('emailInput').value = state.email; loadDashboard(); }
+</script>
+</body>
+</html>

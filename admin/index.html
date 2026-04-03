@@ -197,10 +197,10 @@
             <div class="dash-status"><span class="dot dot-green dot-pulse"></span> Live</div>
           </div>
           <div class="dash-card">
-            <span class="dash-icon">💳</span>
-            <div class="dash-label c-green">Providers</div>
-            <div class="dash-value" id="statProviders">—</div>
-            <div class="dash-status"><span class="dot dot-amber"></span> Stripe Connect</div>
+            <span class="dash-icon">💬</span>
+            <div class="dash-label c-amber">Negotiations</div>
+            <div class="dash-value" id="statNegotiations">—</div>
+            <div class="dash-status"><span class="dot dot-amber"></span> Active</div>
           </div>
         </div>
 
@@ -252,6 +252,7 @@
           <div class="panel-head">
             <div class="tabs" role="tablist">
               <button class="tab active" data-tab="bookings">Bookings</button>
+              <button class="tab" data-tab="negotiations">Negotiations</button>
               <button class="tab" data-tab="contacts">Applications</button>
               <button class="tab" data-tab="providers">Providers</button>
             </div>
@@ -275,6 +276,11 @@
                 <thead><tr><th>Ref</th><th>Created</th><th>Client</th><th>Service</th><th>Slot</th><th>Status</th><th>Actions</th></tr></thead>
                 <tbody id="bookingsTbody"></tbody>
               </table>
+            </div>
+
+            <div id="negotiationsView" class="hide" style="padding:20px;">
+              <p class="muted" style="margin-bottom:16px;font-size:12px;line-height:1.55;">Assign a provider email to each negotiation so the provider can see the request and send a price offer. The customer and provider then negotiate directly through their dashboards.</p>
+              <div id="negsContainer"></div>
             </div>
 
             <div id="contactsView" class="hide">
@@ -322,7 +328,8 @@
         token: localStorage.getItem(STORAGE_KEY) || "",
         bookings: [],
         contacts: [],
-        providers: {}
+        providers: {},
+        negotiations: []
       };
 
       const el = {
@@ -340,6 +347,8 @@
         bookingsTbody: document.getElementById("bookingsTbody"),
         contactsTbody: document.getElementById("contactsTbody"),
         bookingsView: document.getElementById("bookingsView"),
+        negotiationsView: document.getElementById("negotiationsView"),
+        negsContainer: document.getElementById("negsContainer"),
         contactsView: document.getElementById("contactsView"),
         providersView: document.getElementById("providersView"),
         providersTbody: document.getElementById("providersTbody"),
@@ -348,7 +357,8 @@
         connectResult: document.getElementById("connectResult"),
         statBookings: document.getElementById("statBookings"),
         statContacts: document.getElementById("statContacts"),
-        statProviders: document.getElementById("statProviders")
+        statProviders: document.getElementById("statProviders"),
+        statNegotiations: document.getElementById("statNegotiations")
       };
 
       el.tokenInput.value = state.token;
@@ -409,10 +419,58 @@
         return "https://wa.me/" + d;
       }
 
+      function renderNegotiations() {
+        const list = filterRows(state.negotiations);
+        if (!list.length) {
+          el.negsContainer.innerHTML = '<div style="text-align:center;padding:40px;color:var(--faint)">No negotiations yet. When customers submit service requests, negotiations will appear here.</div>';
+          return;
+        }
+        el.negsContainer.innerHTML = list.map(n => {
+          const badgeClass = n.status === 'agreed' || n.status === 'paid' ? 'success' : n.status === 'declined' ? 'danger' : n.status === 'negotiating' ? 'warn' : 'neutral';
+          const lastMsg = (n.messages || []).slice(-1)[0];
+          const lastText = lastMsg ? `${lastMsg.from}: ${lastMsg.type}${lastMsg.amount ? ' £' + lastMsg.amount : ''}` : '';
+          const hasProvider = n.providerEmail && n.providerEmail.length > 0;
+          return `<div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:8px;">
+              <div>
+                <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">${escHtml(n.service || '')}</div>
+                <div class="muted" style="font-size:11px;margin-top:4px;">${escHtml(n.id)} · ${escHtml(n.bookingRef || '')} · ${escHtml(n.customerName || '')} (${escHtml(n.customerEmail || '')})</div>
+                ${hasProvider ? `<div style="font-size:12px;margin-top:4px;color:var(--green);">Provider: ${escHtml(n.providerEmail)}</div>` : ''}
+                ${lastText ? `<div class="muted" style="font-size:11px;margin-top:4px;">Last: ${escHtml(lastText)}</div>` : ''}
+                ${n.agreedPrice ? `<div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--cyan);margin-top:6px;">Agreed: £${Number(n.agreedPrice).toFixed(2)}</div>` : ''}
+              </div>
+              <span class="badge ${badgeClass}">${n.status || 'pending'}</span>
+            </div>
+            ${!hasProvider ? `<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;">
+              <input class="input" placeholder="Provider email" style="width:240px;font-size:12px;padding:8px 12px;" data-neg-id="${n.id}" data-field="provider-email" />
+              <button class="btn btn-primary" style="font-size:12px;padding:8px 14px;" onclick="assignProvider('${n.id}')">Assign Provider</button>
+            </div>` : ''}
+          </div>`;
+        }).join('');
+      }
+
+      async function assignProvider(negId) {
+        const input = el.negsContainer.querySelector(`[data-neg-id="${negId}"][data-field="provider-email"]`);
+        const email = input?.value?.trim();
+        if (!email) { alert('Enter a provider email'); return; }
+        try {
+          const res = await fetch('/api/negotiate', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json', 'x-admin-token': getToken() },
+            body: JSON.stringify({ action: 'assign-provider', negotiationId: negId, providerEmail: email })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || 'Failed');
+          setStatus(el.dataStatus, 'Provider assigned to ' + negId, 'ok');
+          await refreshAll();
+        } catch (e) { setStatus(el.dataStatus, e.message || 'Failed to assign', 'err'); }
+      }
+
       function updateDashStats() {
         el.statBookings.textContent = state.bookings.length;
         el.statContacts.textContent = state.contacts.length;
         el.statProviders.textContent = Object.keys(state.providers).length;
+        el.statNegotiations.textContent = state.negotiations.length;
       }
 
       function timeAgo(dateStr) {
@@ -432,8 +490,11 @@
           t.classList.toggle("active", t.dataset.tab === state.tab);
         });
         el.bookingsView.classList.toggle("hide", state.tab !== "bookings");
+        el.negotiationsView.classList.toggle("hide", state.tab !== "negotiations");
         el.contactsView.classList.toggle("hide", state.tab !== "contacts");
         el.providersView.classList.toggle("hide", state.tab !== "providers");
+
+        renderNegotiations();
 
         const bookings = filterRows(state.bookings);
         el.bookingsTbody.innerHTML = bookings.length === 0
@@ -501,15 +562,17 @@
       async function refreshAll() {
         setStatus(el.dataStatus, "Loading…");
         try {
-          const [bookings, contacts, provData] = await Promise.all([
-            api("/api/admin/bookings"),
-            api("/api/admin/contacts"),
-            api("/api/admin/providers").catch(() => ({ providers: {} }))
+          const [bookings, contacts, provData, negsData] = await Promise.all([
+            api("/api/admin?action=bookings"),
+            api("/api/admin?action=contacts"),
+            api("/api/admin?action=providers").catch(() => ({ providers: {} })),
+            api("/api/admin?action=negotiations").catch(() => ({ items: [] }))
           ]);
           state.bookings = bookings.items || [];
           state.contacts = contacts.items || [];
           state.providers = provData.providers || {};
-          setStatus(el.dataStatus, `${state.bookings.length} bookings · ${state.contacts.length} applications · ${Object.keys(state.providers).length} providers`, "ok");
+          state.negotiations = negsData.items || [];
+          setStatus(el.dataStatus, `${state.bookings.length} bookings · ${state.negotiations.length} negotiations · ${state.contacts.length} applications`, "ok");
           render();
         } catch (e) {
           setStatus(el.dataStatus, e?.message || "Failed to load", "err");
@@ -519,7 +582,7 @@
       async function testAuth() {
         setStatus(el.authStatus, "Testing…");
         try {
-          await api("/api/admin/ping");
+          await api("/api/admin?action=ping");
           setStatus(el.authStatus, "Connected.", "ok");
         } catch (e) {
           setStatus(el.authStatus, e?.message || "Connection failed", "err");
@@ -570,7 +633,7 @@
         if (!ref || !status) return;
         btn.disabled = true; btn.textContent = "…";
         try {
-          await api("/api/admin/update-booking", { method: "POST", body: JSON.stringify({ ref, status }) });
+          await api("/api/admin?action=update-booking", { method: "POST", body: JSON.stringify({ ref, status }) });
           const i = state.bookings.findIndex((b) => b.ref === ref);
           if (i >= 0) state.bookings[i] = { ...state.bookings[i], status };
           setStatus(el.dataStatus, "Saved.", "ok");
@@ -635,7 +698,7 @@
       });
 
       async function refreshProviders() {
-        try { const data = await api("/api/admin/providers"); state.providers = data.providers || {}; render(); }
+        try { const data = await api("/api/admin?action=providers"); state.providers = data.providers || {}; render(); }
         catch (e) { console.warn("Could not load providers", e); }
       }
 

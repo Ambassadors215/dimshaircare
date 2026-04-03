@@ -1,15 +1,10 @@
 <svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
   <rect width="400" height="120" fill="#0B1120" rx="12"/>
-  <!-- Pin body -->
-  <ellipse cx="48" cy="44" rx="28" ry="28" fill="#00D4FF"/>
-  <path d="M48 72 L36 54 Q20 36 48 20 Q76 4 76 44 Q76 60 48 72Z" fill="#00D4FF"/>
-  <!-- Pin inner hole -->
+  <ellipse cx="48" cy="44" rx="30" ry="30" fill="#00D4FF"/>
+  <path d="M48 74 L34 54 Q18 34 48 18 Q78 2 78 44 Q78 62 48 74Z" fill="#00D4FF"/>
   <circle cx="48" cy="43" r="12" fill="#0B1120"/>
-  <!-- Live green dot -->
-  <circle cx="67" cy="24" r="10" fill="#00FF88"/>
-  <!-- Wordmark: Clip bold cyan + Services light white -->
-  <text x="96" y="50" font-family="Arial Black, Helvetica, sans-serif" font-size="42" font-weight="900" fill="#00D4FF">Clip</text>
-  <text x="96" y="80" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="300" fill="#FFFFFF" letter-spacing="4">Services</text>
-  <!-- Manchester tagline -->
-  <text x="98" y="102" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="400" fill="#3A5080" letter-spacing="3">MANCHESTER</text>
+  <circle cx="69" cy="22" r="11" fill="#00FF88"/>
+  <text x="96" y="52" font-family="Arial Black, Helvetica, sans-serif" font-size="46" font-weight="900" fill="#00D4FF">Clip</text>
+  <text x="97" y="82" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="400" fill="#FFFFFF" letter-spacing="5">Services</text>
+  <text x="98" y="104" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="500" fill="#3A5080" letter-spacing="3.5">MANCHESTER</text>
 </svg>
