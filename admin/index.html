@@ -347,24 +347,34 @@
             </div>
 
             <div id="negotiationsView" class="hide" style="padding:20px;">
-              <p class="muted" style="margin-bottom:16px;font-size:12px;line-height:1.55;">Assign a provider email to each negotiation so the provider can see the request and send a price offer. The customer and provider then negotiate directly through their dashboards.</p>
+              <p class="muted" style="margin-bottom:16px;font-size:12px;line-height:1.55;">Use when a booking has no provider email (e.g. generic seed card). <strong>Assign Provider</strong> lets them use <span class="mono">/provider/</span>. If you published the applicant under Marketplace listings, matching emails are usually set automatically.</p>
               <div id="negsContainer"></div>
             </div>
 
             <div id="contactsView" class="hide">
               <p class="muted" style="margin:0;padding:14px 20px;font-size:12px;line-height:1.55;border-bottom:1px solid var(--border);background:rgba(0,200,240,.04);">
-                <strong style="color:var(--cyan)">Provider applications</strong> are saved here and in Redis (same database as bookings). Open the <strong>Applications</strong> tab and click <strong>Refresh</strong> to load the latest. You should also get an email at the address set as <span class="mono">ADMIN_EMAIL</span> on Vercel (Brevo must be configured). <strong>WhatsApp is not sent automatically</strong> for applications — use <em>Open WhatsApp</em> beside the applicant’s number.
+                <strong style="color:var(--cyan)">Provider applications</strong> — click <strong>Publish to site</strong> to add a marketplace card and link this email to new requests. Listing ID should match Stripe Connect ID when you use payouts.
               </p>
               <div style="overflow-x:auto;">
               <table>
-                <thead><tr><th>Date</th><th>Applicant</th><th>Full application</th></tr></thead>
+                <thead><tr><th>Date</th><th>Applicant</th><th>Full application</th><th style="min-width:120px">Actions</th></tr></thead>
                 <tbody id="contactsTbody"></tbody>
               </table>
               </div>
             </div>
 
+            <div id="marketplaceView" class="hide" style="padding:20px;">
+              <p class="muted" style="margin-bottom:16px;font-size:12px;line-height:1.55;">These listings are merged into the homepage service grid (<span class="mono">/api/listings</span>). Customers who book notify the provider email on file.</p>
+              <div style="overflow-x:auto;">
+                <table>
+                  <thead><tr><th>Listing ID</th><th>Display name</th><th>Provider email</th><th>Category</th><th>Actions</th></tr></thead>
+                  <tbody id="marketplaceTbody"></tbody>
+                </table>
+              </div>
+            </div>
+
             <div id="providersView" class="hide" style="padding:20px;">
-              <p class="muted" style="margin-top:0;margin-bottom:16px;">Connect provider bank accounts via Stripe Express. Their share is sent automatically on each booking payment.</p>
+              <p class="muted" style="margin-top:0;margin-bottom:16px;"><strong>Stripe Connect</strong> — use the same <span class="mono">Provider ID</span> as the marketplace listing so card payments can split to their account.</p>
               <div id="providersStatus" class="status"></div>
               <div style="overflow-x:auto;">
                 <table>
@@ -484,9 +494,10 @@
         pubStatus: document.getElementById("pubStatus")
       };
 
-      el.tokenInput.value = state.token;
+      if (el.tokenInput) el.tokenInput.value = state.token;
 
       function setStatus(target, msg, kind) {
+        if (!target) return;
         target.textContent = msg || "";
         target.classList.remove("ok", "err");
         if (kind) target.classList.add(kind);
@@ -522,7 +533,7 @@
       }
 
       function filterRows(list) {
-        const q = el.searchInput.value.trim().toLowerCase();
+        const q = (el.searchInput?.value || "").trim().toLowerCase();
         if (!q) return list;
         return list.filter((x) => JSON.stringify(x).toLowerCase().includes(q));
       }
@@ -590,12 +601,13 @@
       }
 
       function updateDashStats() {
-        el.statBookings.textContent = state.bookings.length;
-        el.statContacts.textContent = state.contacts.length;
-        el.statNegotiations.textContent = state.negotiations.length;
+        if (el.statBookings) el.statBookings.textContent = state.bookings.length;
+        if (el.statContacts) el.statContacts.textContent = state.contacts.length;
+        if (el.statNegotiations) el.statNegotiations.textContent = state.negotiations.length;
       }
 
       function renderMarketplaceTable() {
+        if (!el.marketplaceTbody) return;
         const list = filterRows(state.marketplace);
         el.marketplaceTbody.innerHTML = list.length === 0
           ? '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--faint)">No published listings. Open <strong>Applications</strong> and click <strong>Publish to site</strong>.</td></tr>'
@@ -645,7 +657,7 @@
         el.bookingsView.classList.toggle("hide", state.tab !== "bookings");
         el.negotiationsView.classList.toggle("hide", state.tab !== "negotiations");
         el.contactsView.classList.toggle("hide", state.tab !== "contacts");
-        el.marketplaceView.classList.toggle("hide", state.tab !== "marketplace");
+        if (el.marketplaceView) el.marketplaceView.classList.toggle("hide", state.tab !== "marketplace");
         el.providersView.classList.toggle("hide", state.tab !== "providers");
 
         renderNegotiations();
@@ -677,7 +689,7 @@
 
         const contacts = filterRows(state.contacts);
         el.contactsTbody.innerHTML = contacts.length === 0
-          ? '<tr><td colspan="3" style="text-align:center;padding:40px;color:var(--faint)">No applications yet. If you expected rows here, click <strong>Refresh</strong> and confirm Vercel <span class="mono">KV_PREFIX</span> matches the key your site uses (default <span class="mono">cs</span>).</td></tr>'
+          ? '<tr><td colspan="4" style="text-align:center;padding:40px;color:var(--faint)">No applications yet. Click <strong>Refresh</strong> and confirm Vercel <span class="mono">KV_PREFIX</span> is <span class="mono">cs</span> (or your chosen prefix).</td></tr>'
           : contacts.map((c) => {
             const phone = c.phone || "";
             const wa = waLink(phone);
@@ -691,6 +703,9 @@
                 </td>
                 <td style="max-width:min(560px,92vw);vertical-align:top">
                   <pre style="margin:0;font-family:ui-monospace,monospace;font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:360px;overflow:auto;color:var(--muted-text);background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--border)">${escHtml(c.message || "")}</pre>
+                </td>
+                <td style="vertical-align:top;padding-top:16px">
+                  <button type="button" class="btn btn-primary" style="font-size:12px;padding:8px 12px" data-open-publish data-pub-email="${escHtml(c.email || "")}" data-pub-name="${escHtml(c.name || "")}">Publish to site</button>
                 </td>
               </tr>`;
           }).join("");
@@ -746,24 +761,25 @@
         }
       }
 
-      el.saveTokenBtn.addEventListener("click", () => {
-        state.token = el.tokenInput.value.trim();
+      el.saveTokenBtn?.addEventListener("click", () => {
+        state.token = (el.tokenInput?.value || "").trim();
         localStorage.setItem(STORAGE_KEY, state.token);
         setStatus(el.authStatus, "Token saved.", "ok");
       });
 
-      el.testAuthBtn.addEventListener("click", async () => { await testAuth(); await refreshAll(); });
+      el.testAuthBtn?.addEventListener("click", async () => { await testAuth(); await refreshAll(); });
 
-      el.logoutBtn.addEventListener("click", () => {
+      el.logoutBtn?.addEventListener("click", () => {
         localStorage.removeItem(STORAGE_KEY);
-        state.token = ""; el.tokenInput.value = "";
+        state.token = "";
+        if (el.tokenInput) el.tokenInput.value = "";
         setStatus(el.authStatus, "Logged out.", "ok");
       });
 
-      el.refreshBtn.addEventListener("click", refreshAll);
-      el.searchInput.addEventListener("input", render);
+      el.refreshBtn?.addEventListener("click", refreshAll);
+      el.searchInput?.addEventListener("input", render);
 
-      el.contactsTbody.addEventListener("click", (e) => {
+      el.contactsTbody?.addEventListener("click", (e) => {
         const btn = e.target.closest("[data-open-publish]");
         if (!btn) return;
         openPublishModal(btn.getAttribute("data-pub-email"), btn.getAttribute("data-pub-name"));
@@ -810,7 +826,7 @@
         t.addEventListener("click", () => { state.tab = t.dataset.tab; render(); });
       });
 
-      el.exportBtn.addEventListener("click", () => {
+      el.exportBtn?.addEventListener("click", () => {
         if (state.tab === "bookings") {
           const rows = [["ref","createdAt","status","service","price","dur","date","time","firstName","lastName","phone","email","notes"],
             ...filterRows(state.bookings).map((b) => [b.ref,b.createdAt,b.status||"new",b.service,b.price,b.dur,b.date,b.time,b.firstName,b.lastName,b.phone,b.email,b.notes])];
@@ -824,7 +840,7 @@
         }
       });
 
-      el.bookingsTbody.addEventListener("click", async (e) => {
+      el.bookingsTbody?.addEventListener("click", async (e) => {
         const btn = e.target.closest("button[data-action='save']");
         if (!btn) return;
         const ref = btn.dataset.ref;
@@ -842,7 +858,7 @@
         finally { btn.disabled = false; btn.textContent = "Save"; }
       });
 
-      el.connectProviderBtn.addEventListener("click", async () => {
+      el.connectProviderBtn?.addEventListener("click", async () => {
         const providerId = document.getElementById("cpId").value.trim();
         const providerName = document.getElementById("cpName").value.trim();
         const providerEmail = document.getElementById("cpEmail").value.trim();
@@ -863,7 +879,7 @@
         finally { el.connectProviderBtn.disabled = false; }
       });
 
-      el.providersTbody.addEventListener("click", async (e) => {
+      el.providersTbody?.addEventListener("click", async (e) => {
         const btn = e.target.closest("button");
         if (!btn) return;
         const providerId = btn.dataset.providerId;
