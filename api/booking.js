@@ -1,5 +1,14 @@
-import { addBooking, addNegotiation, patchBooking } from "../lib/kv-store.js";
-import { notifyBookingSubmittedAdmin, notifyBookingSubmittedCustomer } from "../lib/notify.js";
+import {
+  addBooking,
+  addNegotiation,
+  patchBooking,
+  getMarketplaceListingById,
+} from "../lib/kv-store.js";
+import {
+  notifyBookingSubmittedAdmin,
+  notifyBookingSubmittedCustomer,
+  notifyNegotiationUpdate,
+} from "../lib/notify.js";
 
 function readBody(req, limitBytes = 1024 * 1024) {
   return new Promise((resolve, reject) => {
@@ -71,6 +80,15 @@ export default async function handler(req, res) {
 
   const ref = `CS-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
   const createdAt = new Date().toISOString();
+  const providerId = safeText(payload?.providerId, 24);
+
+  let publishedListing = null;
+  try {
+    if (providerId) publishedListing = await getMarketplaceListingById(providerId);
+  } catch (e) {
+    console.warn("BOOKING_LISTING_LOOKUP", e?.message);
+  }
+
   const record = {
     ref,
     createdAt,
@@ -84,13 +102,16 @@ export default async function handler(req, res) {
     lastName,
     phone,
     email,
-    notes
+    notes,
+    providerId: providerId || undefined,
   };
 
   try {
     await addBooking(record);
 
     const negId = `NEG-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    const providerEmail = publishedListing?.email ? String(publishedListing.email).toLowerCase() : "";
+    const providerName = publishedListing?.role || record.notes?.match(/Provider:\s*(.+)/)?.[1]?.trim() || "";
     const neg = {
       id: negId,
       bookingRef: ref,
@@ -98,9 +119,9 @@ export default async function handler(req, res) {
       customerEmail: email.toLowerCase(),
       customerName: `${firstName} ${lastName}`,
       customerPhone: phone,
-      providerEmail: "",
-      providerName: record.notes?.match(/Provider:\s*(.+)/)?.[1] || service,
-      providerId: safeText(payload?.providerId, 20),
+      providerEmail,
+      providerName,
+      providerId,
       status: "pending",
       messages: [{ from: "customer", type: "request", text: notes || `Service request: ${service}`, ts: createdAt }],
       agreedPrice: null,
@@ -109,6 +130,12 @@ export default async function handler(req, res) {
     };
     await addNegotiation(neg);
     await patchBooking(ref, { negotiationId: negId, status: "negotiating" });
+
+    if (providerEmail) {
+      void notifyNegotiationUpdate(neg, "new_request", providerEmail).catch((err) =>
+        console.error("NOTIFY_NEG_NEW", err)
+      );
+    }
 
     void Promise.allSettled([
       notifyBookingSubmittedCustomer(record),

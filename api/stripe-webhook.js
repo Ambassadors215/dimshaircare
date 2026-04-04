@@ -1,5 +1,11 @@
 import Stripe from "stripe";
-import { getBookingByRef, patchBooking, getProviders, upsertProvider } from "../lib/kv-store.js";
+import {
+  getBookingByRef,
+  patchBooking,
+  patchNegotiation,
+  getProviders,
+  upsertProvider,
+} from "../lib/kv-store.js";
 import { notifyPaymentSucceededAdmin, notifyPaymentSucceededCustomer } from "../lib/notify.js";
 
 export const config = {
@@ -69,6 +75,7 @@ export default async function handler(req, res) {
   if (event.type === "checkout.session.completed") {
     const session = event.data.object;
     const ref = session.metadata?.bookingRef || session.client_reference_id;
+    const negotiationId = session.metadata?.negotiationId;
     if (ref) {
       try {
         await patchBooking(String(ref), {
@@ -77,6 +84,13 @@ export default async function handler(req, res) {
           stripeSessionId: session.id,
           stripePaymentIntent: session.payment_intent ? String(session.payment_intent) : "",
         });
+        if (negotiationId) {
+          try {
+            await patchNegotiation(String(negotiationId), { status: "paid" });
+          } catch (e) {
+            console.error("WEBHOOK_NEG_PATCH", e);
+          }
+        }
         const booking = await getBookingByRef(String(ref));
         if (booking) {
           void Promise.allSettled([

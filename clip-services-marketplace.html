@@ -609,6 +609,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
     <a href="#" onclick="switchView('customer','how-c');return false;">How It Works</a>
     <a href="#" onclick="switchView('customer','payment');return false;">Payment</a>
     <a href="#" onclick="switchView('provider');return false;" class="nav-btn">Join as Provider</a>
+    <a href="/provider/" class="nav-btn" style="background:rgba(0,200,240,.12);border:1px solid rgba(0,200,240,.25);">Provider dashboard</a>
   </div>
   <button class="nav-toggle" onclick="toggleMobileMenu()">☰</button>
 </nav>
@@ -654,6 +655,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
 
     <div style="display:flex;gap:12px;flex-wrap:wrap;" class="r rd3">
       <a href="/user/" class="btn-s" style="font-size:13px;">📋 My Bookings</a>
+      <a href="/provider/" class="btn-s" style="font-size:13px;">🙋 Provider dashboard</a>
     </div>
 
   </div>
@@ -912,10 +914,12 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       </div>
     </div>
 
-    <div class="hero-acts r rd3">
+    <div class="hero-acts r rd3" style="flex-wrap:wrap;gap:10px;">
       <a href="#apply" class="btn-p">Apply to join — it's free</a>
+      <a href="/provider/" class="btn-s" style="border:1px solid rgba(0,200,240,.35);">Provider dashboard →</a>
       <button class="btn-s" onclick="switchView('customer')">Browse as customer instead</button>
     </div>
+    <p class="r rd3" style="font-size:13px;color:var(--muted);max-width:520px;margin-top:12px;">Already approved? Open the dashboard with the <strong>same email</strong> you gave us when you applied. After we publish your listing, customer requests appear there for pricing and negotiation.</p>
   </div>
 
   <!-- BENEFITS -->
@@ -1373,8 +1377,8 @@ const SVC_ICONS = {
   search: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5A78A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`
 };
 
-// ===== PROVIDER DATA =====
-const providers = [
+// ===== PROVIDER DATA (seed + published from admin /api/listings) =====
+const SEED_PROVIDERS = [
   {
     id:1, icon:"runner", role:"Runner & Errands", category:"runner",
     bio:"Need something picked up, dropped off, or delivered across Salford Quays? Our runners handle groceries, pharmacy trips, parcel returns, takeaway pickups, and late-night essentials.",
@@ -1425,6 +1429,35 @@ const providers = [
   },
 ];
 
+let providers = [];
+
+async function loadMarketplaceProviders() {
+  providers = SEED_PROVIDERS.map(function (p) { return Object.assign({}, p); });
+  try {
+    var r = await fetch('/api/listings');
+    var d = await r.json();
+    if (d.ok && d.items && d.items.length) {
+      d.items.forEach(function (it) {
+        var row = {
+          id: it.id,
+          icon: SVC_ICONS[it.icon] ? it.icon : 'plus',
+          role: it.role || 'Service provider',
+          category: it.category || 'runner',
+          bio: it.bio || 'Services and prices are confirmed when you book.',
+          services: (it.services && it.services.length) ? it.services : ['See profile for details'],
+          popular: !!it.popular
+        };
+        var ix = providers.findIndex(function (x) { return String(x.id) === String(it.id); });
+        if (ix >= 0) providers[ix] = row;
+        else providers.push(row);
+      });
+    }
+  } catch (e) {
+    console.warn('Could not load /api/listings', e);
+  }
+  renderServiceCards(providers);
+  filterProviders();
+}
 
 function renderProviders(list) {
   const grid = document.getElementById('providersGrid');
@@ -1433,7 +1466,7 @@ function renderProviders(list) {
     return;
   }
   grid.innerHTML = list.map(p => `
-    <div class="pcard" onclick="openModal(${p.id})">
+    <div class="pcard" onclick="openModal(${JSON.stringify(p.id)})">
       ${p.popular?'<span class="pcard-badge bg-top">Popular</span>':''}
       <div class="pcard-top">
         <div class="pcard-avatar">
@@ -1451,7 +1484,7 @@ function renderProviders(list) {
       </div>
       <div class="pcard-foot">
         <span class="pcard-opts">${p.services.length} services available</span>
-        <button class="book-btn" onclick="event.stopPropagation();openModal(${p.id})">Request Service</button>
+        <button class="book-btn" onclick="event.stopPropagation();openModal(${JSON.stringify(p.id)})">Request Service</button>
       </div>
     </div>
   `).join('');
@@ -1461,7 +1494,7 @@ function renderServiceCards(list) {
   const grid = document.getElementById('svcGrid');
   if (!grid) return;
   grid.innerHTML = list.map(p => 
-    '<div class="svc-card" onclick="openModal(' + p.id + ')">' +
+    '<div class="svc-card" onclick="openModal(' + JSON.stringify(p.id) + ')">' +
     (p.popular ? '<span class="svc-card-badge">Popular</span>' : '') +
     '<div class="svc-card-icon">' + (SVC_ICONS[p.icon] || '') + '</div>' +
     '<div class="svc-card-name">' + p.role + '</div>' +
@@ -1501,7 +1534,7 @@ function scrollToProviders() {
 }
 
 function openModal(id) {
-  const p = providers.find(x=>x.id===id);
+  const p = providers.find(x => String(x.id) === String(id));
   if(!p) return;
   document.getElementById('m-avatar').innerHTML = SVC_ICONS[p.icon]||p.icon;
   document.getElementById('m-name').textContent = p.role;
@@ -1510,7 +1543,7 @@ function openModal(id) {
   document.getElementById('m-svcs').innerHTML = p.services.map(s=>`<span class="msvc">${s}</span>`).join('');
   document.getElementById('bookingForm').reset();
   document.getElementById('bf-provider').value = p.role;
-  document.getElementById('bf-provider-id').value = p.id;
+  document.getElementById('bf-provider-id').value = String(p.id);
   const dateInput = document.getElementById('bf-date');
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
@@ -1889,7 +1922,7 @@ function closeMobileMenu(){
 const siEl = document.getElementById('si-search');
 if (siEl) siEl.innerHTML = SVC_ICONS.search;
 
-renderServiceCards(providers);
+loadMarketplaceProviders();
 
 (function smartFormInit() {
   const phoneInput = document.getElementById('bf-phone');

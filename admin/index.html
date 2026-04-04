@@ -179,7 +179,7 @@
         <div class="workspace-banner">
           <div class="workspace-label">Admin Dashboard</div>
           <div class="workspace-name">Clip Services</div>
-          <div class="workspace-desc">Manage bookings, provider applications, Stripe Connect, and push notifications.</div>
+          <div class="workspace-desc"><strong>Launch checklist:</strong> (1) <em>Applications</em> — review applicants. (2) <em>Publish to site</em> — adds their card on the marketplace and links their email so requests route to their dashboard. (3) <em>Stripe Connect</em> — same numeric <span class="mono">Provider ID</span> as the listing so payouts work. (4) <em>Negotiations</em> — only needed if no listing match; otherwise the provider is notified automatically.</div>
         </div>
 
         <!-- DASHBOARD STATS -->
@@ -254,7 +254,8 @@
               <button class="tab active" data-tab="bookings">Bookings</button>
               <button class="tab" data-tab="negotiations">Negotiations</button>
               <button class="tab" data-tab="contacts">Applications</button>
-              <button class="tab" data-tab="providers">Providers</button>
+              <button class="tab" data-tab="marketplace">Marketplace listings</button>
+              <button class="tab" data-tab="providers">Stripe Connect</button>
             </div>
             <div class="panel-tools">
               <input class="input" id="searchInput" placeholder="Search…" style="width:200px" />
@@ -318,6 +319,55 @@
         </div>
 
       </div>
+
+      <div id="publishModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto;">
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);max-width:520px;width:100%;margin:24px auto;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,.5);">
+          <h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;">Publish provider to marketplace</h3>
+          <p class="muted" style="font-size:12px;margin-bottom:16px;line-height:1.5;">Creates a bookable service card and links this email to new customer requests. Listing ID should match Stripe Connect provider ID if you use payouts.</p>
+          <div style="display:grid;gap:10px;">
+            <div><div class="muted" style="font-size:11px;margin-bottom:4px;">Listing / provider ID *</div><input class="input" id="pub-id" placeholder="e.g. 9" /></div>
+            <div><div class="muted" style="font-size:11px;margin-bottom:4px;">Provider email *</div><input class="input" id="pub-email" type="email" /></div>
+            <div><div class="muted" style="font-size:11px;margin-bottom:4px;">Display name (shown to customers) *</div><input class="input" id="pub-role" placeholder="e.g. Mobile hair stylist" /></div>
+            <div><div class="muted" style="font-size:11px;margin-bottom:4px;">Bio</div><textarea class="input" id="pub-bio" rows="3" placeholder="Short description for the card"></textarea></div>
+            <div><div class="muted" style="font-size:11px;margin-bottom:4px;">Services (comma-separated)</div><input class="input" id="pub-services" placeholder="Braids, Wig install, ..." /></div>
+            <div class="row" style="gap:10px;">
+              <div style="flex:1">
+                <div class="muted" style="font-size:11px;margin-bottom:4px;">Category</div>
+                <select class="select" id="pub-category" style="width:100%;padding:10px 12px;">
+                  <option value="runner">Runner</option>
+                  <option value="cleaning">Cleaning</option>
+                  <option value="handyman">Handyman</option>
+                  <option value="dog">Dog walking</option>
+                  <option value="grocery">Groceries</option>
+                  <option value="delivery">Delivery</option>
+                  <option value="beauty">Hair &amp; beauty</option>
+                  <option value="tech">Tech</option>
+                </select>
+              </div>
+              <div style="flex:1">
+                <div class="muted" style="font-size:11px;margin-bottom:4px;">Icon</div>
+                <select class="select" id="pub-icon" style="width:100%;padding:10px 12px;">
+                  <option value="beauty">Beauty</option>
+                  <option value="runner">Runner</option>
+                  <option value="cleaning">Cleaning</option>
+                  <option value="handyman">Handyman</option>
+                  <option value="dog">Dog</option>
+                  <option value="grocery">Grocery</option>
+                  <option value="delivery">Delivery</option>
+                  <option value="tech">Tech</option>
+                  <option value="plus">Other</option>
+                </select>
+              </div>
+            </div>
+            <label class="muted" style="font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="pub-popular" /> Feature as Popular</label>
+            <div class="row" style="margin-top:8px;">
+              <button class="btn btn-primary" type="button" id="pubSaveBtn">Save listing</button>
+              <button class="btn btn-ghost" type="button" id="pubCancelBtn">Cancel</button>
+            </div>
+            <div class="status" id="pubStatus"></div>
+          </div>
+        </div>
+      </div>
     </main>
 
     <script>
@@ -329,7 +379,8 @@
         bookings: [],
         contacts: [],
         providers: {},
-        negotiations: []
+        negotiations: [],
+        marketplace: []
       };
 
       const el = {
@@ -357,8 +408,13 @@
         connectResult: document.getElementById("connectResult"),
         statBookings: document.getElementById("statBookings"),
         statContacts: document.getElementById("statContacts"),
-        statProviders: document.getElementById("statProviders"),
-        statNegotiations: document.getElementById("statNegotiations")
+        statNegotiations: document.getElementById("statNegotiations"),
+        marketplaceView: document.getElementById("marketplaceView"),
+        marketplaceTbody: document.getElementById("marketplaceTbody"),
+        publishModal: document.getElementById("publishModal"),
+        pubSaveBtn: document.getElementById("pubSaveBtn"),
+        pubCancelBtn: document.getElementById("pubCancelBtn"),
+        pubStatus: document.getElementById("pubStatus")
       };
 
       el.tokenInput.value = state.token;
@@ -469,8 +525,38 @@
       function updateDashStats() {
         el.statBookings.textContent = state.bookings.length;
         el.statContacts.textContent = state.contacts.length;
-        el.statProviders.textContent = Object.keys(state.providers).length;
         el.statNegotiations.textContent = state.negotiations.length;
+      }
+
+      function renderMarketplaceTable() {
+        const list = filterRows(state.marketplace);
+        el.marketplaceTbody.innerHTML = list.length === 0
+          ? '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--faint)">No published listings. Open <strong>Applications</strong> and click <strong>Publish to site</strong>.</td></tr>'
+          : list.map((m) => `
+              <tr>
+                <td class="mono">${escHtml(m.id)}</td>
+                <td style="font-weight:500">${escHtml(m.role)}</td>
+                <td class="muted" style="font-size:12px">${escHtml(m.email)}</td>
+                <td>${escHtml(m.category)}</td>
+                <td><button type="button" class="btn btn-danger" style="font-size:12px;padding:6px 12px" data-mp-remove="${escHtml(m.id)}">Remove</button></td>
+              </tr>`).join("");
+      }
+
+      function openPublishModal(email, name) {
+        document.getElementById("pub-id").value = "";
+        document.getElementById("pub-email").value = email || "";
+        document.getElementById("pub-role").value = name || "";
+        document.getElementById("pub-bio").value = "";
+        document.getElementById("pub-services").value = "";
+        document.getElementById("pub-category").value = "beauty";
+        document.getElementById("pub-icon").value = "beauty";
+        document.getElementById("pub-popular").checked = false;
+        setStatus(el.pubStatus, "", null);
+        el.publishModal.style.display = "flex";
+      }
+
+      function closePublishModal() {
+        el.publishModal.style.display = "none";
       }
 
       function timeAgo(dateStr) {
@@ -492,9 +578,11 @@
         el.bookingsView.classList.toggle("hide", state.tab !== "bookings");
         el.negotiationsView.classList.toggle("hide", state.tab !== "negotiations");
         el.contactsView.classList.toggle("hide", state.tab !== "contacts");
+        el.marketplaceView.classList.toggle("hide", state.tab !== "marketplace");
         el.providersView.classList.toggle("hide", state.tab !== "providers");
 
         renderNegotiations();
+        renderMarketplaceTable();
 
         const bookings = filterRows(state.bookings);
         el.bookingsTbody.innerHTML = bookings.length === 0
@@ -562,17 +650,19 @@
       async function refreshAll() {
         setStatus(el.dataStatus, "Loading…");
         try {
-          const [bookings, contacts, provData, negsData] = await Promise.all([
+          const [bookings, contacts, provData, negsData, mpData] = await Promise.all([
             api("/api/admin?action=bookings"),
             api("/api/admin?action=contacts"),
             api("/api/admin?action=providers").catch(() => ({ providers: {} })),
-            api("/api/admin?action=negotiations").catch(() => ({ items: [] }))
+            api("/api/admin?action=negotiations").catch(() => ({ items: [] })),
+            api("/api/admin?action=marketplace").catch(() => ({ items: [] }))
           ]);
           state.bookings = bookings.items || [];
           state.contacts = contacts.items || [];
           state.providers = provData.providers || {};
           state.negotiations = negsData.items || [];
-          setStatus(el.dataStatus, `${state.bookings.length} bookings · ${state.negotiations.length} negotiations · ${state.contacts.length} applications`, "ok");
+          state.marketplace = mpData.items || [];
+          setStatus(el.dataStatus, `${state.bookings.length} bookings · ${state.negotiations.length} negotiations · ${state.marketplace.length} live listings · ${state.contacts.length} applications`, "ok");
           render();
         } catch (e) {
           setStatus(el.dataStatus, e?.message || "Failed to load", "err");
@@ -605,6 +695,49 @@
 
       el.refreshBtn.addEventListener("click", refreshAll);
       el.searchInput.addEventListener("input", render);
+
+      el.contactsTbody.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-open-publish]");
+        if (!btn) return;
+        openPublishModal(btn.getAttribute("data-pub-email"), btn.getAttribute("data-pub-name"));
+      });
+
+      el.marketplaceTbody.addEventListener("click", async (e) => {
+        const btn = e.target.closest("[data-mp-remove]");
+        if (!btn) return;
+        const id = btn.getAttribute("data-mp-remove");
+        if (!id || !confirm("Remove this listing from the public marketplace?")) return;
+        try {
+          await api("/api/admin?action=marketplace-unpublish", { method: "POST", body: JSON.stringify({ id }) });
+          setStatus(el.dataStatus, "Listing removed.", "ok");
+          await refreshAll();
+        } catch (err) {
+          setStatus(el.dataStatus, err.message || "Remove failed", "err");
+        }
+      });
+
+      el.pubCancelBtn.addEventListener("click", closePublishModal);
+      el.pubSaveBtn.addEventListener("click", async () => {
+        setStatus(el.pubStatus, "Saving…", null);
+        const body = {
+          id: document.getElementById("pub-id").value.trim(),
+          email: document.getElementById("pub-email").value.trim(),
+          role: document.getElementById("pub-role").value.trim(),
+          bio: document.getElementById("pub-bio").value.trim(),
+          services: document.getElementById("pub-services").value,
+          category: document.getElementById("pub-category").value,
+          icon: document.getElementById("pub-icon").value,
+          popular: document.getElementById("pub-popular").checked
+        };
+        try {
+          await api("/api/admin?action=marketplace-publish", { method: "POST", body: JSON.stringify(body) });
+          setStatus(el.pubStatus, "Saved.", "ok");
+          closePublishModal();
+          await refreshAll();
+        } catch (err) {
+          setStatus(el.pubStatus, err.message || "Save failed", "err");
+        }
+      });
 
       document.querySelectorAll(".tab").forEach((t) => {
         t.addEventListener("click", () => { state.tab = t.dataset.tab; render(); });

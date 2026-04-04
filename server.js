@@ -189,9 +189,23 @@ const server = http.createServer(async (req, res) => {
     }
 
     const safePath = path.normalize(url.pathname).replace(/^(\.\.(\/|\\|$))+/, "");
-    const filePath = path.join(ROOT, safePath);
+    const rel = safePath.replace(/^[/\\]+/, "");
+    let filePath = path.join(ROOT, rel);
 
-    const stat = await fs.stat(filePath);
+    let stat;
+    try {
+      stat = await fs.stat(filePath);
+    } catch {
+      return send(res, 404, { "content-type": "text/plain; charset=utf-8" }, "Not Found");
+    }
+    if (stat.isDirectory()) {
+      filePath = path.join(filePath, "index.html");
+      try {
+        stat = await fs.stat(filePath);
+      } catch {
+        return send(res, 404, { "content-type": "text/plain; charset=utf-8" }, "Not Found");
+      }
+    }
     if (!stat.isFile()) {
       return send(res, 404, { "content-type": "text/plain; charset=utf-8" }, "Not Found");
     }

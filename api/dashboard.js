@@ -22,16 +22,11 @@ export default async function handler(req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`);
   const role = url.searchParams.get("role") || "";
   const email = (url.searchParams.get("email") || "").trim().toLowerCase();
-  const ref = url.searchParams.get("ref") || "";
-
   if (!isValidEmail(email)) return endJson(res, 400, { ok: false, error: "Valid email required" });
 
   try {
     if (role === "customer") {
       const bookings = await getBookingsByEmail(email);
-      if (!bookings.length && !ref) {
-        return endJson(res, 200, { ok: true, bookings: [], negotiations: [] });
-      }
       const negotiations = await getNegotiationsByEmail(email);
       const safeBookings = bookings.map((b) => ({
         ref: b.ref,
@@ -52,6 +47,7 @@ export default async function handler(req, res) {
         status: n.status,
         agreedPrice: n.agreedPrice,
         messages: n.messages,
+        providerName: n.providerName || "",
         createdAt: n.createdAt,
         updatedAt: n.updatedAt,
         bookingRef: n.bookingRef,

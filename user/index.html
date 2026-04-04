@@ -180,9 +180,11 @@ function renderNegotiations() {
 
     let actions = '';
     if (n.status === 'agreed') {
-      actions = '<div class="agreed-box">' +
-        '<div>Price agreed: <strong>&pound;' + Number(n.agreedPrice).toFixed(2) + '</strong></div>' +
-        '<a href="/clip-services-marketplace.html?pay=' + encodeURIComponent(n.id) + '" class="btn btn-green btn-sm">Pay Now</a>' +
+      actions = '<div class="agreed-box" style="flex-direction:column;align-items:flex-start;gap:10px">' +
+        '<div>Price agreed: <strong>&pound;' + Number(n.agreedPrice).toFixed(2) + '</strong> (card total may include service charges at checkout)</div>' +
+        '<label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);cursor:pointer">' +
+        '<input type="checkbox" id="pay-consent-' + escHtml(n.id) + '"> I agree to pay the total shown on the secure payment page.</label>' +
+        '<button type="button" class="btn btn-green btn-sm" data-neg-pay="' + escHtml(n.id) + '" onclick="startPayFromBtn(this)">Pay securely with card</button>' +
         '</div>';
     } else if (canAct && providerOffered) {
       actions = '<div class="offer-actions" data-neg="' + n.id + '">' +
@@ -289,6 +291,27 @@ async function sendCounter(negId) {
   } catch (e) { alert(e.message || 'Failed to send counter offer'); }
 }
 
+function startPayFromBtn(btn) {
+  startPay(btn.getAttribute('data-neg-pay'));
+}
+
+async function startPay(negId) {
+  if (!negId) return;
+  var cb = document.getElementById('pay-consent-' + negId);
+  if (!cb || !cb.checked) { alert('Please tick the box to continue to payment.'); return; }
+  try {
+    var res = await fetch('/api/stripe-checkout', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ negotiationId: negId, email: state.email, consent: true })
+    });
+    var data = await res.json();
+    if (data.code === 'NO_STRIPE') { alert('Card payments are not configured on the server yet.'); return; }
+    if (!data.ok) throw new Error(data.error || 'Could not start payment');
+    if (data.url) window.location.href = data.url;
+  } catch (e) { alert(e.message || 'Failed'); }
+}
+
 async function declineNeg(negId) {
   if (!confirm('Decline this negotiation?')) return;
   try {
@@ -335,9 +358,16 @@ document.querySelectorAll('.tab').forEach(t => {
   });
 });
 
-const urlEmail = new URLSearchParams(location.search).get('email');
+var urlParams = new URLSearchParams(location.search);
+var urlEmail = urlParams.get('email');
 if (urlEmail) { state.email = urlEmail; localStorage.setItem(STORAGE_KEY, urlEmail); }
 if (state.email) { $('emailInput').value = state.email; loadDashboard(); }
+if (urlParams.get('paid') === '1') {
+  setTimeout(function () { alert('Payment received — thank you. You will get a confirmation by email.'); }, 400);
+}
+if (urlParams.get('cancel') === '1') {
+  setTimeout(function () { alert('Payment was cancelled. You can pay again from this page when you are ready.'); }, 400);
+}
 </script>
 </body>
 </html>

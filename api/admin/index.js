@@ -6,6 +6,9 @@ import {
   getBookingByRef,
   updateBookingStatus,
   getNegotiations,
+  getMarketplaceListings,
+  upsertMarketplaceListing,
+  removeMarketplaceListing,
 } from "../../lib/kv-store.js";
 import { notifyBookingStatusCustomer } from "../../lib/notify.js";
 
@@ -89,10 +92,76 @@ async function handleNegotiations(req, res) {
   }
 }
 
+async function handleMarketplace(req, res) {
+  if (req.method !== "GET") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
+  try {
+    const items = await getMarketplaceListings();
+    return endJson(res, 200, { ok: true, items });
+  } catch (e) {
+    console.error("ADMIN_MARKETPLACE_ERROR", e);
+    return endJson(res, 500, { ok: false, error: "Failed to load marketplace listings" });
+  }
+}
+
+async function handleMarketplacePublish(req, res) {
+  if (req.method !== "POST") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
+  let payload;
+  try {
+    payload = JSON.parse(await readBody(req));
+  } catch {
+    return endJson(res, 400, { ok: false, error: "Invalid JSON" });
+  }
+  const id = String(payload?.id || "").trim().slice(0, 32);
+  const email = String(payload?.email || "").trim().slice(0, 120);
+  const role = String(payload?.role || "").trim().slice(0, 200);
+  const bio = String(payload?.bio || "").trim().slice(0, 4000);
+  const category = String(payload?.category || "runner").trim().slice(0, 40);
+  const icon = String(payload?.icon || "plus").trim().slice(0, 40);
+  const popular = Boolean(payload?.popular);
+  let services = payload?.services;
+  if (typeof services === "string") {
+    services = services.split(/[,;\n]/).map((s) => s.trim()).filter(Boolean);
+  }
+  if (!Array.isArray(services)) services = [];
+  if (!id || !email || !role) {
+    return endJson(res, 400, { ok: false, error: "id, email, and display name (role) are required" });
+  }
+  try {
+    await upsertMarketplaceListing({ id, email, role, bio, services, category, icon, popular });
+    return endJson(res, 200, { ok: true });
+  } catch (e) {
+    console.error("ADMIN_MARKETPLACE_PUBLISH", e);
+    return endJson(res, 400, { ok: false, error: e.message || "Publish failed" });
+  }
+}
+
+async function handleMarketplaceUnpublish(req, res) {
+  if (req.method !== "POST") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
+  let payload;
+  try {
+    payload = JSON.parse(await readBody(req));
+  } catch {
+    return endJson(res, 400, { ok: false, error: "Invalid JSON" });
+  }
+  const id = String(payload?.id || "").trim();
+  if (!id) return endJson(res, 400, { ok: false, error: "Missing id" });
+  try {
+    const ok = await removeMarketplaceListing(id);
+    if (!ok) return endJson(res, 404, { ok: false, error: "Listing not found" });
+    return endJson(res, 200, { ok: true });
+  } catch (e) {
+    console.error("ADMIN_MARKETPLACE_UNPUBLISH", e);
+    return endJson(res, 500, { ok: false, error: "Unpublish failed" });
+  }
+}
+
 const ROUTES = {
   ping: handlePing,
   bookings: handleBookings,
   negotiations: handleNegotiations,
+  marketplace: handleMarketplace,
+  "marketplace-publish": handleMarketplacePublish,
+  "marketplace-unpublish": handleMarketplaceUnpublish,
   contacts: handleContacts,
   providers: handleProviders,
   "update-booking": handleUpdateBooking,
