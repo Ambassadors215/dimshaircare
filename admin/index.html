@@ -138,6 +138,54 @@
       ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
       ::-webkit-scrollbar-thumb:hover { background: var(--faint); }
 
+      /* OPERATOR GUIDE */
+      .operator-panel {
+        background: var(--card2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        margin-bottom: 20px;
+        overflow: hidden;
+      }
+      .operator-panel > summary {
+        cursor: pointer;
+        padding: 16px 20px;
+        font-family: "Syne", sans-serif;
+        font-weight: 700;
+        font-size: 15px;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        user-select: none;
+      }
+      .operator-panel > summary::-webkit-details-marker {
+        display: none;
+      }
+      .operator-panel > summary::after {
+        content: "▾";
+        color: var(--cyan);
+        font-size: 12px;
+        transition: transform 0.2s;
+      }
+      .operator-panel[open] > summary::after {
+        transform: rotate(-180deg);
+      }
+      .operator-panel .operator-body {
+        padding: 0 20px 20px;
+        border-top: 1px solid var(--border);
+      }
+      .operator-panel ol {
+        margin: 14px 0 0;
+        padding-left: 20px;
+        font-size: 13px;
+        line-height: 1.65;
+        color: var(--muted-text);
+      }
+      .operator-panel ol strong {
+        color: var(--text);
+      }
+
       /* RESPONSIVE */
       @media (max-width: 900px) {
         .dash-grid { grid-template-columns: repeat(2, 1fr); }
@@ -181,6 +229,21 @@
           <div class="workspace-name">Clip Services</div>
           <div class="workspace-desc"><strong>Launch checklist:</strong> (1) <em>Applications</em> — review applicants. (2) <em>Publish to site</em> — adds their card on the marketplace and links their email so requests route to their dashboard. (3) <em>Stripe Connect</em> — same numeric <span class="mono">Provider ID</span> as the listing so payouts work. (4) <em>Negotiations</em> — only needed if no listing match; otherwise the provider is notified automatically.</div>
         </div>
+
+        <details class="operator-panel">
+          <summary>For operators — full workflow reference</summary>
+          <div class="operator-body">
+            <ol>
+              <li><strong>Applications tab:</strong> Read each submission. When you are ready to onboard someone, click <strong>Publish to site</strong>. Enter a unique <span class="mono">Listing ID</span> (e.g. <span class="mono">9</span>) and the <strong>exact email</strong> they will use on <span class="mono">/provider/</span>. That creates their public service card and links new bookings to them.</li>
+              <li><strong>Marketplace listings tab:</strong> See everyone who is live on the homepage. <strong>Remove</strong> takes their card off the site (data stays in bookings/negotiations history).</li>
+              <li><strong>Stripe Connect tab:</strong> Create Connect with the <strong>same ID</strong> as the marketplace listing so card payments can route the provider’s share automatically after the customer pays.</li>
+              <li><strong>Customer journey:</strong> They book from the marketplace → request appears under <strong>Negotiations</strong> and in their <span class="mono">/user/</span> dashboard → provider sends a price → customer accepts or counters → customer pays in <span class="mono">/user/</span> when agreed.</li>
+              <li><strong>Negotiations tab (manual assign):</strong> Use only when a booking used a generic seed card (no published listing) or the provider email is missing. Paste the provider’s email and <strong>Assign Provider</strong> so they see the thread on <span class="mono">/provider/</span>.</li>
+              <li><strong>Bookings tab:</strong> Operational status (new, awaiting payment, paid, etc.). Payment success is also driven by the Stripe webhook.</li>
+            </ol>
+            <p class="muted" style="font-size:12px;margin-top:14px;line-height:1.55;margin-bottom:0;">This panel is only visible in admin. Customers and providers never see it.</p>
+          </div>
+        </details>
 
         <!-- DASHBOARD STATS -->
         <div class="dash-grid" id="dashGrid">
