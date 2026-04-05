@@ -1491,6 +1491,14 @@ function providerIdAttr(id) {
   return encodeURIComponent(String(id));
 }
 
+/** Public label on marketplace cards (internal role/email unchanged for booking). */
+function cardListingTitle(p) {
+  var r = String(p && p.role != null ? p.role : '').trim();
+  if (!r) return 'Service provider';
+  if (/\bsonia\b/i.test(r) && /\botikpa\b/i.test(r)) return 'Hairstylist';
+  return r;
+}
+
 async function loadMarketplaceProviders() {
   providers = SEED_PROVIDERS.map(function (p) { return Object.assign({}, p); });
   try {
@@ -1544,7 +1552,7 @@ function renderProviders(list) {
           ${SVC_ICONS[p.icon]||p.icon}
         </div>
         <div class="pcard-info">
-          <div class="pcard-name">${escHtml(p.role)}</div>
+          <div class="pcard-name">${escHtml(cardListingTitle(p))}</div>
           <div class="pcard-provider-note">Price & duration set by provider</div>
         </div>
       </div>
@@ -1572,7 +1580,7 @@ function renderServiceCards(list) {
     return '<div class="svc-card" role="button" tabindex="0" data-provider-id="' + providerIdAttr(p.id) + '">' +
     (p.popular ? '<span class="svc-card-badge">Popular</span>' : '') +
     '<div class="svc-card-icon">' + (SVC_ICONS[p.icon] || '') + '</div>' +
-    '<div class="svc-card-name">' + escHtml(p.role) + '</div>' +
+    '<div class="svc-card-name">' + escHtml(cardListingTitle(p)) + '</div>' +
     priceLine +
     '<div class="svc-card-count">' + p.services.length + ' services</div>' +
     '<div class="svc-card-tags">' + p.services.slice(0,3).map(function (s) { return '<span class="svc-card-tag">' + escHtml(s) + '</span>'; }).join('') + '</div>' +
@@ -1633,7 +1641,7 @@ function openModal(id) {
     return;
   }
   document.getElementById('m-avatar').innerHTML = SVC_ICONS[p.icon]||p.icon;
-  document.getElementById('m-name').textContent = p.role;
+  document.getElementById('m-name').textContent = cardListingTitle(p);
   document.getElementById('m-role').textContent = p.services.length + ' services available';
   document.getElementById('m-about').textContent = p.bio;
   const wrap = document.getElementById('m-price-wrap');
@@ -1660,7 +1668,7 @@ function openModal(id) {
         : 'After you submit, your provider sends their price. This listing has counter-offers turned off — you can accept or decline only.');
   }
   document.getElementById('bookingForm').reset();
-  document.getElementById('bf-provider').value = p.role;
+  document.getElementById('bf-provider').value = cardListingTitle(p);
   document.getElementById('bf-provider-id').value = String(p.id);
   var bfSvc = document.getElementById('bf-service');
   if (bfSvc) {
