@@ -4,6 +4,8 @@ import {
   patchNegotiation,
   getBookingByRef,
   patchBooking,
+  getMarketplaceListingById,
+  upsertMarketplaceListing,
 } from "../lib/kv-store.js";
 import { notifyNegotiationUpdate } from "../lib/notify.js";
 
@@ -98,6 +100,13 @@ export default async function handler(req, res) {
     const isCustomer = String(neg.customerEmail).toLowerCase() === email.toLowerCase();
     if (!isProvider && !isCustomer) return endJson(res, 403, { ok: false, error: "Unauthorized" });
 
+    if (action === "counter" && isCustomer && neg.negotiationEnabled === false) {
+      return endJson(res, 400, {
+        ok: false,
+        error: "This provider has set fixed pricing — customer counter-offers are disabled. You can accept or decline their offer.",
+      });
+    }
+
     const from = isProvider ? "provider" : "customer";
     const msgs = [...(neg.messages || []), { from, type: action, amount, text: message, ts: new Date().toISOString() }];
     await patchNegotiation(negId, { messages: msgs, status: "negotiating" });
@@ -158,6 +167,24 @@ export default async function handler(req, res) {
       void notifyNegotiationUpdate({ ...neg, messages: msgs }, "declined", recipientEmail).catch(console.error);
     }
     return endJson(res, 200, { ok: true });
+  }
+
+  if (action === "set-negotiation-mode") {
+    const listingId = safe(payload?.listingId, 32);
+    const email = safe(payload?.email, 120);
+    const negotiationEnabled = Boolean(payload?.negotiationEnabled);
+    if (!listingId || !isValidEmail(email)) return endJson(res, 400, { ok: false, error: "Missing fields" });
+    try {
+      const row = await getMarketplaceListingById(listingId);
+      if (!row || String(row.email).toLowerCase() !== email.toLowerCase()) {
+        return endJson(res, 403, { ok: false, error: "Unauthorized" });
+      }
+      await upsertMarketplaceListing({ ...row, negotiationEnabled });
+      return endJson(res, 200, { ok: true });
+    } catch (e) {
+      console.error("SET_NEG_MODE", e);
+      return endJson(res, 500, { ok: false, error: "Failed to update listing" });
+    }
   }
 
   if (action === "assign-provider") {

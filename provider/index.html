@@ -136,6 +136,8 @@ a{color:var(--cyan);text-decoration:none}
         <div class="stat-card"><div class="stat-num" id="statBookings">0</div><div class="stat-lbl">Bookings</div></div>
       </div>
 
+      <div id="listingSettings" class="hide"></div>
+
       <div class="tabs">
         <button class="tab active" data-tab="negotiations">Requests & Negotiations</button>
         <button class="tab" data-tab="bookings">Confirmed Bookings</button>
@@ -240,7 +242,27 @@ function updateStats() {
   $('statBookings').textContent = state.bookings.length;
 }
 
-function render() { renderNegotiations(); renderBookings(); updateStats(); }
+function renderListingSettings() {
+  const box = $('listingSettings');
+  if (!box) return;
+  if (!state.listings.length) {
+    box.className = 'hide';
+    box.innerHTML = '';
+    return;
+  }
+  box.className = 'card';
+  box.innerHTML = '<div class="label">Your marketplace listing</div>' +
+    '<p style="font-size:13px;color:var(--muted);margin:8px 0 12px;line-height:1.55">Prices always come from you. Turn off counter-offers if you prefer fixed menu pricing — customers can still accept or decline.</p>' +
+    state.listings.map(function (l) {
+      return '<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">' +
+        '<span style="font-weight:600">' + escHtml(l.role) + ' <small style="color:var(--muted);font-weight:400">(ID ' + escHtml(l.id) + ')</small></span>' +
+        '<label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;user-select:none">' +
+        '<input type="checkbox" class="neg-mode-cb" data-listing-id="' + escHtml(l.id) + '" ' + (l.negotiationEnabled !== false ? 'checked' : '') + ' />' +
+        'Allow customer counter-offers</label></div>';
+    }).join('');
+}
+
+function render() { renderListingSettings(); renderNegotiations(); renderBookings(); updateStats(); }
 
 function escHtml(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -255,6 +277,7 @@ async function loadDashboard() {
     if (!data.ok) throw new Error(data.error || 'Failed');
     state.negotiations = data.negotiations || [];
     state.bookings = data.bookings || [];
+    state.listings = data.listings || [];
     $('loginCard').classList.add('hide');
     $('dashboard').classList.remove('hide');
     $('welcomeText').textContent = 'Welcome back';
@@ -317,9 +340,33 @@ $('loginBtn').addEventListener('click', () => {
 
 $('refreshBtn').addEventListener('click', loadDashboard);
 
+document.getElementById('listingSettings')?.addEventListener('change', async (e) => {
+  const cb = e.target.closest('.neg-mode-cb');
+  if (!cb || !state.email) return;
+  const listingId = cb.getAttribute('data-listing-id');
+  const negotiationEnabled = cb.checked;
+  cb.disabled = true;
+  try {
+    const res = await fetch('/api/negotiate', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action: 'set-negotiation-mode', email: state.email, listingId, negotiationEnabled })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Failed');
+    const L = state.listings.find((x) => String(x.id) === String(listingId));
+    if (L) L.negotiationEnabled = negotiationEnabled;
+  } catch (err) {
+    alert(err.message || 'Could not update');
+    cb.checked = !negotiationEnabled;
+  } finally {
+    cb.disabled = false;
+  }
+});
+
 $('logoutBtn').addEventListener('click', () => {
   localStorage.removeItem(STORAGE_KEY);
-  state = { email: '', negotiations: [], bookings: [] };
+  state = { email: '', negotiations: [], bookings: [], listings: [] };
   $('dashboard').classList.add('hide');
   $('loginCard').classList.remove('hide');
   $('emailInput').value = '';

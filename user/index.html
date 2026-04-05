@@ -187,17 +187,20 @@ function renderNegotiations() {
         '<button type="button" class="btn btn-green btn-sm" data-neg-pay="' + escHtml(n.id) + '" onclick="startPayFromBtn(this)">Pay securely with card</button>' +
         '</div>';
     } else if (canAct && providerOffered) {
+      var negOk = n.negotiationEnabled !== false;
       actions = '<div class="offer-actions" data-neg="' + n.id + '">' +
         '<button class="btn btn-green btn-sm" onclick="acceptOffer(\'' + n.id + '\')">Accept &pound;' + Number(lastMsg.amount).toFixed(2) + '</button>' +
-        '<button class="btn btn-ghost btn-sm" onclick="showCounterForm(\'' + n.id + '\')">Counter Offer</button>' +
+        (negOk
+          ? '<button class="btn btn-ghost btn-sm" onclick="showCounterForm(\'' + n.id + '\')">Counter Offer</button>'
+          : '<span style="font-size:12px;color:var(--muted);align-self:center">Counter-offers disabled by provider</span>') +
         '<button class="btn btn-red btn-sm" onclick="declineNeg(\'' + n.id + '\')">Decline</button>' +
         '</div>' +
-        '<div class="counter-form hide" id="counter-' + n.id + '" data-neg="' + n.id + '">' +
+        (negOk ? '<div class="counter-form hide" id="counter-' + n.id + '" data-neg="' + n.id + '">' +
         '<input class="input" type="number" min="1" step="0.01" placeholder="&pound; Your price" data-field="amount">' +
         '<input class="input" type="text" placeholder="Message (optional)" data-field="msg" style="max-width:200px">' +
         '<button class="btn btn-p btn-sm" onclick="sendCounter(\'' + n.id + '\')">Send</button>' +
         '<button class="btn btn-ghost btn-sm" onclick="hideCounterForm(\'' + n.id + '\')">Cancel</button>' +
-        '</div>';
+        '</div>' : '');
     } else if (canAct) {
       actions = '<div class="waiting-msg">Waiting for provider response&hellip;</div>';
     }

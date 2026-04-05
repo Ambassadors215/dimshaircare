@@ -89,6 +89,15 @@ export default async function handler(req, res) {
     console.warn("BOOKING_LISTING_LOOKUP", e?.message);
   }
 
+  function negotiationEnabledForSeed(id) {
+    if (!id) return true;
+    if (String(id) === "5") return false;
+    return true;
+  }
+  const negotiationEnabled = publishedListing
+    ? publishedListing.negotiationEnabled !== false
+    : negotiationEnabledForSeed(providerId);
+
   const record = {
     ref,
     createdAt,
@@ -122,6 +131,7 @@ export default async function handler(req, res) {
       providerEmail,
       providerName,
       providerId,
+      negotiationEnabled,
       status: "pending",
       messages: [{ from: "customer", type: "request", text: notes || `Service request: ${service}`, ts: createdAt }],
       agreedPrice: null,

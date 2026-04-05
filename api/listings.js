@@ -19,6 +19,8 @@ export default async function handler(req, res) {
       category: pub.category,
       icon: pub.icon,
       popular: pub.popular,
+      negotiationEnabled: pub.negotiationEnabled !== false,
+      priceList: Array.isArray(pub.priceList) ? pub.priceList.slice(0, 20) : [],
     }));
     return endJson(res, 200, { ok: true, items });
   } catch (e) {

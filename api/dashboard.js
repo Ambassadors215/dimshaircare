@@ -3,6 +3,7 @@ import {
   getNegotiationsByEmail,
   getBookings,
   getNegotiations,
+  getMarketplaceListings,
 } from "../lib/kv-store.js";
 
 function endJson(res, code, obj) {
@@ -48,6 +49,7 @@ export default async function handler(req, res) {
         agreedPrice: n.agreedPrice,
         messages: n.messages,
         providerName: n.providerName || "",
+        negotiationEnabled: n.negotiationEnabled !== false,
         createdAt: n.createdAt,
         updatedAt: n.updatedAt,
         bookingRef: n.bookingRef,
@@ -91,7 +93,21 @@ export default async function handler(req, res) {
           customerName: `${b.firstName || ""} ${b.lastName || ""}`.trim(),
         }));
 
-      return endJson(res, 200, { ok: true, negotiations: providerNegs, bookings: providerBookings });
+      let listings = [];
+      try {
+        const all = await getMarketplaceListings();
+        listings = all
+          .filter((x) => String(x?.email || "").toLowerCase() === email)
+          .map((x) => ({
+            id: x.id,
+            role: x.role,
+            negotiationEnabled: x.negotiationEnabled !== false,
+          }));
+      } catch (e) {
+        console.warn("DASHBOARD_LISTINGS", e?.message);
+      }
+
+      return endJson(res, 200, { ok: true, negotiations: providerNegs, bookings: providerBookings, listings });
     }
 
     return endJson(res, 400, { ok: false, error: "role must be 'customer' or 'provider'" });

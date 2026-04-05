@@ -118,6 +118,7 @@ async function handleMarketplacePublish(req, res) {
   const category = String(payload?.category || "runner").trim().slice(0, 40);
   const icon = String(payload?.icon || "plus").trim().slice(0, 40);
   const popular = Boolean(payload?.popular);
+  const negotiationEnabled = payload?.negotiationEnabled !== false;
   let services = payload?.services;
   if (typeof services === "string") {
     services = services.split(/[,;\n]/).map((s) => s.trim()).filter(Boolean);
@@ -127,7 +128,7 @@ async function handleMarketplacePublish(req, res) {
     return endJson(res, 400, { ok: false, error: "id, email, and display name (role) are required" });
   }
   try {
-    await upsertMarketplaceListing({ id, email, role, bio, services, category, icon, popular });
+    await upsertMarketplaceListing({ id, email, role, bio, services, category, icon, popular, negotiationEnabled });
     return endJson(res, 200, { ok: true });
   } catch (e) {
     console.error("ADMIN_MARKETPLACE_PUBLISH", e);

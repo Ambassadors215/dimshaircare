@@ -436,6 +436,7 @@
                 </select>
               </div>
             </div>
+            <label class="muted" style="font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="pub-negotiation" checked /> Allow customers to counter-offer (prices still come from you)</label>
             <label class="muted" style="font-size:13px;display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="pub-popular" /> Feature as Popular</label>
             <div class="row" style="margin-top:8px;">
               <button class="btn btn-primary" type="button" id="pubSaveBtn">Save listing</button>
@@ -630,6 +631,8 @@
         document.getElementById("pub-category").value = "beauty";
         document.getElementById("pub-icon").value = "beauty";
         document.getElementById("pub-popular").checked = false;
+        const pubNeg = document.getElementById("pub-negotiation");
+        if (pubNeg) pubNeg.checked = true;
         setStatus(el.pubStatus, "", null);
         el.publishModal.style.display = "flex";
       }
@@ -810,7 +813,8 @@
           services: document.getElementById("pub-services").value,
           category: document.getElementById("pub-category").value,
           icon: document.getElementById("pub-icon").value,
-          popular: document.getElementById("pub-popular").checked
+          popular: document.getElementById("pub-popular").checked,
+          negotiationEnabled: document.getElementById("pub-negotiation")?.checked !== false
         };
         try {
           await api("/api/admin?action=marketplace-publish", { method: "POST", body: JSON.stringify(body) });
