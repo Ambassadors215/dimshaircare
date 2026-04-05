@@ -68,11 +68,23 @@ nav.scrolled .logo-img{height:50px;max-width:min(260px,55vw);}
 .nav-links a:hover{color:var(--white);}
 .nav-btn{background:var(--cyan);color:var(--navy)!important;padding:10px 22px;border-radius:var(--radius-sm);font-weight:500!important;transition:background .2s,transform .15s!important;}
 .nav-btn:hover{background:var(--cyan2)!important;transform:translateY(-1px);}
+.nav-dash-secondary{text-decoration:none!important;color:var(--cyan)!important;padding:10px 16px;border-radius:var(--radius-sm);border:1px solid rgba(0,200,240,.28);font-size:14px;font-weight:600;min-height:44px;display:inline-flex;align-items:center;justify-content:center;}
+.nav-dash-secondary:hover{color:var(--white)!important;border-color:rgba(0,200,240,.45);background:rgba(0,200,240,.06);}
 .nav-toggle{display:none;background:none;border:1px solid var(--border);color:var(--muted);padding:8px 12px;cursor:pointer;font-size:18px;border-radius:var(--radius-sm);}
 
 /* ===== TABS (USER / PROVIDER) ===== */
-.mode-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 56px;display:flex;align-items:center;gap:0;position:fixed;top:108px;left:0;right:0;z-index:199;transition:top .35s;}
+.mode-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 56px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;row-gap:10px;position:fixed;top:108px;left:0;right:0;z-index:199;transition:top .35s;}
 nav.scrolled + .mode-bar{top:62px;}
+.mode-bar-tabs{display:flex;align-items:stretch;}
+.mode-bar-cta{display:flex;align-items:center;gap:10px;}
+.mode-cta{font-size:13px;font-weight:600;text-decoration:none;padding:10px 18px;border-radius:var(--radius-pill);border:1px solid rgba(0,200,240,.28);color:var(--cyan);transition:background .2s,color .2s,border-color .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;min-height:44px;display:inline-flex;align-items:center;justify-content:center;}
+.mode-cta:hover{background:rgba(0,200,240,.08);color:var(--white);border-color:rgba(0,200,240,.45);}
+.page-customer .mode-cta-provider{display:none!important;}
+.page-provider .mode-cta-customer{display:none!important;}
+.nav-only-customer{display:none!important;}
+.nav-only-provider{display:none!important;}
+.page-customer .nav-only-customer{display:inline-flex!important;}
+.page-provider .nav-only-provider{display:inline-flex!important;}
 .mode-tab{padding:16px 32px;font-size:16px;font-weight:600;letter-spacing:.03em;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
 .mode-tab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
 .mode-tab:hover{color:var(--white);}
@@ -116,8 +128,11 @@ h2.stitle em{font-style:italic;color:var(--cyan);}
 .hide{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 
 /* CATEGORY FILTER (browse grid) */
-.cat-filter-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:24px;}
-.cat-filter-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
+.active-cat-bar{display:none;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:12px 16px;margin-bottom:20px;background:rgba(0,200,240,.06);border:1px solid rgba(0,200,240,.18);border-radius:var(--radius-sm);font-size:13px;color:var(--muted);}
+.active-cat-bar.visible{display:flex;}
+.active-cat-bar strong{color:var(--white);font-weight:600;}
+.active-cat-bar button{background:none;border:1px solid var(--border);color:var(--cyan);padding:8px 14px;border-radius:var(--radius-pill);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color .2s,background .2s;}
+.active-cat-bar button:hover{border-color:rgba(0,200,240,.35);background:rgba(0,200,240,.06);}
 .cat-chip{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:10px 18px;border-radius:var(--radius-pill);font-size:13px;cursor:pointer;transition:all .22s;font-family:'DM Sans',sans-serif;box-shadow:var(--glow);}
 .cat-chip:hover,.cat-chip.active{background:rgba(0,200,240,.1);border-color:rgba(0,200,240,.35);color:var(--cyan);box-shadow:var(--glow-hover);}
 .price-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:8px;}
@@ -552,7 +567,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
 ::-webkit-scrollbar-thumb:hover{background:var(--faint);}
 </style>
 </head>
-<body>
+<body class="page-customer">
 <div class="grid-bg"></div>
 <div class="toast" id="toast"></div>
 
@@ -610,16 +625,23 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
     <a href="#" onclick="switchView('provider');return false;">Offer Your Service</a>
     <a href="#" onclick="switchView('customer','how-c');return false;">How It Works</a>
     <a href="#" onclick="switchView('customer','payment');return false;">Payment</a>
+    <a href="/user/" class="nav-only-customer nav-dash-secondary">My bookings</a>
     <a href="#" onclick="switchView('provider');return false;" class="nav-btn">Join as Provider</a>
-    <a href="/provider/" class="nav-btn" style="background:rgba(0,200,240,.12);border:1px solid rgba(0,200,240,.25);">Provider dashboard</a>
+    <a href="/provider/" class="nav-only-provider nav-btn" style="background:rgba(0,200,240,.12);border:1px solid rgba(0,200,240,.25);">Provider dashboard</a>
   </div>
   <button class="nav-toggle" onclick="toggleMobileMenu()">☰</button>
 </nav>
 
 <!-- MODE BAR -->
 <div class="mode-bar" id="modebar">
-  <button class="mode-tab active" id="tab-customer" onclick="switchView('customer')">🔍 I need a service</button>
-  <button class="mode-tab" id="tab-provider" onclick="switchView('provider')">🙋 I offer a service</button>
+  <div class="mode-bar-tabs">
+    <button type="button" class="mode-tab active" id="tab-customer" onclick="switchView('customer')">🔍 I need a service</button>
+    <button type="button" class="mode-tab" id="tab-provider" onclick="switchView('provider')">🙋 I offer a service</button>
+  </div>
+  <div class="mode-bar-cta">
+    <a href="/user/" class="mode-cta mode-cta-customer">My bookings</a>
+    <a href="/provider/" class="mode-cta mode-cta-provider">Provider dashboard</a>
+  </div>
 </div>
 
 <!-- WA FLOAT -->
@@ -661,18 +683,10 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
     </select>
     <div class="eyebrow">Our services</div>
     <h2 class="stitle r">Browse <em>services</em></h2>
-    <p class="sdesc r">All prices are set by the service provider. Below are sample guides for two categories — your provider confirms the exact amount after you request.</p>
-    <div class="cat-filter-row r" role="toolbar" aria-label="Filter by category">
-      <span class="cat-filter-label">Filter</span>
-      <button type="button" class="cat-chip active" data-cat="" onclick="setCategoryFilter('')">All</button>
-      <button type="button" class="cat-chip" data-cat="runner" onclick="setCategoryFilter('runner')">Runner</button>
-      <button type="button" class="cat-chip" data-cat="cleaning" onclick="setCategoryFilter('cleaning')">Cleaning</button>
-      <button type="button" class="cat-chip" data-cat="handyman" onclick="setCategoryFilter('handyman')">Handyman</button>
-      <button type="button" class="cat-chip" data-cat="dog" onclick="setCategoryFilter('dog')">Dog care</button>
-      <button type="button" class="cat-chip" data-cat="beauty" onclick="setCategoryFilter('beauty')">Beauty</button>
-      <button type="button" class="cat-chip" data-cat="tech" onclick="setCategoryFilter('tech')">Tech</button>
-      <button type="button" class="cat-chip" data-cat="grocery" onclick="setCategoryFilter('grocery')">Groceries</button>
-      <button type="button" class="cat-chip" data-cat="delivery" onclick="setCategoryFilter('delivery')">Delivery</button>
+    <p class="sdesc r">Every price starts with the service provider — we never set rates for them. Sample menus on some cards are guides only; the provider confirms your quote after you request.</p>
+    <div class="active-cat-bar" id="activeCatBar" aria-live="polite">
+      <span>Showing <strong id="activeCatLabel"></strong> — open a card for that provider’s price list.</span>
+      <button type="button" onclick="setCategoryFilter('')">Show all categories</button>
     </div>
     <div class="svc-grid" id="svcGrid"></div>
     <div class="providers-grid" id="providersGrid" style="margin-top:32px;"></div>
@@ -1242,7 +1256,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       <h4>About</h4>
       <p class="modal-about" id="m-about"></p>
       <div id="m-price-wrap" style="display:none">
-        <h4>Provider price guide</h4>
+        <h4>Price list from this provider</h4>
         <div class="price-panel" id="m-price-panel"></div>
       </div>
       <h4>Services offered</h4>
@@ -1346,7 +1360,7 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
       <a href="#" onclick="switchView('customer');setTimeout(()=>filterCat('beauty'),100);return false;">Beauty</a>
       <a href="#" onclick="switchView('customer','payment');return false;">Payment</a>
       <a href="#" onclick="switchView('customer','faq-c');return false;">FAQ</a>
-      <a href="/user/">My Dashboard</a>
+      <a href="/user/">My bookings</a>
     </div>
     <div class="fcol">
       <h4>For providers</h4>
@@ -1402,7 +1416,12 @@ const SEED_PROVIDERS = [
     id:2, icon:"cleaning", role:"Flat & Home Cleaning", category:"cleaning",
     bio:"Professional apartment cleaning tailored to Salford Quays residences. Regular weekly cleans, deep cleans, end-of-tenancy turnarounds, and more — eco-friendly supplies included.",
     services:["Regular Clean","Deep Clean","End of Tenancy","Oven & Appliance Clean","Move-in Clean"],
-    popular:true
+    popular:true,
+    pricingNote:"Sample rates below are set by this provider. Final price is confirmed after you request — negotiation is on unless they turn it off.",
+    priceList:[
+      { item:"Regular clean (1-bed)", price:"from £45" },
+      { item:"Deep clean (2-bed)", price:"from £95" }
+    ]
   },
   {
     id:3, icon:"handyman", role:"Handyman & Repairs", category:"handyman",
@@ -1422,7 +1441,7 @@ const SEED_PROVIDERS = [
     services:["Braids & Cornrows","Wig Install & Revamp","Silk Press","Gel Nails","Acrylic Nails","Lash Extensions","Eyebrow Threading","Waxing","Makeup"],
     popular:true,
     negotiationEnabled:false,
-    pricingNote:"Sample menu below — this demo listing has counter-offers turned off; you accept or decline the provider’s offer.",
+    pricingNote:"Prices below are set by this provider. Counter-offers are off for this listing — you accept or decline their offer only.",
     priceList:[
       { item:"Braids / cornrows (mid-back)", price:"from £65" },
       { item:"Gel nails (full set)", price:"£35–£45" }
@@ -1488,7 +1507,7 @@ async function loadMarketplaceProviders() {
 function renderProviders(list) {
   const grid = document.getElementById('providersGrid');
   if (!list.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--faint);"><p style="font-size:16px;margin-bottom:8px;">No services in this category yet.</p><p style="font-size:13px;">Try another filter or choose All.</p></div>';
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--faint);"><p style="font-size:16px;margin-bottom:8px;">No providers in this category yet.</p><p style="font-size:13px;"><button type="button" class="btn-ghost" onclick="setCategoryFilter(\'\')">Show all categories</button></p></div>';
     return;
   }
   grid.innerHTML = list.map(p => `
@@ -1535,15 +1554,23 @@ function renderServiceCards(list) {
   }).join('');
 }
 
+var CATEGORY_LABELS = { runner:'Runner', cleaning:'Cleaning', handyman:'Handyman', dog:'Dog care', beauty:'Beauty', tech:'Tech', grocery:'Groceries', delivery:'Delivery' };
+
 function filterProviders() {
   const catEl = document.getElementById('catFilter');
   const cat = catEl ? catEl.value : '';
-  document.querySelectorAll('.cat-chip').forEach(function (el) {
-    var c = el.getAttribute('data-cat') || '';
-    el.classList.toggle('active', (!cat && c === '') || (cat && c === cat));
-  });
   const filtered = providers.filter(function (p) { return !cat || p.category === cat; });
   renderServiceCards(filtered);
+  var bar = document.getElementById('activeCatBar');
+  var lbl = document.getElementById('activeCatLabel');
+  if (bar && lbl) {
+    if (cat) {
+      lbl.textContent = CATEGORY_LABELS[cat] || cat;
+      bar.classList.add('visible');
+    } else {
+      bar.classList.remove('visible');
+    }
+  }
   if (cat) {
     renderProviders(filtered);
     document.getElementById('providersGrid').style.display = '';
@@ -1922,6 +1949,8 @@ async function handleApply(e) {
 }
 
 function switchView(v, anchor) {
+  document.body.classList.toggle('page-customer', v === 'customer');
+  document.body.classList.toggle('page-provider', v === 'provider');
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.getElementById('view-'+v).classList.add('active');
   document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
