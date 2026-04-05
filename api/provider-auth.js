@@ -40,6 +40,53 @@ function randomOtp6() {
   return String(Math.floor(100000 + Math.random() * 900000));
 }
 
+/** Map nodemailer / Brevo SMTP errors to a safe, actionable hint (no raw server text). */
+function smtpOtpHint(err) {
+  const raw = [err?.message, err?.response, String(err?.responseCode ?? "")]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+  if (!raw) return "";
+  if (
+    raw.includes("contact") ||
+    raw.includes("recipient") ||
+    raw.includes("liste") ||
+    raw.includes("authoriz") ||
+    raw.includes("authorised") ||
+    raw.includes("not allowed")
+  ) {
+    return "Your mail provider may block sends to addresses that are not pre-approved. In Brevo: add this email under Contacts (or verify your sending domain), then try again.";
+  }
+  if (
+    raw.includes("eauth") ||
+    raw.includes("535") ||
+    raw.includes("authentication failed") ||
+    raw.includes("invalid login") ||
+    raw.includes("credentials")
+  ) {
+    return "SMTP login failed on the server. Check BREVO_SMTP_USER (must match Brevo’s SMTP login) and BREVO_SMTP_KEY.";
+  }
+  if (raw.includes("sender") || raw.includes("from address") || raw.includes("521") || raw.includes("invalid from")) {
+    return "The From address may not be verified in Brevo. Check EMAIL_FROM matches a verified sender.";
+  }
+  if (raw.includes("quota") || raw.includes("limit exceeded") || raw.includes("daily")) {
+    return "Sending quota may be exceeded; try again later or check your Brevo plan.";
+  }
+  if (
+    raw.includes("etimedout") ||
+    raw.includes("econnrefused") ||
+    raw.includes("getaddrinfo") ||
+    raw.includes("timeout") ||
+    raw.includes("enotfound")
+  ) {
+    return "Could not reach the mail server (network/DNS). Retry in a moment; if it persists, check Vercel logs.";
+  }
+  if (raw.includes("554") || raw.includes("552") || raw.includes("spam") || raw.includes("reject")) {
+    return "The recipient or content was rejected by the mail provider. In Brevo: add this address under Contacts or verify your domain.";
+  }
+  return "";
+}
+
 function setSessionCookie(res, token) {
   const parts = [
     `${PROVIDER_SESSION_COOKIE}=${encodeURIComponent(token)}`,
@@ -99,8 +146,6 @@ export default async function handler(req, res) {
       return endJson(res, 429, { ok: false, error: "Please wait about a minute before requesting another code." });
     }
     const code = randomOtp6();
-    await setProviderOtp(email, code);
-    await setProviderOtpCooldown(email, 45);
     const html = `<p>Your Clip Services provider sign-in code is:</p>
 <p style="font-size:28px;font-weight:700;letter-spacing:0.2em;font-family:ui-monospace,monospace">${code}</p>
 <p>This code expires in 15 minutes. If you did not request it, you can ignore this email.</p>
@@ -112,9 +157,15 @@ export default async function handler(req, res) {
         html,
       });
     } catch (e) {
-      console.error("OTP_EMAIL_ERR", e?.message);
-      return endJson(res, 500, { ok: false, error: "Could not send email. Try again later." });
+      const hint = smtpOtpHint(e);
+      console.error("OTP_EMAIL_ERR", e?.message, e?.responseCode, e?.response);
+      return endJson(res, 500, {
+        ok: false,
+        error: hint ? `Could not send email. ${hint}` : "Could not send email. Try again later.",
+      });
     }
+    await setProviderOtp(email, code);
+    await setProviderOtpCooldown(email, 45);
     return endJson(res, 200, { ok: true, sent: true });
   }
 

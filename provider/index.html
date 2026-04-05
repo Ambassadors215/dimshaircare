@@ -93,7 +93,8 @@ a{color:var(--cyan);text-decoration:none}
     <div class="card" id="loginCard">
       <div class="label">Provider dashboard</div>
       <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:8px">Sign in</h2>
-      <p style="color:var(--muted);font-size:14px;margin-bottom:14px;line-height:1.6"><strong>Service providers only</strong> — customers book without an account. Enter the email on your published listing; we’ll send a <strong>one-time code</strong>. After you verify, you stay signed in on this browser for a long time until you log out.</p>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:10px;line-height:1.6"><strong>Service providers only</strong> — customers book without an account. Enter the email on your published listing; we’ll send a <strong>one-time code</strong>. After you verify, you stay signed in on this browser for a long time until you log out.</p>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:14px;line-height:1.55">We don’t match this to your application form: any valid address can get a code. If sending fails, it’s almost always mail setup (on Brevo’s free plan, add your provider email under <strong>Contacts</strong> or verify your domain so messages can reach that inbox).</p>
       <div id="otpStepEmail">
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
           <input class="input" id="emailInput" placeholder="Your provider email" type="email" autocomplete="email" style="max-width:320px">
@@ -299,12 +300,16 @@ function escHtml(s) {
 }
 
 async function loadDashboard() {
-  const email = state.email;
-  if (!email) return;
   try {
-    const res = await fetch('/api/dashboard?role=provider&email=' + encodeURIComponent(email));
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'Failed');
+    const res = await fetch('/api/dashboard?role=provider', { credentials: 'include' });
+    const data = await res.json().catch(function () { return {}; });
+    if (!data.ok) {
+      if (res.status === 401 || data.code === 'PROVIDER_AUTH') return;
+      throw new Error(data.error || 'Could not load data');
+    }
+    const email = String(data.sessionEmail || '').trim().toLowerCase();
+    if (!email) throw new Error('Could not load data');
+    state.email = email;
     state.negotiations = data.negotiations || [];
     state.bookings = data.bookings || [];
     state.listings = data.listings || [];
@@ -441,6 +446,7 @@ document.getElementById('listingSettings')?.addEventListener('change', async (e)
   try {
     const res = await fetch('/api/negotiate', {
       method: 'POST',
+      credentials: 'include',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ action: 'set-negotiation-mode', email: state.email, listingId, negotiationEnabled })
     });
@@ -481,8 +487,8 @@ document.querySelectorAll('.tab').forEach(t => {
   });
 });
 
-const urlEmail = new URLSearchParams(location.search).get('email');
-if (urlEmail) $('emailInput').value = urlEmail;
+var urlEmail = new URLSearchParams(location.search).get('email');
+if (urlEmail) $('emailInput').value = urlEmail.trim().toLowerCase();
 loadDashboard();
 
 function urlBase64ToUint8Array(base64String) {

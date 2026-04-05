@@ -75,6 +75,9 @@ ok("STRIPE_WEBHOOK_SECRET", () => has("STRIPE_WEBHOOK_SECRET"), "Optional — ne
 total++;
 ok("VAPID_PUBLIC_KEY + VAPID_PRIVATE_KEY", () => has("VAPID_PUBLIC_KEY") && has("VAPID_PRIVATE_KEY"), "Optional — PWA push disabled if missing");
 
+total++;
+ok("VAPID_CONTACT_EMAIL", () => has("VAPID_CONTACT_EMAIL"), "Optional — mailto for Web Push; defaults to clipservices26@gmail.com");
+
 console.log(`\n${critical === 0 ? "All critical variables OK." : `Missing ${critical} critical variable(s) — fix before production.`}\n`);
 
 process.exit(critical > 0 ? 1 : 0);

@@ -2,6 +2,19 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "cleanUrls": true,
+  "rewrites": [
+    { "source": "/admin", "destination": "/admin/index.html" },
+    { "source": "/admin/", "destination": "/admin/index.html" },
+    { "source": "/provider", "destination": "/provider/index.html" },
+    { "source": "/provider/", "destination": "/provider/index.html" },
+    { "source": "/user", "destination": "/user/index.html" },
+    { "source": "/user/", "destination": "/user/index.html" }
+  ],
+  "functions": {
+    "api/provider-auth.js": { "maxDuration": 30 },
+    "api/contact.js": { "maxDuration": 30 },
+    "api/booking.js": { "maxDuration": 30 }
+  },
   "headers": [
     {
       "source": "/(.*)",

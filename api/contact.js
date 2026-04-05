@@ -90,7 +90,16 @@ export default async function handler(req, res) {
           }));
 
         if (emailAttachments.length > 0) {
-          const kycLines = message.split("\n").filter((l) => l.includes(":")).map((l) => { const safe = escapeHtml(l); return `<li>${safe.replace(":", ":</strong>").replace(/^/, "<strong>")}</li>`; }).join("");
+          const kycLines = message
+            .split("\n")
+            .filter((l) => l.includes(":"))
+            .map((l) => {
+              const safe = escapeHtml(l);
+              const i = safe.indexOf(":");
+              if (i < 0) return `<li>${safe}</li>`;
+              return `<li><strong>${safe.slice(0, i)}:</strong>${safe.slice(i + 1)}</li>`;
+            })
+            .join("");
           void sendEmail({
             to: adminInbox(),
             subject: `[Clip Services] KYC Documents — ${name}`,
