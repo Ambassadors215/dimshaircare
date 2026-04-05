@@ -6,7 +6,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "verify-env": "node scripts/verify-env.mjs",
+    "gen:secret": "node scripts/gen-secret.mjs"
   },
   "dependencies": {
     "ioredis": "^5.4.2",
