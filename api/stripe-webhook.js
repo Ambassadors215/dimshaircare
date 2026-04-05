@@ -1,12 +1,17 @@
 import Stripe from "stripe";
 import {
   getBookingByRef,
+  getNegotiationById,
   patchBooking,
   patchNegotiation,
   getProviders,
   upsertProvider,
 } from "../lib/kv-store.js";
-import { notifyPaymentSucceededAdmin, notifyPaymentSucceededCustomer } from "../lib/notify.js";
+import {
+  notifyPaymentSucceededAdmin,
+  notifyPaymentSucceededCustomer,
+  notifyPaymentSucceededProvider,
+} from "../lib/notify.js";
 
 export const config = {
   api: { bodyParser: false },
@@ -93,9 +98,20 @@ export default async function handler(req, res) {
         }
         const booking = await getBookingByRef(String(ref));
         if (booking) {
+          let providerEmail = "";
+          const negId = negotiationId || booking.negotiationId;
+          if (negId) {
+            try {
+              const neg = await getNegotiationById(String(negId));
+              if (neg?.providerEmail) providerEmail = String(neg.providerEmail).trim();
+            } catch (e) {
+              console.error("WEBHOOK_NEG_LOOKUP", e);
+            }
+          }
           void Promise.allSettled([
             notifyPaymentSucceededCustomer(booking),
             notifyPaymentSucceededAdmin(booking),
+            providerEmail ? notifyPaymentSucceededProvider(providerEmail, booking) : Promise.resolve(),
           ]);
         }
       } catch (e) {

@@ -6,7 +6,11 @@ import {
   getBookingByRef,
   patchBooking,
 } from "../lib/kv-store.js";
-import { notifyCheckoutStartedAdmin, notifyCheckoutStartedCustomer } from "../lib/notify.js";
+import {
+  notifyCheckoutStartedAdmin,
+  notifyCheckoutStartedCustomer,
+  notifyCheckoutStartedProvider,
+} from "../lib/notify.js";
 
 function readBody(req, limitBytes = 1024 * 1024) {
   return new Promise((resolve, reject) => {
@@ -188,9 +192,11 @@ export default async function handler(req, res) {
         return endJson(res, 500, { ok: false, error: "No checkout URL returned" });
       }
 
+      const provEmail = String(neg.providerEmail || "").trim();
       void Promise.allSettled([
         notifyCheckoutStartedCustomer(payRecord, session.url),
         notifyCheckoutStartedAdmin(payRecord),
+        provEmail ? notifyCheckoutStartedProvider(provEmail, payRecord) : Promise.resolve(),
       ]);
 
       return endJson(res, 200, { ok: true, url: session.url, ref });

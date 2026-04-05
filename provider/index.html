@@ -91,12 +91,22 @@ a{color:var(--cyan);text-decoration:none}
   <div class="wrap" style="padding-top:24px;padding-bottom:48px">
 
     <div class="card" id="loginCard">
-      <div class="label">Provider Dashboard</div>
-      <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:8px">Welcome back</h2>
-      <p style="color:var(--muted);font-size:14px;margin-bottom:12px">Enter the <strong>same email address</strong> Clip Services has on file when your listing was published in admin. If nothing appears, confirm with the team that your <strong>Marketplace listing</strong> uses this email.</p>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input class="input" id="emailInput" placeholder="Your provider email" type="email" style="max-width:320px">
-        <button class="btn btn-p" id="loginBtn">View Dashboard</button>
+      <div class="label">Provider dashboard</div>
+      <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:8px">Sign in</h2>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:14px;line-height:1.6"><strong>Service providers only</strong> — customers book without an account. Enter the email on your published listing; we’ll send a <strong>one-time code</strong>. After you verify, you stay signed in on this browser for a long time until you log out.</p>
+      <div id="otpStepEmail">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <input class="input" id="emailInput" placeholder="Your provider email" type="email" autocomplete="email" style="max-width:320px">
+          <button type="button" class="btn btn-p" id="sendOtpBtn">Email me a code</button>
+        </div>
+      </div>
+      <div id="otpStepCode" class="hide">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:10px">Enter the 6-digit code we sent to <strong id="otpEmailDisplay"></strong></p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <input class="input" id="otpCodeInput" placeholder="000000" inputmode="numeric" autocomplete="one-time-code" maxlength="8" style="max-width:160px;letter-spacing:0.15em;font-family:ui-monospace,monospace">
+          <button type="button" class="btn btn-p" id="verifyOtpBtn">Verify &amp; continue</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="backOtpBtn">Use different email</button>
+        </div>
       </div>
       <div class="status" id="loginStatus"></div>
     </div>
@@ -136,6 +146,14 @@ a{color:var(--cyan);text-decoration:none}
         <div class="stat-card"><div class="stat-num" id="statBookings">0</div><div class="stat-lbl">Bookings</div></div>
       </div>
 
+      <div class="card" style="padding:16px 18px;margin-bottom:16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px">
+        <div style="flex:1;min-width:200px">
+          <div class="label">Phone notifications</div>
+          <p style="font-size:13px;color:var(--muted);margin:6px 0 0;line-height:1.55">New requests and negotiation updates for <strong id="pushEmailLabel"></strong> on <em>this</em> device. Same email as your published listing.</p>
+        </div>
+        <button type="button" class="btn btn-p btn-sm" id="enablePushBtn">Enable push alerts</button>
+      </div>
+
       <div id="listingSettings" class="hide"></div>
 
       <div class="tabs">
@@ -151,15 +169,27 @@ a{color:var(--cyan);text-decoration:none}
 </main>
 
 <script>
-const STORAGE_KEY = 'cs_provider_email';
-let state = { email: localStorage.getItem(STORAGE_KEY) || '', negotiations: [], bookings: [] };
-
-const $ = id => document.getElementById(id);
+const $ = (id) => document.getElementById(id);
+let state = { email: '', negotiations: [], bookings: [], listings: [] };
 
 function setStatus(el, msg, kind) {
   el.textContent = msg || '';
   el.classList.remove('ok','err');
   if (kind) el.classList.add(kind);
+}
+
+function showOtpEmailStep() {
+  $('otpStepEmail').classList.remove('hide');
+  $('otpStepCode').classList.add('hide');
+  setStatus($('loginStatus'), '', null);
+}
+
+function showOtpCodeStep(email) {
+  $('otpEmailDisplay').textContent = email;
+  $('otpStepEmail').classList.add('hide');
+  $('otpStepCode').classList.remove('hide');
+  $('otpCodeInput').value = '';
+  $('otpCodeInput').focus();
 }
 
 function timeAgo(d) {
@@ -281,6 +311,8 @@ async function loadDashboard() {
     $('loginCard').classList.add('hide');
     $('dashboard').classList.remove('hide');
     $('welcomeText').textContent = 'Welcome back';
+    var pl = document.getElementById('pushEmailLabel');
+    if (pl) pl.textContent = email;
     render();
   } catch (e) {
     setStatus($('loginStatus'), e.message || 'Could not load data', 'err');
@@ -294,7 +326,9 @@ async function sendOffer(negId) {
   if (!amount || amount < 1) { alert('Enter a valid price'); return; }
   try {
     const res = await fetch('/api/negotiate', {
-      method: 'POST', headers: { 'content-type': 'application/json' },
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ action: 'offer', negotiationId: negId, email: state.email, amount, message: msg })
     });
     const data = await res.json();
@@ -306,7 +340,9 @@ async function sendOffer(negId) {
 async function acceptOffer(negId) {
   try {
     const res = await fetch('/api/negotiate', {
-      method: 'POST', headers: { 'content-type': 'application/json' },
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ action: 'accept', negotiationId: negId, email: state.email })
     });
     const data = await res.json();
@@ -319,7 +355,9 @@ async function declineNeg(negId) {
   if (!confirm('Decline this service request?')) return;
   try {
     const res = await fetch('/api/negotiate', {
-      method: 'POST', headers: { 'content-type': 'application/json' },
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ action: 'decline', negotiationId: negId, email: state.email })
     });
     const data = await res.json();
@@ -328,14 +366,68 @@ async function declineNeg(negId) {
   } catch (e) { alert(e.message || 'Failed'); }
 }
 
-$('loginBtn').addEventListener('click', () => {
-  const email = $('emailInput').value.trim();
+$('sendOtpBtn').addEventListener('click', async () => {
+  const email = $('emailInput').value.trim().toLowerCase();
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    setStatus($('loginStatus'), 'Enter a valid email', 'err'); return;
+    setStatus($('loginStatus'), 'Enter a valid provider email', 'err');
+    return;
   }
-  state.email = email;
-  localStorage.setItem(STORAGE_KEY, email);
-  loadDashboard();
+  setStatus($('loginStatus'), 'Sending code…', null);
+  try {
+    const res = await fetch('/api/provider-auth', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action: 'request-otp', email })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Could not send code');
+    showOtpCodeStep(email);
+    setStatus($('loginStatus'), 'Check your inbox for the 6-digit code.', 'ok');
+  } catch (e) {
+    setStatus($('loginStatus'), e.message || 'Request failed', 'err');
+  }
+});
+
+$('verifyOtpBtn').addEventListener('click', async () => {
+  const email = $('emailInput').value.trim().toLowerCase();
+  const code = ($('otpCodeInput').value || '').replace(/\D/g, '');
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    setStatus($('loginStatus'), 'Email missing', 'err');
+    return;
+  }
+  if (code.length !== 6) {
+    setStatus($('loginStatus'), 'Enter the 6-digit code', 'err');
+    return;
+  }
+  setStatus($('loginStatus'), 'Verifying…', null);
+  try {
+    const res = await fetch('/api/provider-auth', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action: 'verify-otp', email, code })
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Invalid code');
+    state.email = data.email || email;
+    setStatus($('loginStatus'), '', null);
+    await loadDashboard();
+  } catch (e) {
+    setStatus($('loginStatus'), e.message || 'Verification failed', 'err');
+  }
+});
+
+$('backOtpBtn').addEventListener('click', () => {
+  showOtpEmailStep();
+});
+
+$('emailInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') $('sendOtpBtn').click();
+});
+
+$('otpCodeInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') $('verifyOtpBtn').click();
 });
 
 $('refreshBtn').addEventListener('click', loadDashboard);
@@ -364,11 +456,19 @@ document.getElementById('listingSettings')?.addEventListener('change', async (e)
   }
 });
 
-$('logoutBtn').addEventListener('click', () => {
-  localStorage.removeItem(STORAGE_KEY);
+$('logoutBtn').addEventListener('click', async () => {
+  try {
+    await fetch('/api/provider-auth', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ action: 'logout' })
+    });
+  } catch (_) {}
   state = { email: '', negotiations: [], bookings: [], listings: [] };
   $('dashboard').classList.add('hide');
   $('loginCard').classList.remove('hide');
+  showOtpEmailStep();
   $('emailInput').value = '';
 });
 
@@ -382,8 +482,46 @@ document.querySelectorAll('.tab').forEach(t => {
 });
 
 const urlEmail = new URLSearchParams(location.search).get('email');
-if (urlEmail) { state.email = urlEmail; localStorage.setItem(STORAGE_KEY, urlEmail); }
-if (state.email) { $('emailInput').value = state.email; loadDashboard(); }
+if (urlEmail) $('emailInput').value = urlEmail;
+loadDashboard();
+
+function urlBase64ToUint8Array(base64String) {
+  var padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+  var base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  var rawData = atob(base64);
+  var outputArray = new Uint8Array(rawData.length);
+  for (var i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
+  return outputArray;
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function () {});
+}
+
+document.getElementById('enablePushBtn')?.addEventListener('click', async function () {
+  var em = state.email;
+  if (!em || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { alert('Sign in with your provider email first.'); return; }
+  try {
+    var reg = await navigator.serviceWorker.ready;
+    var v = await fetch('/api/push-vapid').then(function (r) { return r.json(); });
+    if (!v.configured || !v.publicKey) { alert('Push is not configured on the server yet.'); return; }
+    var permission = await Notification.requestPermission();
+    if (permission !== 'granted') { alert('Notifications are blocked. Enable them in your browser or system settings.'); return; }
+    var sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: urlBase64ToUint8Array(v.publicKey) });
+    var res = await fetch('/api/push-subscribe', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ role: 'provider', email: em, subscription: sub.toJSON() })
+    });
+    var data = await res.json();
+    if (data.ok) alert('Push alerts enabled for this phone.');
+    else alert(data.error || 'Could not save subscription.');
+  } catch (e) {
+    console.warn(e);
+    alert(e.message || 'Could not enable push.');
+  }
+});
 </script>
 </body>
 </html>

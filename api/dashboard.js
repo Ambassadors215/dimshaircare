@@ -5,6 +5,7 @@ import {
   getNegotiations,
   getMarketplaceListings,
 } from "../lib/kv-store.js";
+import { getProviderSessionEmailFromReq } from "../lib/provider-session.js";
 
 function endJson(res, code, obj) {
   res.statusCode = code;
@@ -22,11 +23,11 @@ export default async function handler(req, res) {
 
   const url = new URL(req.url, `http://${req.headers.host}`);
   const role = url.searchParams.get("role") || "";
-  const email = (url.searchParams.get("email") || "").trim().toLowerCase();
-  if (!isValidEmail(email)) return endJson(res, 400, { ok: false, error: "Valid email required" });
 
   try {
     if (role === "customer") {
+      const email = (url.searchParams.get("email") || "").trim().toLowerCase();
+      if (!isValidEmail(email)) return endJson(res, 400, { ok: false, error: "Valid email required" });
       const bookings = await getBookingsByEmail(email);
       const negotiations = await getNegotiationsByEmail(email);
       const safeBookings = bookings.map((b) => ({
@@ -58,6 +59,10 @@ export default async function handler(req, res) {
     }
 
     if (role === "provider") {
+      const email = getProviderSessionEmailFromReq(req);
+      if (!email) {
+        return endJson(res, 401, { ok: false, error: "Provider sign-in required", code: "PROVIDER_AUTH" });
+      }
       const negotiations = await getNegotiationsByEmail(email);
       const providerNegs = negotiations.filter(
         (n) => String(n.providerEmail).toLowerCase() === email
@@ -107,7 +112,13 @@ export default async function handler(req, res) {
         console.warn("DASHBOARD_LISTINGS", e?.message);
       }
 
-      return endJson(res, 200, { ok: true, negotiations: providerNegs, bookings: providerBookings, listings });
+      return endJson(res, 200, {
+        ok: true,
+        sessionEmail: email,
+        negotiations: providerNegs,
+        bookings: providerBookings,
+        listings,
+      });
     }
 
     return endJson(res, 400, { ok: false, error: "role must be 'customer' or 'provider'" });

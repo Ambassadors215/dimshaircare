@@ -8,6 +8,12 @@ import {
   upsertMarketplaceListing,
 } from "../lib/kv-store.js";
 import { notifyNegotiationUpdate } from "../lib/notify.js";
+import { getProviderSessionEmailFromReq } from "../lib/provider-session.js";
+
+function providerSessionMatches(req, email) {
+  const sess = getProviderSessionEmailFromReq(req);
+  return Boolean(sess && sess === String(email).toLowerCase().trim());
+}
 
 function readBody(req, limitBytes = 1024 * 1024) {
   return new Promise((resolve, reject) => {
@@ -99,6 +105,12 @@ export default async function handler(req, res) {
     const isProvider = String(neg.providerEmail).toLowerCase() === email.toLowerCase();
     const isCustomer = String(neg.customerEmail).toLowerCase() === email.toLowerCase();
     if (!isProvider && !isCustomer) return endJson(res, 403, { ok: false, error: "Unauthorized" });
+    if (isProvider && !providerSessionMatches(req, email)) {
+      return endJson(res, 403, {
+        ok: false,
+        error: "Provider sign-in required. Open your dashboard and sign in with the email code.",
+      });
+    }
 
     if (action === "counter" && isCustomer && neg.negotiationEnabled === false) {
       return endJson(res, 400, {
@@ -129,6 +141,12 @@ export default async function handler(req, res) {
     const isProvider = String(neg.providerEmail).toLowerCase() === email.toLowerCase();
     const isCustomer = String(neg.customerEmail).toLowerCase() === email.toLowerCase();
     if (!isProvider && !isCustomer) return endJson(res, 403, { ok: false, error: "Unauthorized" });
+    if (isProvider && !providerSessionMatches(req, email)) {
+      return endJson(res, 403, {
+        ok: false,
+        error: "Provider sign-in required. Open your dashboard and sign in with the email code.",
+      });
+    }
 
     const lastOffer = [...(neg.messages || [])].reverse().find((m) => m.type === "offer" || m.type === "counter");
     if (!lastOffer?.amount) return endJson(res, 400, { ok: false, error: "No offer to accept" });
@@ -158,6 +176,12 @@ export default async function handler(req, res) {
     const isProvider = String(neg.providerEmail).toLowerCase() === email.toLowerCase();
     const isCustomer = String(neg.customerEmail).toLowerCase() === email.toLowerCase();
     if (!isProvider && !isCustomer) return endJson(res, 403, { ok: false, error: "Unauthorized" });
+    if (isProvider && !providerSessionMatches(req, email)) {
+      return endJson(res, 403, {
+        ok: false,
+        error: "Provider sign-in required. Open your dashboard and sign in with the email code.",
+      });
+    }
 
     const msgs = [...(neg.messages || []), { from: isProvider ? "provider" : "customer", type: "decline", ts: new Date().toISOString() }];
     await patchNegotiation(negId, { messages: msgs, status: "declined" });
@@ -174,6 +198,12 @@ export default async function handler(req, res) {
     const email = safe(payload?.email, 120);
     const negotiationEnabled = Boolean(payload?.negotiationEnabled);
     if (!listingId || !isValidEmail(email)) return endJson(res, 400, { ok: false, error: "Missing fields" });
+    if (!providerSessionMatches(req, email)) {
+      return endJson(res, 403, {
+        ok: false,
+        error: "Provider sign-in required. Open your dashboard and sign in with the email code.",
+      });
+    }
     try {
       const row = await getMarketplaceListingById(listingId);
       if (!row || String(row.email).toLowerCase() !== email.toLowerCase()) {

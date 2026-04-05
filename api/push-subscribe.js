@@ -1,4 +1,4 @@
-import { addPushSubscription } from "../lib/kv-store.js";
+import { addPushSubscription, addPushSubscriptionForEmail } from "../lib/kv-store.js";
 
 function readBody(req, limitBytes = 65536) {
   return new Promise((resolve, reject) => {
@@ -25,6 +25,10 @@ function endJson(res, statusCode, obj) {
   res.end(JSON.stringify(obj));
 }
 
+function isValidEmail(email) {
+  return typeof email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+}
+
 export default async function handler(req, res) {
   if (req.method !== "POST") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
 
@@ -38,19 +42,40 @@ export default async function handler(req, res) {
   const role = String(payload?.role || "").trim();
   const subscription = payload?.subscription;
   const token = String(payload?.adminToken || "").trim();
-
-  if (role !== "customer" && role !== "admin") {
-    return endJson(res, 400, { ok: false, error: "Invalid role" });
-  }
-  if (role === "admin") {
-    if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) {
-      return endJson(res, 401, { ok: false, error: "Unauthorized" });
-    }
-  }
+  const email = String(payload?.email || "").trim();
 
   try {
-    await addPushSubscription(role, subscription);
-    return endJson(res, 200, { ok: true });
+    if (role === "admin") {
+      if (!process.env.ADMIN_TOKEN || token !== process.env.ADMIN_TOKEN) {
+        return endJson(res, 401, { ok: false, error: "Unauthorized" });
+      }
+      await addPushSubscription("admin", subscription);
+      return endJson(res, 200, { ok: true });
+    }
+
+    if (role === "customer") {
+      if (!isValidEmail(email)) {
+        return endJson(res, 400, {
+          ok: false,
+          error: "Valid email required — use the same address as your customer dashboard / booking.",
+        });
+      }
+      await addPushSubscriptionForEmail(email, "user", subscription);
+      return endJson(res, 200, { ok: true });
+    }
+
+    if (role === "provider") {
+      if (!isValidEmail(email)) {
+        return endJson(res, 400, {
+          ok: false,
+          error: "Valid email required — use the same address as your published provider listing.",
+        });
+      }
+      await addPushSubscriptionForEmail(email, "provider", subscription);
+      return endJson(res, 200, { ok: true });
+    }
+
+    return endJson(res, 400, { ok: false, error: "Invalid role" });
   } catch (e) {
     console.error("PUSH_SUB_ERR", e);
     return endJson(res, 400, { ok: false, error: "Invalid subscription" });
