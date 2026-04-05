@@ -1479,6 +1479,18 @@ const SEED_PROVIDERS = [
 
 let providers = [];
 
+function escHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function providerIdAttr(id) {
+  return encodeURIComponent(String(id));
+}
+
 async function loadMarketplaceProviders() {
   providers = SEED_PROVIDERS.map(function (p) { return Object.assign({}, p); });
   try {
@@ -1486,6 +1498,10 @@ async function loadMarketplaceProviders() {
     var d = await r.json();
     if (d.ok && d.items && d.items.length) {
       d.items.forEach(function (it) {
+        if (it.id == null || String(it.id).trim() === '') {
+          console.warn('LISTINGS_SKIP_ROW', 'missing id', it);
+          return;
+        }
         var row = {
           id: it.id,
           icon: SVC_ICONS[it.icon] ? it.icon : 'plus',
@@ -1496,7 +1512,7 @@ async function loadMarketplaceProviders() {
           popular: !!it.popular,
           negotiationEnabled: it.negotiationEnabled !== false,
           priceList: Array.isArray(it.priceList) ? it.priceList : [],
-          pricingNote: typeof it.pricingNote === 'string' ? it.pricingNote : ''
+          pricingNote: typeof it.pricingNote === 'string' ? it.pricingNote : '',
         };
         var ix = providers.findIndex(function (x) { return String(x.id) === String(it.id); });
         if (ix >= 0) {
@@ -1521,25 +1537,25 @@ function renderProviders(list) {
     return;
   }
   grid.innerHTML = list.map(p => `
-    <div class="pcard" onclick="openModal(${JSON.stringify(p.id)})">
+    <div class="pcard" data-provider-id="${providerIdAttr(p.id)}">
       ${p.popular?'<span class="pcard-badge bg-top">Popular</span>':''}
       <div class="pcard-top">
         <div class="pcard-avatar">
           ${SVC_ICONS[p.icon]||p.icon}
         </div>
         <div class="pcard-info">
-          <div class="pcard-name">${p.role}</div>
+          <div class="pcard-name">${escHtml(p.role)}</div>
           <div class="pcard-provider-note">Price & duration set by provider</div>
         </div>
       </div>
-      <div class="pcard-mid">${p.bio}</div>
+      <div class="pcard-mid">${escHtml(p.bio)}</div>
       <div class="pcard-services">
-        ${p.services.slice(0,5).map(s=>`<span class="ptag">${s}</span>`).join('')}
+        ${p.services.slice(0,5).map(s=>`<span class="ptag">${escHtml(s)}</span>`).join('')}
         ${p.services.length>5?`<span class="ptag">+${p.services.length-5} more</span>`:''}
       </div>
       <div class="pcard-foot">
         <span class="pcard-opts">${p.services.length} services available</span>
-        <button class="book-btn" onclick="event.stopPropagation();openModal(${JSON.stringify(p.id)})">Request Service</button>
+        <button type="button" class="book-btn" data-provider-id="${providerIdAttr(p.id)}">Request Service</button>
       </div>
     </div>
   `).join('');
@@ -1551,15 +1567,15 @@ function renderServiceCards(list) {
   grid.innerHTML = list.map(function (p) {
     var priceLine = '';
     if (p.priceList && p.priceList.length && p.priceList[0].price) {
-      priceLine = '<div class="svc-card-price">From ' + String(p.priceList[0].price).replace(/^from\s+/i, '') + '</div>';
+      priceLine = '<div class="svc-card-price">From ' + escHtml(String(p.priceList[0].price).replace(/^from\s+/i, '')) + '</div>';
     }
-    return '<div class="svc-card" onclick="openModal(' + JSON.stringify(p.id) + ')">' +
+    return '<div class="svc-card" role="button" tabindex="0" data-provider-id="' + providerIdAttr(p.id) + '">' +
     (p.popular ? '<span class="svc-card-badge">Popular</span>' : '') +
     '<div class="svc-card-icon">' + (SVC_ICONS[p.icon] || '') + '</div>' +
-    '<div class="svc-card-name">' + p.role + '</div>' +
+    '<div class="svc-card-name">' + escHtml(p.role) + '</div>' +
     priceLine +
     '<div class="svc-card-count">' + p.services.length + ' services</div>' +
-    '<div class="svc-card-tags">' + p.services.slice(0,3).map(function (s) { return '<span class="svc-card-tag">' + s + '</span>'; }).join('') + '</div>' +
+    '<div class="svc-card-tags">' + p.services.slice(0,3).map(function (s) { return '<span class="svc-card-tag">' + escHtml(s) + '</span>'; }).join('') + '</div>' +
     '</div>';
   }).join('');
 }
@@ -1611,7 +1627,11 @@ function scrollToProviders() {
 
 function openModal(id) {
   const p = providers.find(x => String(x.id) === String(id));
-  if(!p) return;
+  if (!p) {
+    console.warn('openModal: unknown provider id', id);
+    showToast('This listing could not be opened. Try refreshing the page.');
+    return;
+  }
   document.getElementById('m-avatar').innerHTML = SVC_ICONS[p.icon]||p.icon;
   document.getElementById('m-name').textContent = p.role;
   document.getElementById('m-role').textContent = p.services.length + ' services available';
@@ -1628,7 +1648,9 @@ function openModal(id) {
   } else if (wrap) {
     wrap.style.display = 'none';
   }
-  document.getElementById('m-svcs').innerHTML = p.services.map(s=>`<span class="msvc">${s}</span>`).join('');
+  document.getElementById('m-svcs').innerHTML = p.services.map(function (s) {
+    return '<span class="msvc">' + escHtml(s) + '</span>';
+  }).join('');
   var noteEl = document.getElementById('bf-pricing-note');
   if (noteEl) {
     var negOn = p.negotiationEnabled !== false;
@@ -2032,6 +2054,49 @@ function closeMobileMenu(){
   if (el) el.innerHTML = SVC_ICONS[k]||'';
 });
 
+function initMarketplaceCardClicks() {
+  var svcGrid = document.getElementById('svcGrid');
+  if (svcGrid && !svcGrid.dataset.delegated) {
+    svcGrid.dataset.delegated = '1';
+    svcGrid.addEventListener('click', function (e) {
+      var card = e.target.closest('.svc-card');
+      if (!card || !svcGrid.contains(card)) return;
+      var raw = card.getAttribute('data-provider-id');
+      if (raw == null || raw === '') return;
+      var pid;
+      try { pid = decodeURIComponent(raw); } catch (err) { pid = raw; }
+      openModal(pid);
+    });
+    svcGrid.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var card = e.target.closest('.svc-card');
+      if (!card || !svcGrid.contains(card)) return;
+      e.preventDefault();
+      var raw = card.getAttribute('data-provider-id');
+      if (raw == null || raw === '') return;
+      var pid;
+      try { pid = decodeURIComponent(raw); } catch (err2) { pid = raw; }
+      openModal(pid);
+    });
+  }
+  var provGrid = document.getElementById('providersGrid');
+  if (provGrid && !provGrid.dataset.delegated) {
+    provGrid.dataset.delegated = '1';
+    provGrid.addEventListener('click', function (e) {
+      var btn = e.target.closest('.book-btn');
+      var card = e.target.closest('.pcard');
+      var el = btn || card;
+      if (!el || !provGrid.contains(el)) return;
+      var raw = el.getAttribute('data-provider-id');
+      if (raw == null || raw === '') return;
+      var pid;
+      try { pid = decodeURIComponent(raw); } catch (err3) { pid = raw; }
+      openModal(pid);
+    });
+  }
+}
+
+initMarketplaceCardClicks();
 loadMarketplaceProviders();
 
 (function smartFormInit() {

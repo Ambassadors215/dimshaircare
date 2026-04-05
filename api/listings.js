@@ -21,6 +21,7 @@ export default async function handler(req, res) {
       popular: pub.popular,
       negotiationEnabled: pub.negotiationEnabled !== false,
       priceList: Array.isArray(pub.priceList) ? pub.priceList.slice(0, 20) : [],
+      pricingNote: typeof pub.pricingNote === "string" ? pub.pricingNote.slice(0, 2000) : "",
     }));
     return endJson(res, 200, { ok: true, items });
   } catch (e) {
