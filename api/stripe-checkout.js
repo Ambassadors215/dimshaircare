@@ -31,7 +31,7 @@ function readBody(req, limitBytes = 1024 * 1024) {
 }
 
 /** Vercel often pre-parses JSON into `req.body`; reading the stream then yields "" and breaks checkout. */
-async function parseJsonBody(req) {
+export async function parseJsonBody(req) {
   const b = req.body;
   try {
     if (b != null && typeof b === "object" && !Buffer.isBuffer(b)) {
@@ -180,11 +180,8 @@ export default async function handler(req, res) {
     });
   }
 
-  let payload;
-  try {
-    const raw = await readBody(req);
-    payload = JSON.parse(raw);
-  } catch {
+  const payload = await parseJsonBody(req);
+  if (!payload || typeof payload !== "object") {
     return endJson(res, 400, { ok: false, error: "Invalid JSON" });
   }
 
