@@ -55,9 +55,54 @@ function endJson(res, statusCode, obj) {
   res.end(JSON.stringify(obj));
 }
 
+/** If Connect transfer_data is invalid, Stripe errors; retry once without destination so checkout still works. */
+async function createCheckoutSessionWithConnectFallback(stripe, params) {
+  const hadTransfer = Boolean(params.payment_intent_data?.transfer_data);
+  try {
+    return await stripe.checkout.sessions.create(params);
+  } catch (err) {
+    if (!hadTransfer) throw err;
+    const msg = String(err?.message || err);
+    const code = err?.code;
+    const shouldRetry =
+      /transfer|destination|connect|account|capabilities|charges_enabled/i.test(msg) ||
+      code === "parameter_invalid_empty" ||
+      code === "payment_intent_invalid_parameter";
+    if (!shouldRetry) throw err;
+    console.warn("STRIPE_CHECKOUT_RETRY_WITHOUT_CONNECT_TRANSFER", code || msg.slice(0, 200));
+    const md = params.payment_intent_data?.metadata || {};
+    return await stripe.checkout.sessions.create({
+      ...params,
+      payment_intent_data: { metadata: md },
+    });
+  }
+}
+
 function siteOrigin() {
   const u = process.env.SITE_URL || "https://clips-service.vercel.app";
   return String(u).replace(/\/$/, "");
+}
+
+/** If Connect transfer_data is invalid, Stripe errors; retry once without transfer so the customer can still pay. */
+async function createCheckoutSession(stripe, sessionParams) {
+  const hadTransfer = Boolean(sessionParams.payment_intent_data?.transfer_data);
+  try {
+    return await stripe.checkout.sessions.create(sessionParams);
+  } catch (err) {
+    if (!hadTransfer) throw err;
+    const msg = String(err?.message || err?.raw?.message || "");
+    const code = String(err?.code || err?.raw?.code || "");
+    const retryable =
+      /transfer|destination|connect|account|capabilities|charge/i.test(msg + code);
+    if (!retryable) throw err;
+    console.warn("STRIPE_CHECKOUT_OMIT_TRANSFER", code || msg);
+    const pi = { ...sessionParams.payment_intent_data };
+    delete pi.transfer_data;
+    return await stripe.checkout.sessions.create({
+      ...sessionParams,
+      payment_intent_data: pi,
+    });
+  }
 }
 
 async function resolveConnectAccount(providerId) {
@@ -163,7 +208,7 @@ export default async function handler(req, res) {
     };
 
     try {
-      await patchBooking(ref, {
+      const patched = await patchBooking(ref, {
         status: "awaiting_payment",
         subtotalGBP,
         platformFeeGBP: fee,
@@ -173,8 +218,11 @@ export default async function handler(req, res) {
         paymentProvider: "stripe_checkout",
         negotiationId,
       });
+      if (!patched) {
+        return endJson(res, 500, { ok: false, error: "Could not update booking before payment." });
+      }
 
-      const session = await stripe.checkout.sessions.create({
+      const session = await createCheckoutSessionWithConnectFallback(stripe, {
         mode: "payment",
         payment_method_types: ["card"],
         line_items: [
@@ -282,7 +330,7 @@ export default async function handler(req, res) {
   try {
     await addBooking(record);
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await createCheckoutSessionWithConnectFallback(stripe, {
       mode: "payment",
       payment_method_types: ["card"],
       line_items: [
@@ -322,7 +370,7 @@ export default async function handler(req, res) {
   }
   } catch (e) {
     console.error("STRIPE_CHECKOUT_FATAL", e);
-    if (res.headersSent) return;
+    if (res.headersSent || res.writableEnded) return;
     return endJson(res, 500, { ok: false, error: "Could not start payment. Please try again." });
   }
 }

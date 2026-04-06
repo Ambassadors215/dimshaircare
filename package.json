@@ -8,7 +8,8 @@
   "scripts": {
     "start": "node server.js",
     "verify-env": "node scripts/verify-env.mjs",
-    "gen:secret": "node scripts/gen-secret.mjs"
+    "gen:secret": "node scripts/gen-secret.mjs",
+    "test:stripe-checkout": "node scripts/test-stripe-negotiation-checkout.mjs"
   },
   "dependencies": {
     "ioredis": "^5.4.2",
