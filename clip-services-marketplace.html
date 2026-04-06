@@ -162,6 +162,11 @@ h2.stitle em{font-style:italic;color:var(--cyan);}
 .svc-card-count{font-size:12px;color:var(--faint);margin-bottom:14px;}
 .svc-card-tags{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;}
 .svc-card-tag{font-size:10px;background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:6px;color:var(--muted);}
+.svc-card-tag--pick{cursor:pointer;transition:border-color .2s,background .2s,color .2s;}
+.svc-card-tag--pick:hover{border-color:rgba(0,200,240,.45);background:rgba(0,200,240,.08);color:var(--cyan);}
+.svc-card-tag--pick:focus{outline:none;}
+.svc-card-tag--pick:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+.svc-card-tag--more{cursor:default;opacity:.85;}
 .svc-card-badge{position:absolute;top:12px;right:12px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-pill);font-weight:600;background:rgba(245,158,11,.12);color:#FCD34D;border:1px solid rgba(245,158,11,.2);}
 
 /* PROVIDER CARDS */
@@ -181,6 +186,11 @@ h2.stitle em{font-style:italic;color:var(--cyan);}
 .pcard-mid{padding:0 24px 16px;font-size:14px;color:var(--muted);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
 .pcard-services{padding:0 24px 16px;display:flex;flex-wrap:wrap;gap:6px;}
 .ptag{font-size:11px;background:var(--surface);border:1px solid var(--border);padding:5px 12px;border-radius:8px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;}
+.ptag--pick{cursor:pointer;transition:border-color .2s,background .2s,color .2s;}
+.ptag--pick:hover{border-color:rgba(0,200,240,.45);background:rgba(0,200,240,.08);color:var(--cyan);}
+.ptag--pick:focus{outline:none;}
+.ptag--pick:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+.ptag--more{cursor:default;opacity:.85;}
 .pcard-opts{font-size:13px;color:var(--muted);}
 .pcard-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
 .book-btn{background:var(--cyan);color:var(--navy);border:none;padding:11px 22px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
@@ -517,7 +527,8 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
   .svc-card-icon{width:44px;height:44px;margin-bottom:10px;}
   .svc-card-name{font-size:13px;}
   .svc-card-count{font-size:11px;}
-  .svc-card-tags{display:none;}
+  .svc-card-tags{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-top:6px;max-height:52px;overflow:hidden;}
+  .svc-card-tag{font-size:8px;padding:2px 6px;}
   .featured-services{padding:40px 16px;}
   .logo-img{height:42px;max-width:min(200px,70vw);}
   nav.scrolled .logo-img{height:36px;}
@@ -1491,6 +1502,10 @@ function providerIdAttr(id) {
   return encodeURIComponent(String(id));
 }
 
+function serviceDataAttrs(name) {
+  return ' data-service="' + encodeURIComponent(String(name)) + '" tabindex="0" role="button"';
+}
+
 /** Public label on marketplace cards (internal role/email unchanged for booking). */
 function cardListingTitle(p) {
   var r = String(p && p.role != null ? p.role : '').trim();
@@ -1583,7 +1598,9 @@ function renderServiceCards(list) {
     '<div class="svc-card-name">' + escHtml(cardListingTitle(p)) + '</div>' +
     priceLine +
     '<div class="svc-card-count">' + p.services.length + ' services</div>' +
-    '<div class="svc-card-tags">' + p.services.slice(0,3).map(function (s) { return '<span class="svc-card-tag">' + escHtml(s) + '</span>'; }).join('') + '</div>' +
+    '<div class="svc-card-tags">' + p.services.slice(0,3).map(function (s) {
+      return '<span class="svc-card-tag svc-card-tag--pick"' + serviceDataAttrs(s) + '>' + escHtml(s) + '</span>';
+    }).join('') + '</div>' +
     '</div>';
   }).join('');
 }
@@ -1633,7 +1650,7 @@ function scrollToProviders() {
   if (el) el.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function openModal(id) {
+function openModal(id, preselectService) {
   const p = providers.find(x => String(x.id) === String(id));
   if (!p) {
     console.warn('openModal: unknown provider id', id);
@@ -1683,6 +1700,18 @@ function openModal(id) {
       o.textContent = s;
       bfSvc.appendChild(o);
     });
+    if (preselectService) {
+      var want = String(preselectService);
+      var okPick = (p.services || []).some(function (s) { return String(s) === want; });
+      if (okPick) {
+        bfSvc.value = want;
+        setTimeout(function () {
+          try {
+            bfSvc.focus();
+          } catch (errF) {}
+        }, 150);
+      }
+    }
   }
   const dateInput = document.getElementById('bf-date');
   const tomorrow = new Date();
@@ -2067,23 +2096,51 @@ function initMarketplaceCardClicks() {
   if (svcGrid && !svcGrid.dataset.delegated) {
     svcGrid.dataset.delegated = '1';
     svcGrid.addEventListener('click', function (e) {
+      var tag = e.target.closest('.svc-card-tag[data-service]');
+      if (tag && svcGrid.contains(tag)) {
+        e.stopPropagation();
+        var card = tag.closest('.svc-card');
+        if (!card || !svcGrid.contains(card)) return;
+        var raw = card.getAttribute('data-provider-id');
+        if (raw == null || raw === '') return;
+        var pid;
+        try { pid = decodeURIComponent(raw); } catch (err) { pid = raw; }
+        var svc = '';
+        try { svc = decodeURIComponent(tag.getAttribute('data-service') || ''); } catch (errSvc) { svc = tag.getAttribute('data-service') || ''; }
+        openModal(pid, svc);
+        return;
+      }
       var card = e.target.closest('.svc-card');
       if (!card || !svcGrid.contains(card)) return;
       var raw = card.getAttribute('data-provider-id');
       if (raw == null || raw === '') return;
       var pid;
-      try { pid = decodeURIComponent(raw); } catch (err) { pid = raw; }
+      try { pid = decodeURIComponent(raw); } catch (err2) { pid = raw; }
       openModal(pid);
     });
     svcGrid.addEventListener('keydown', function (e) {
       if (e.key !== 'Enter' && e.key !== ' ') return;
+      var tag = e.target.closest('.svc-card-tag[data-service]');
+      if (tag && svcGrid.contains(tag)) {
+        e.preventDefault();
+        var card = tag.closest('.svc-card');
+        if (!card || !svcGrid.contains(card)) return;
+        var raw = card.getAttribute('data-provider-id');
+        if (raw == null || raw === '') return;
+        var pid;
+        try { pid = decodeURIComponent(raw); } catch (err3) { pid = raw; }
+        var svc = '';
+        try { svc = decodeURIComponent(tag.getAttribute('data-service') || ''); } catch (err4) { svc = tag.getAttribute('data-service') || ''; }
+        openModal(pid, svc);
+        return;
+      }
       var card = e.target.closest('.svc-card');
       if (!card || !svcGrid.contains(card)) return;
       e.preventDefault();
       var raw = card.getAttribute('data-provider-id');
       if (raw == null || raw === '') return;
       var pid;
-      try { pid = decodeURIComponent(raw); } catch (err2) { pid = raw; }
+      try { pid = decodeURIComponent(raw); } catch (err5) { pid = raw; }
       openModal(pid);
     });
   }
@@ -2091,6 +2148,20 @@ function initMarketplaceCardClicks() {
   if (provGrid && !provGrid.dataset.delegated) {
     provGrid.dataset.delegated = '1';
     provGrid.addEventListener('click', function (e) {
+      var ptag = e.target.closest('.ptag[data-service]');
+      if (ptag && provGrid.contains(ptag)) {
+        e.stopPropagation();
+        var pcard = ptag.closest('.pcard');
+        if (!pcard || !provGrid.contains(pcard)) return;
+        var raw = pcard.getAttribute('data-provider-id');
+        if (raw == null || raw === '') return;
+        var pid;
+        try { pid = decodeURIComponent(raw); } catch (errP) { pid = raw; }
+        var svc = '';
+        try { svc = decodeURIComponent(ptag.getAttribute('data-service') || ''); } catch (errS) { svc = ptag.getAttribute('data-service') || ''; }
+        openModal(pid, svc);
+        return;
+      }
       var btn = e.target.closest('.book-btn');
       var card = e.target.closest('.pcard');
       var el = btn || card;
@@ -2100,6 +2171,21 @@ function initMarketplaceCardClicks() {
       var pid;
       try { pid = decodeURIComponent(raw); } catch (err3) { pid = raw; }
       openModal(pid);
+    });
+    provGrid.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var ptag = e.target.closest('.ptag[data-service]');
+      if (!ptag || !provGrid.contains(ptag)) return;
+      e.preventDefault();
+      var pcard = ptag.closest('.pcard');
+      if (!pcard || !provGrid.contains(pcard)) return;
+      var raw = pcard.getAttribute('data-provider-id');
+      if (raw == null || raw === '') return;
+      var pid;
+      try { pid = decodeURIComponent(raw); } catch (errK) { pid = raw; }
+      var svc = '';
+      try { svc = decodeURIComponent(ptag.getAttribute('data-service') || ''); } catch (errK2) { svc = ptag.getAttribute('data-service') || ''; }
+      openModal(pid, svc);
     });
   }
 }
