@@ -91,7 +91,7 @@ a{color:var(--cyan);text-decoration:none}
       <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:8px">View your bookings</h2>
       <p style="color:var(--muted);font-size:14px;margin-bottom:16px">Enter the email address you used when requesting a service to view your negotiations and bookings.</p>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <input class="input" id="emailInput" placeholder="Your email address" type="email" style="max-width:320px">
+        <input class="input" id="emailInput" placeholder="Your email address" type="text" inputmode="email" autocomplete="email" autocapitalize="none" spellcheck="false" style="max-width:320px">
         <button class="btn btn-p" id="loginBtn">View My Bookings</button>
       </div>
       <div class="status" id="loginStatus"></div>
@@ -137,7 +137,7 @@ a{color:var(--cyan);text-decoration:none}
 
 <script>
 const STORAGE_KEY = 'cs_customer_email';
-let state = { email: localStorage.getItem(STORAGE_KEY) || '', negotiations: [], bookings: [] };
+let state = { email: '', negotiations: [], bookings: [] };
 
 const $ = id => document.getElementById(id);
 
@@ -160,6 +160,32 @@ function timeAgo(d) {
 
 function escHtml(s) {
   return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/** Trim + lowercase + strip invisible chars (avoids browser "pattern" / type=email quirks). */
+function normalizeCustomerEmail(s) {
+  return String(s || '')
+    .replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '')
+    .trim()
+    .toLowerCase();
+}
+
+function isCustomerEmailOk(s) {
+  const e = normalizeCustomerEmail(s);
+  return e.length > 3 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+}
+
+(function syncEmailFromStorage() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const ne = normalizeCustomerEmail(raw);
+    if (isCustomerEmailOk(ne)) state.email = ne;
+  } catch (e) {}
+})();
+
+function payConsentElId(negId) {
+  return 'pay-consent-' + String(negId || '').replace(/[^a-zA-Z0-9_-]/g, '_');
 }
 
 function badgeClass(status) {
@@ -191,7 +217,7 @@ function renderNegotiations() {
       actions = '<div class="agreed-box" style="flex-direction:column;align-items:flex-start;gap:10px">' +
         '<div>Price agreed: <strong>&pound;' + Number(n.agreedPrice).toFixed(2) + '</strong> (card total may include service charges at checkout)</div>' +
         '<label style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);cursor:pointer">' +
-        '<input type="checkbox" id="pay-consent-' + escHtml(n.id) + '"> I agree to pay the total shown on the secure payment page.</label>' +
+        '<input type="checkbox" id="' + escHtml(payConsentElId(n.id)) + '"> I agree to pay the total shown on the secure payment page.</label>' +
         '<button type="button" class="btn btn-green btn-sm" data-neg-pay="' + escHtml(n.id) + '" onclick="startPayFromBtn(this)">Pay securely with card</button>' +
         '</div>';
     } else if (canAct && providerOffered) {
@@ -257,8 +283,9 @@ function hideCounterForm(negId) {
 }
 
 async function loadDashboard() {
-  const email = state.email;
+  const email = normalizeCustomerEmail(state.email);
   if (!email) return;
+  state.email = email;
   try {
     const res = await fetch('/api/dashboard?role=customer&email=' + encodeURIComponent(email));
     const data = await res.json();
@@ -310,13 +337,19 @@ function startPayFromBtn(btn) {
 
 async function startPay(negId) {
   if (!negId) return;
-  var cb = document.getElementById('pay-consent-' + negId);
+  var cb = document.getElementById(payConsentElId(negId));
   if (!cb || !cb.checked) { alert('Please tick the box to continue to payment.'); return; }
+  var email = normalizeCustomerEmail(state.email);
+  if (!isCustomerEmailOk(email)) {
+    alert('Your email address looks invalid. Log out, enter the same email you used to book, then try Pay again.');
+    return;
+  }
+  state.email = email;
   try {
     var res = await fetch('/api/stripe-checkout', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ negotiationId: negId, email: state.email, consent: true })
+      body: JSON.stringify({ negotiationId: String(negId).trim(), email, consent: true })
     });
     var data = await res.json();
     if (data.code === 'NO_STRIPE') { alert('Card payments are not configured on the server yet.'); return; }
@@ -339,11 +372,12 @@ async function declineNeg(negId) {
 }
 
 $('loginBtn').addEventListener('click', () => {
-  const email = $('emailInput').value.trim();
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  const email = normalizeCustomerEmail($('emailInput').value);
+  if (!isCustomerEmailOk(email)) {
     setStatus($('loginStatus'), 'Enter a valid email', 'err'); return;
   }
   state.email = email;
+  $('emailInput').value = email;
   localStorage.setItem(STORAGE_KEY, email);
   loadDashboard();
 });
@@ -373,8 +407,17 @@ document.querySelectorAll('.tab').forEach(t => {
 
 var urlParams = new URLSearchParams(location.search);
 var urlEmail = urlParams.get('email');
-if (urlEmail) { state.email = urlEmail; localStorage.setItem(STORAGE_KEY, urlEmail); }
-if (state.email) { $('emailInput').value = state.email; loadDashboard(); }
+if (urlEmail) {
+  var ne = normalizeCustomerEmail(urlEmail);
+  if (isCustomerEmailOk(ne)) {
+    state.email = ne;
+    localStorage.setItem(STORAGE_KEY, ne);
+  }
+}
+if (state.email) {
+  $('emailInput').value = normalizeCustomerEmail(state.email);
+  loadDashboard();
+}
 if (urlParams.get('paid') === '1') {
   setTimeout(function () { alert('Payment received — thank you. You will get a confirmation by email.'); }, 400);
 }
@@ -396,8 +439,8 @@ if ('serviceWorker' in navigator) {
 }
 
 document.getElementById('enablePushBtn')?.addEventListener('click', async function () {
-  var em = state.email;
-  if (!em || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { alert('Sign in with your email first.'); return; }
+  var em = normalizeCustomerEmail(state.email);
+  if (!isCustomerEmailOk(em)) { alert('Sign in with your email first.'); return; }
   try {
     var reg = await navigator.serviceWorker.ready;
     var v = await fetch('/api/push-vapid').then(function (r) { return r.json(); });

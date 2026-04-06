@@ -30,8 +30,17 @@ function readBody(req, limitBytes = 1024 * 1024) {
   });
 }
 
+function normalizeEmailInput(email) {
+  if (typeof email !== "string") return "";
+  return email
+    .replace(/[\u200B-\u200D\uFEFF\u00A0]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
 function isValidEmail(email) {
-  return typeof email === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  const e = normalizeEmailInput(email);
+  return e.length > 3 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 }
 
 function safeText(s, max = 5000) {
@@ -91,7 +100,7 @@ export default async function handler(req, res) {
   /* ── Pay after agreed price (customer dashboard) ── */
   const negotiationId = safeText(payload?.negotiationId, 28);
   if (negotiationId) {
-    const email = safeText(payload?.email, 120);
+    const email = normalizeEmailInput(safeText(payload?.email, 120));
     const consent = Boolean(payload?.consent);
     if (!isValidEmail(email) || !consent) {
       return endJson(res, 400, { ok: false, error: "Valid email and consent are required" });
@@ -105,7 +114,7 @@ export default async function handler(req, res) {
       return endJson(res, 500, { ok: false, error: "Could not load negotiation" });
     }
     if (!neg) return endJson(res, 404, { ok: false, error: "Negotiation not found" });
-    if (String(neg.customerEmail).toLowerCase() !== email.toLowerCase()) {
+    if (normalizeEmailInput(neg.customerEmail) !== email) {
       return endJson(res, 403, { ok: false, error: "Email does not match this request" });
     }
     if (neg.status !== "agreed" || neg.agreedPrice == null) {
@@ -182,7 +191,7 @@ export default async function handler(req, res) {
         ],
         success_url: `${origin}/user/?email=${encodeURIComponent(email)}&paid=1&ref=${encodeURIComponent(ref)}`,
         cancel_url: `${origin}/user/?email=${encodeURIComponent(email)}&cancel=1&ref=${encodeURIComponent(ref)}`,
-        customer_email: email.trim(),
+        customer_email: email,
         client_reference_id: ref,
         metadata: { bookingRef: ref, negotiationId },
         payment_intent_data: paymentIntentData,
@@ -213,7 +222,7 @@ export default async function handler(req, res) {
   const firstName = safeText(payload?.firstName, 80);
   const lastName = safeText(payload?.lastName, 80);
   const phone = safeText(payload?.phone, 40);
-  const email = safeText(payload?.email, 120);
+  const email = normalizeEmailInput(safeText(payload?.email, 120));
   const notes = safeText(payload?.notes, 3000);
   const consent = Boolean(payload?.consent);
   const subtotalGBP = Number(payload?.subtotalGBP);
@@ -290,7 +299,7 @@ export default async function handler(req, res) {
       ],
       success_url: `${origin}/clip-services-marketplace.html?booking=paid&ref=${encodeURIComponent(ref)}`,
       cancel_url: `${origin}/clip-services-marketplace.html?booking=cancel&ref=${encodeURIComponent(ref)}`,
-      customer_email: email.trim(),
+      customer_email: email,
       client_reference_id: ref,
       metadata: { bookingRef: ref },
       payment_intent_data: paymentIntentData,
