@@ -188,6 +188,25 @@ function payConsentElId(negId) {
   return 'pay-consent-' + String(negId || '').replace(/[^a-zA-Z0-9_-]/g, '_');
 }
 
+async function readJsonFromFetch(res) {
+  var text = await res.text();
+  var t = text.trim();
+  if (!t) {
+    throw new Error('Empty response from server (' + res.status + '). Try again shortly.');
+  }
+  if (t.charAt(0) !== '{' && t.charAt(0) !== '[') {
+    if (res.status >= 500) {
+      throw new Error('Payment service is temporarily unavailable. Please try again in a few minutes.');
+    }
+    throw new Error('Server returned an error (' + res.status + '). Please refresh and try again.');
+  }
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    throw new Error('Invalid response from server. Please refresh and try again.');
+  }
+}
+
 function badgeClass(status) {
   const map = { pending:'b-pending', negotiating:'b-negotiating', agreed:'b-agreed', declined:'b-declined', paid:'b-paid', confirmed:'b-agreed', completed:'b-agreed' };
   return map[status] || 'b-pending';
@@ -288,7 +307,7 @@ async function loadDashboard() {
   state.email = email;
   try {
     const res = await fetch('/api/dashboard?role=customer&email=' + encodeURIComponent(email));
-    const data = await res.json();
+    const data = await readJsonFromFetch(res);
     if (!data.ok) throw new Error(data.error || 'Failed');
     state.negotiations = data.negotiations || [];
     state.bookings = data.bookings || [];
@@ -309,7 +328,7 @@ async function acceptOffer(negId) {
       method: 'POST', headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ action: 'accept', negotiationId: negId, email: state.email })
     });
-    const data = await res.json();
+    const data = await readJsonFromFetch(res);
     if (!data.ok) throw new Error(data.error);
     await loadDashboard();
   } catch (e) { alert(e.message || 'Failed'); }
@@ -325,7 +344,7 @@ async function sendCounter(negId) {
       method: 'POST', headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ action: 'counter', negotiationId: negId, email: state.email, amount, message: msg })
     });
-    const data = await res.json();
+    const data = await readJsonFromFetch(res);
     if (!data.ok) throw new Error(data.error);
     await loadDashboard();
   } catch (e) { alert(e.message || 'Failed to send counter offer'); }
@@ -351,7 +370,7 @@ async function startPay(negId) {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ negotiationId: String(negId).trim(), email, consent: true })
     });
-    var data = await res.json();
+    var data = await readJsonFromFetch(res);
     if (data.code === 'NO_STRIPE') { alert('Card payments are not configured on the server yet.'); return; }
     if (!data.ok) throw new Error(data.error || 'Could not start payment');
     if (data.url) window.location.href = data.url;
@@ -365,7 +384,7 @@ async function declineNeg(negId) {
       method: 'POST', headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ action: 'decline', negotiationId: negId, email: state.email })
     });
-    const data = await res.json();
+    const data = await readJsonFromFetch(res);
     if (!data.ok) throw new Error(data.error);
     await loadDashboard();
   } catch (e) { alert(e.message || 'Failed'); }
@@ -443,7 +462,7 @@ document.getElementById('enablePushBtn')?.addEventListener('click', async functi
   if (!isCustomerEmailOk(em)) { alert('Sign in with your email first.'); return; }
   try {
     var reg = await navigator.serviceWorker.ready;
-    var v = await fetch('/api/push-vapid').then(function (r) { return r.json(); });
+    var v = await fetch('/api/push-vapid').then(function (r) { return readJsonFromFetch(r); });
     if (!v.configured || !v.publicKey) { alert('Push is not configured on the server yet.'); return; }
     var permission = await Notification.requestPermission();
     if (permission !== 'granted') { alert('Notifications are blocked. Enable them in your browser or system settings.'); return; }
@@ -453,7 +472,7 @@ document.getElementById('enablePushBtn')?.addEventListener('click', async functi
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ role: 'customer', email: em, subscription: sub.toJSON() })
     });
-    var data = await res.json();
+    var data = await readJsonFromFetch(res);
     if (data.ok) alert('Push alerts enabled for this phone.');
     else alert(data.error || 'Could not save subscription.');
   } catch (e) {

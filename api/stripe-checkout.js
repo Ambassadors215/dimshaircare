@@ -94,6 +94,7 @@ export default async function handler(req, res) {
     return endJson(res, 400, { ok: false, error: "Invalid JSON" });
   }
 
+  try {
   const origin = siteOrigin();
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -317,6 +318,11 @@ export default async function handler(req, res) {
     return endJson(res, 200, { ok: true, url: session.url, ref });
   } catch (e) {
     console.error("STRIPE_CHECKOUT_ERROR", e);
+    return endJson(res, 500, { ok: false, error: "Could not start payment. Please try again." });
+  }
+  } catch (e) {
+    console.error("STRIPE_CHECKOUT_FATAL", e);
+    if (res.headersSent) return;
     return endJson(res, 500, { ok: false, error: "Could not start payment. Please try again." });
   }
 }
