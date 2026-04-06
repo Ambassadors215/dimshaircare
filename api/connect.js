@@ -9,7 +9,7 @@ function endJson(res, statusCode, obj) {
 }
 
 function siteOrigin() {
-  return String(process.env.SITE_URL || "https://clips-service.vercel.app").replace(/\/$/, "");
+  return String(process.env.SITE_URL || "https://clipservice.app").replace(/\/$/, "");
 }
 
 function readBody(req, limitBytes = 1024 * 1024) {

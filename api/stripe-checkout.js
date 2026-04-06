@@ -106,7 +106,7 @@ async function createCheckoutSessionWithConnectFallback(stripe, params) {
 }
 
 function siteOrigin() {
-  const u = process.env.SITE_URL || "https://clips-service.vercel.app";
+  const u = process.env.SITE_URL || "https://clipservice.app";
   return String(u).replace(/\/$/, "");
 }
 

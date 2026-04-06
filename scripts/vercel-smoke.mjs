@@ -4,7 +4,7 @@
  * Run: npm run vercel:smoke
  *      npm run vercel:smoke -- https://your-domain.vercel.app
  */
-const base = (process.argv[2] || process.env.SITE_URL || "https://clips-service.vercel.app").replace(/\/$/, "");
+const base = (process.argv[2] || process.env.SITE_URL || "https://clipservice.app").replace(/\/$/, "");
 
 async function check(path, init) {
   const url = base + path;
