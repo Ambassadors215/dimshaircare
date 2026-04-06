@@ -1,5 +1,6 @@
 import http from "node:http";
 import fs from "node:fs/promises";
+import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -8,6 +9,48 @@ const __dirname = path.dirname(__filename);
 
 const PORT = Number(process.env.PORT || 3000);
 const ROOT = __dirname;
+
+function loadDotEnvFile(name, opts) {
+  const p = path.join(ROOT, name);
+  if (!existsSync(p)) return;
+  const raw = readFileSync(p, "utf8");
+  for (const line of raw.split("\n")) {
+    const t = line.trim();
+    if (!t || t.startsWith("#")) continue;
+    const eq = t.indexOf("=");
+    if (eq < 0) continue;
+    const k = t.slice(0, eq).trim();
+    let v = t.slice(eq + 1).trim();
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) {
+      v = v.slice(1, -1);
+    }
+    if (opts?.override || process.env[k] === undefined || process.env[k] === "") {
+      process.env[k] = v;
+    }
+  }
+}
+
+loadDotEnvFile(".env");
+loadDotEnvFile(".env.local", { override: true });
+
+let stripeCheckoutFn;
+let dashboardFn;
+let negotiateFn;
+
+async function runStripeCheckout(req, res) {
+  stripeCheckoutFn ??= (await import("./api/stripe-checkout.js")).default;
+  return stripeCheckoutFn(req, res);
+}
+
+async function runDashboard(req, res) {
+  dashboardFn ??= (await import("./api/dashboard.js")).default;
+  return dashboardFn(req, res);
+}
+
+async function runNegotiate(req, res) {
+  negotiateFn ??= (await import("./api/negotiate.js")).default;
+  return negotiateFn(req, res);
+}
 const DATA_DIR = path.join(ROOT, "data");
 const BOOKINGS_FILE = path.join(DATA_DIR, "bookings.json");
 const CONTACT_FILE = path.join(DATA_DIR, "contact-messages.json");
@@ -104,6 +147,18 @@ function safeText(s, max = 5000) {
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url || "/", `http://${req.headers.host || "localhost"}`);
+    const apiPath = url.pathname.replace(/\/+$/, "") || "/";
+
+    // --- API (same modules as Vercel; needs KV_REDIS_URL + STRIPE_SECRET_KEY in .env.local for pay flow)
+    if (apiPath === "/api/stripe-checkout" && req.method === "POST") {
+      return runStripeCheckout(req, res);
+    }
+    if (apiPath === "/api/dashboard" && req.method === "GET") {
+      return runDashboard(req, res);
+    }
+    if (apiPath === "/api/negotiate" && req.method === "POST") {
+      return runNegotiate(req, res);
+    }
 
     // --- API
     if (url.pathname === "/api/booking" && req.method === "POST") {
@@ -227,5 +282,13 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(PORT, () => {
   console.log(`Listening on http://localhost:${PORT}`);
+  if (!process.env.KV_REDIS_URL?.trim()) {
+    console.warn(
+      "[clip-services] KV_REDIS_URL is not set — /api/dashboard, /api/negotiate, /api/stripe-checkout need Redis (copy from Vercel into .env.local)."
+    );
+  }
+  if (!process.env.STRIPE_SECRET_KEY?.trim()) {
+    console.warn("[clip-services] STRIPE_SECRET_KEY is not set — card checkout will return NO_STRIPE until configured.");
+  }
 });
 

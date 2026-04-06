@@ -195,10 +195,19 @@ async function readJsonFromFetch(res) {
     throw new Error('Empty response from server (' + res.status + '). Try again shortly.');
   }
   if (t.charAt(0) !== '{' && t.charAt(0) !== '[') {
-    if (res.status >= 500) {
-      throw new Error('Payment service is temporarily unavailable. Please try again in a few minutes.');
+    var hint = t.replace(/\s+/g, ' ').trim().slice(0, 120);
+    if (res.status === 405) {
+      throw new Error('This server does not handle card checkout (405). Run `npm start` from the project folder or use `npx vercel dev`.');
     }
-    throw new Error('Server returned an error (' + res.status + '). Please refresh and try again.');
+    if (res.status >= 500) {
+      throw new Error(
+        'Payment service error (' +
+          res.status +
+          '). If testing locally, use `npm start` with .env.local (KV_REDIS_URL + STRIPE_SECRET_KEY). ' +
+          (hint ? 'Details: ' + hint : '')
+      );
+    }
+    throw new Error('Server returned an error (' + res.status + '). ' + (hint || 'Please refresh and try again.'));
   }
   try {
     return JSON.parse(text);
