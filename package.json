@@ -12,6 +12,7 @@
     "test:stripe-checkout": "node scripts/test-stripe-negotiation-checkout.mjs",
     "test:payment-parse": "node scripts/test-payment-json-parse.mjs",
     "vercel:env:push": "node scripts/vercel-push-env.mjs",
+    "vercel:env:ls": "node scripts/vercel-env-list.mjs",
     "vercel:smoke": "node scripts/vercel-smoke.mjs"
   },
   "dependencies": {
