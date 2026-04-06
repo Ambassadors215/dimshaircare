@@ -372,7 +372,11 @@ async function startPay(negId) {
     });
     var data = await readJsonFromFetch(res);
     if (data.code === 'NO_STRIPE') { alert('Card payments are not configured on the server yet.'); return; }
-    if (!data.ok) throw new Error(data.error || 'Could not start payment');
+    if (!data.ok) {
+      var pe = data.error || 'Could not start payment';
+      if (data.code) pe += ' (' + data.code + ')';
+      throw new Error(pe);
+    }
     if (data.url) window.location.href = data.url;
   } catch (e) { alert(e.message || 'Failed'); }
 }

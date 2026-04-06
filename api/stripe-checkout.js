@@ -83,26 +83,48 @@ function siteOrigin() {
   return String(u).replace(/\/$/, "");
 }
 
-/** If Connect transfer_data is invalid, Stripe errors; retry once without transfer so the customer can still pay. */
-async function createCheckoutSession(stripe, sessionParams) {
-  const hadTransfer = Boolean(sessionParams.payment_intent_data?.transfer_data);
-  try {
-    return await stripe.checkout.sessions.create(sessionParams);
-  } catch (err) {
-    if (!hadTransfer) throw err;
-    const msg = String(err?.message || err?.raw?.message || "");
-    const code = String(err?.code || err?.raw?.code || "");
-    const retryable =
-      /transfer|destination|connect|account|capabilities|charge/i.test(msg + code);
-    if (!retryable) throw err;
-    console.warn("STRIPE_CHECKOUT_OMIT_TRANSFER", code || msg);
-    const pi = { ...sessionParams.payment_intent_data };
-    delete pi.transfer_data;
-    return await stripe.checkout.sessions.create({
-      ...sessionParams,
-      payment_intent_data: pi,
-    });
+/** Map Stripe / infra errors to a short `code` + safe message for the client (full error stays in logs). */
+function publicCheckoutError(e, fallbackCode) {
+  const base = {
+    error: "Could not start payment. Please try again.",
+    code: fallbackCode || "CHECKOUT_FAILED",
+  };
+  if (!e || typeof e !== "object") return base;
+  const msg = String(e.message || e.raw?.message || e);
+  if (e.type === "StripeAuthenticationError" || e.code === "api_key_expired") {
+    return {
+      error: "Stripe API key is invalid or expired. Check STRIPE_SECRET_KEY in Vercel.",
+      code: "STRIPE_AUTH",
+    };
   }
+  if (e.type === "StripeConnectionError") {
+    return { error: "Could not reach Stripe. Check your connection and try again.", code: "STRIPE_NETWORK" };
+  }
+  if (e.type === "StripeInvalidRequestError") {
+    if (/test mode.*live mode|live mode.*test mode/i.test(msg)) {
+      return {
+        error: "Stripe key mode does not match your account (test vs live). Fix STRIPE_SECRET_KEY in Vercel.",
+        code: "STRIPE_MODE",
+      };
+    }
+    if (/No such destination|does not have the capability|charges_enabled|transfers/i.test(msg)) {
+      return {
+        error: "Card payment could not use the provider payout route. Try again or contact support.",
+        code: "STRIPE_CONNECT",
+      };
+    }
+  }
+  if (msg.includes("KV_REDIS_URL") || msg.includes("ECONNREFUSED") || msg.includes("Redis")) {
+    return {
+      error: "Database connection failed. Check KV_REDIS_URL in Vercel.",
+      code: "KV_REDIS",
+    };
+  }
+  if (e.type && String(e.type).startsWith("Stripe")) {
+    const c = e.code ? String(e.code).replace(/\W/g, "_").slice(0, 40) : "";
+    return { error: base.error, code: c ? `STRIPE_${c}` : "STRIPE_ERROR" };
+  }
+  return base;
 }
 
 async function resolveConnectAccount(providerId) {
@@ -172,7 +194,14 @@ export default async function handler(req, res) {
       return endJson(res, 400, { ok: false, error: "Invalid agreed amount" });
     }
 
-    const booking = await getBookingByRef(neg.bookingRef);
+    let booking;
+    try {
+      booking = await getBookingByRef(neg.bookingRef);
+    } catch (e) {
+      console.error("BOOKING_LOOKUP", e);
+      const pub = publicCheckoutError(e, "KV_BOOKING");
+      return endJson(res, 500, { ok: false, error: pub.error, code: pub.code });
+    }
     if (!booking) return endJson(res, 404, { ok: false, error: "Booking not found" });
 
     const fee = Math.round(subtotalGBP * 0.15 * 100) / 100;
@@ -260,7 +289,8 @@ export default async function handler(req, res) {
       return endJson(res, 200, { ok: true, url: session.url, ref });
     } catch (e) {
       console.error("STRIPE_CHECKOUT_NEG_ERROR", e);
-      return endJson(res, 500, { ok: false, error: "Could not start payment. Please try again." });
+      const pub = publicCheckoutError(e, "NEG_CHECKOUT");
+      return endJson(res, 500, { ok: false, error: pub.error, code: pub.code });
     }
   }
 
@@ -366,11 +396,13 @@ export default async function handler(req, res) {
     return endJson(res, 200, { ok: true, url: session.url, ref });
   } catch (e) {
     console.error("STRIPE_CHECKOUT_ERROR", e);
-    return endJson(res, 500, { ok: false, error: "Could not start payment. Please try again." });
+    const pub = publicCheckoutError(e, "LEGACY_CHECKOUT");
+    return endJson(res, 500, { ok: false, error: pub.error, code: pub.code });
   }
   } catch (e) {
     console.error("STRIPE_CHECKOUT_FATAL", e);
     if (res.headersSent || res.writableEnded) return;
-    return endJson(res, 500, { ok: false, error: "Could not start payment. Please try again." });
+    const pub = publicCheckoutError(e, "CHECKOUT_FATAL");
+    return endJson(res, 500, { ok: false, error: pub.error, code: pub.code });
   }
 }
