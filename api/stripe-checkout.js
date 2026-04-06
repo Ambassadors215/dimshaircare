@@ -30,6 +30,31 @@ function readBody(req, limitBytes = 1024 * 1024) {
   });
 }
 
+/** Vercel often pre-parses JSON into `req.body`; reading the stream then yields "" and breaks checkout. */
+async function parseJsonBody(req) {
+  const b = req.body;
+  try {
+    if (b != null && typeof b === "object" && !Buffer.isBuffer(b)) {
+      return b;
+    }
+    if (typeof b === "string" && b.trim()) {
+      return JSON.parse(b);
+    }
+    if (Buffer.isBuffer(b) && b.length) {
+      return JSON.parse(b.toString("utf8"));
+    }
+  } catch {
+    return null;
+  }
+  try {
+    const raw = await readBody(req);
+    if (!raw || !String(raw).trim()) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
 function normalizeEmailInput(email) {
   if (typeof email !== "string") return "";
   return email
@@ -55,25 +80,27 @@ function endJson(res, statusCode, obj) {
   res.end(JSON.stringify(obj));
 }
 
-/** If Connect transfer_data is invalid, Stripe errors; retry once without destination so checkout still works. */
+/**
+ * With Connect, first Checkout attempt uses transfer_data. Any Stripe failure there retries once
+ * without destination so customers can still pay on the platform account.
+ */
 async function createCheckoutSessionWithConnectFallback(stripe, params) {
   const hadTransfer = Boolean(params.payment_intent_data?.transfer_data);
+  if (!hadTransfer) {
+    return await stripe.checkout.sessions.create(params);
+  }
   try {
     return await stripe.checkout.sessions.create(params);
   } catch (err) {
-    if (!hadTransfer) throw err;
-    const msg = String(err?.message || err);
-    const code = err?.code;
-    const shouldRetry =
-      /transfer|destination|connect|account|capabilities|charges_enabled/i.test(msg) ||
-      code === "parameter_invalid_empty" ||
-      code === "payment_intent_invalid_parameter";
-    if (!shouldRetry) throw err;
-    console.warn("STRIPE_CHECKOUT_RETRY_WITHOUT_CONNECT_TRANSFER", code || msg.slice(0, 200));
+    console.warn("STRIPE_CHECKOUT_WITH_TRANSFER_FAILED", err?.type, err?.code, String(err?.message || err).slice(0, 300));
     const md = params.payment_intent_data?.metadata || {};
+    const metadata = {};
+    for (const [k, v] of Object.entries(md)) {
+      metadata[String(k).slice(0, 40)] = String(v ?? "").replace(/\0/g, "").slice(0, 500);
+    }
     return await stripe.checkout.sessions.create({
       ...params,
-      payment_intent_data: { metadata: md },
+      payment_intent_data: { metadata },
     });
   }
 }
@@ -166,7 +193,10 @@ export default async function handler(req, res) {
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   /* ── Pay after agreed price (customer dashboard) ── */
-  const negotiationId = safeText(payload?.negotiationId, 28);
+  const negotiationId = String(payload?.negotiationId ?? "")
+    .replace(/[\u200B-\u200D\uFEFF\u00A0]/g, "")
+    .trim()
+    .slice(0, 64);
   if (negotiationId) {
     const email = normalizeEmailInput(safeText(payload?.email, 120));
     const consent = Boolean(payload?.consent);
@@ -214,8 +244,10 @@ export default async function handler(req, res) {
     const connectedAccountId = await resolveConnectAccount(providerId);
     const providerSharePence = Math.round(subtotalGBP * 100);
 
+    const metaBookingRef = String(ref).replace(/\0/g, "").slice(0, 500);
+    const metaNegId = String(negotiationId).replace(/\0/g, "").slice(0, 500);
     const paymentIntentData = {
-      metadata: { bookingRef: ref, negotiationId },
+      metadata: { bookingRef: metaBookingRef, negotiationId: metaNegId },
     };
     if (connectedAccountId) {
       paymentIntentData.transfer_data = {
@@ -224,7 +256,7 @@ export default async function handler(req, res) {
       };
     }
 
-    const service = safeText(booking.service, 120);
+    const service = safeText(booking.service, 120).replace(/\0/g, "");
     const payRecord = {
       ...booking,
       status: "awaiting_payment",
@@ -259,8 +291,11 @@ export default async function handler(req, res) {
             price_data: {
               currency: "gbp",
               product_data: {
-                name: `Clip Services — ${service.slice(0, 70)}`,
-                description: `Booking ${ref}. Total payable £${total.toFixed(2)} (includes service charge).`,
+                name: `Clip Services - ${service.slice(0, 70)}`,
+                description: `Booking ${ref}. Total payable £${total.toFixed(2)} (includes service charge).`.slice(
+                  0,
+                  500
+                ),
               },
               unit_amount: unitAmountPence,
             },
@@ -270,8 +305,8 @@ export default async function handler(req, res) {
         success_url: `${origin}/user/?email=${encodeURIComponent(email)}&paid=1&ref=${encodeURIComponent(ref)}`,
         cancel_url: `${origin}/user/?email=${encodeURIComponent(email)}&cancel=1&ref=${encodeURIComponent(ref)}`,
         customer_email: email,
-        client_reference_id: ref,
-        metadata: { bookingRef: ref, negotiationId },
+        client_reference_id: String(ref).slice(0, 200),
+        metadata: { bookingRef: metaBookingRef, negotiationId: metaNegId },
         payment_intent_data: paymentIntentData,
       });
 
@@ -346,8 +381,9 @@ export default async function handler(req, res) {
   const connectedAccountId = await resolveConnectAccount(providerId);
   const providerSharePence = Math.round(subtotalGBP * 100);
 
+  const legacyMetaRef = String(ref).replace(/\0/g, "").slice(0, 500);
   const paymentIntentData = {
-    metadata: { bookingRef: ref },
+    metadata: { bookingRef: legacyMetaRef },
   };
 
   if (connectedAccountId) {
@@ -368,8 +404,11 @@ export default async function handler(req, res) {
           price_data: {
             currency: "gbp",
             product_data: {
-              name: `Clip Services — ${service.slice(0, 70)}`,
-              description: `Booking ${ref}. Total payable £${total.toFixed(2)} (includes service charge).`,
+              name: `Clip Services - ${service.slice(0, 70)}`,
+              description: `Booking ${ref}. Total payable £${total.toFixed(2)} (includes service charge).`.slice(
+                0,
+                500
+              ),
             },
             unit_amount: unitAmountPence,
           },
@@ -379,8 +418,8 @@ export default async function handler(req, res) {
       success_url: `${origin}/clip-services-marketplace.html?booking=paid&ref=${encodeURIComponent(ref)}`,
       cancel_url: `${origin}/clip-services-marketplace.html?booking=cancel&ref=${encodeURIComponent(ref)}`,
       customer_email: email,
-      client_reference_id: ref,
-      metadata: { bookingRef: ref },
+      client_reference_id: String(ref).slice(0, 200),
+      metadata: { bookingRef: legacyMetaRef },
       payment_intent_data: paymentIntentData,
     });
 
