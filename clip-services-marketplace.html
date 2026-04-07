@@ -582,6 +582,14 @@ input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;le
 </style>
 </head>
 <body class="page-customer">
+<script>
+(function () {
+  var p = location.pathname.replace(/\/$/, "") || "/";
+  if (p === "/clip-services-marketplace" || p === "/clip-services-marketplace.html") {
+    history.replaceState({}, "", "/" + location.search + location.hash);
+  }
+})();
+</script>
 <div class="grid-bg"></div>
 <div class="toast" id="toast"></div>
 
@@ -2449,5 +2457,6 @@ registerClipServiceWorker().then(() => {
   }, 12000);
 });
 </script>
+<script src="/site-track.js" defer></script>
 </body>
 </html>

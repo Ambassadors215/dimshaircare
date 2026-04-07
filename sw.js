@@ -1,8 +1,8 @@
 /* Clip Services — v4 */
-const CACHE = "clip-services-v4";
+const CACHE = "clip-services-v5";
 const OFFLINE_PAGE = "/offline.html";
 const PRECACHE = [
-  "/clip-services-marketplace.html",
+  "/",
   "/manifest.webmanifest",
   "/icons/icon-192.svg",
   "/icons/icon-512.svg",
@@ -28,7 +28,7 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("push", (event) => {
-  let data = { title: "Clip Services", body: "", url: "/clip-services-marketplace.html" };
+  let data = { title: "Clip Services", body: "", url: "/" };
   try {
     if (event.data) data = { ...data, ...event.data.json() };
   } catch {
@@ -43,7 +43,7 @@ self.addEventListener("push", (event) => {
       body: data.body,
       icon: "/icons/icon-192.svg",
       badge: "/icons/icon-192.svg",
-      data: { url: data.url || "/clip-services-marketplace.html" },
+      data: { url: data.url || "/" },
       vibrate: [100, 50, 100],
       actions: [
         { action: "open", title: "Open" },
@@ -56,7 +56,7 @@ self.addEventListener("push", (event) => {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   if (event.action === "dismiss") return;
-  const raw = event.notification.data?.url || "/clip-services-marketplace.html";
+  const raw = event.notification.data?.url || "/";
   const url = /^https?:\/\//i.test(raw) ? raw : new URL(raw, self.location.origin).href;
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clientList) => {

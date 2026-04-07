@@ -36,6 +36,12 @@ loadDotEnvFile(".env.local", { override: true });
 let stripeCheckoutFn;
 let dashboardFn;
 let negotiateFn;
+let trackVisitFn;
+
+async function runTrackVisit(req, res) {
+  trackVisitFn ??= (await import("./api/track-visit.js")).default;
+  return trackVisitFn(req, res);
+}
 
 async function runStripeCheckout(req, res) {
   stripeCheckoutFn ??= (await import("./api/stripe-checkout.js")).default;
@@ -159,6 +165,9 @@ const server = http.createServer(async (req, res) => {
     if (apiPath === "/api/negotiate" && req.method === "POST") {
       return runNegotiate(req, res);
     }
+    if (apiPath === "/api/track-visit" && (req.method === "POST" || req.method === "OPTIONS")) {
+      return runTrackVisit(req, res);
+    }
 
     // --- API
     if (url.pathname === "/api/booking" && req.method === "POST") {
@@ -238,7 +247,16 @@ const server = http.createServer(async (req, res) => {
       return send(res, 405, { "content-type": "text/plain; charset=utf-8" }, "Method Not Allowed");
     }
 
-    if (url.pathname === "/" || url.pathname === "/index.html") {
+    if (
+      url.pathname === "/clip-services-marketplace" ||
+      url.pathname === "/clip-services-marketplace.html" ||
+      url.pathname === "/index.html"
+    ) {
+      const loc = "/" + (url.search || "");
+      return send(res, 301, { Location: loc }, undefined);
+    }
+
+    if (url.pathname === "/") {
       const html = await fs.readFile(path.join(ROOT, "clip-services-marketplace.html"));
       return send(res, 200, { "content-type": "text/html; charset=utf-8" }, req.method === "HEAD" ? undefined : html);
     }

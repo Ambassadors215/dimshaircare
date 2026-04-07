@@ -2,7 +2,13 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "cleanUrls": true,
+  "redirects": [
+    { "source": "/clip-services-marketplace", "destination": "/", "permanent": true },
+    { "source": "/clip-services-marketplace.html", "destination": "/", "permanent": true },
+    { "source": "/index.html", "destination": "/", "permanent": true }
+  ],
   "rewrites": [
+    { "source": "/", "destination": "/clip-services-marketplace.html" },
     { "source": "/admin", "destination": "/admin/index.html" },
     { "source": "/admin/", "destination": "/admin/index.html" },
     { "source": "/provider", "destination": "/provider/index.html" },
@@ -16,7 +22,8 @@
     "api/booking.js": { "maxDuration": 30 },
     "api/stripe-checkout.js": { "maxDuration": 60 },
     "api/dashboard.js": { "maxDuration": 30 },
-    "api/negotiate.js": { "maxDuration": 30 }
+    "api/negotiate.js": { "maxDuration": 30 },
+    "api/track-visit.js": { "maxDuration": 15 }
   },
   "headers": [
     {
