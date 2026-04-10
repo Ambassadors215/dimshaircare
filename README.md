@@ -2,7 +2,7 @@
 
 > A two-sided local service marketplace connecting customers with verified providers in Salford Quays & MediaCityUK, Manchester.
 
-**Live:** [clips-service.vercel.app](https://clips-service.vercel.app)
+**Live:** [clipservice.app](https://clipservice.app)
 
 ---
 
@@ -134,7 +134,7 @@ Provider applications are stored in Redis under the key `{KV_PREFIX}:contacts` (
 |----------|----------|-------------|
 | `KV_REDIS_URL` | Yes | Redis connection string (Vercel KV) |
 | `ADMIN_TOKEN` | Yes | Admin dashboard auth token (32+ chars recommended) |
-| `SITE_URL` | Yes | Production URL (e.g. `https://clips-service.vercel.app`) |
+| `SITE_URL` | Yes | Production URL (e.g. `https://clipservice.app`) |
 | `STRIPE_PUBLISHABLE_KEY` | Optional | Only if you add Stripe.js on the frontend (Checkout uses server secret only) |
 | `STRIPE_SECRET_KEY` | Yes | Stripe API secret key (`sk_test_…` or `sk_live_…`) |
 | `STRIPE_WEBHOOK_SECRET` | Yes | Webhook signing secret (`whsec_…`) from Stripe Dashboard or API |

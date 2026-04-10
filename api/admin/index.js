@@ -9,6 +9,7 @@ import {
   getMarketplaceListings,
   upsertMarketplaceListing,
   removeMarketplaceListing,
+  getRecentSiteVisits,
 } from "../../lib/kv-store.js";
 import { notifyBookingStatusCustomer } from "../../lib/notify.js";
 
@@ -136,6 +137,17 @@ async function handleMarketplacePublish(req, res) {
   }
 }
 
+async function handleSiteVisits(req, res) {
+  if (req.method !== "GET") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
+  try {
+    const items = await getRecentSiteVisits(500);
+    return endJson(res, 200, { ok: true, items });
+  } catch (e) {
+    console.error("ADMIN_SITE_VISITS", e);
+    return endJson(res, 500, { ok: false, error: "Failed to load visits" });
+  }
+}
+
 async function handleMarketplaceUnpublish(req, res) {
   if (req.method !== "POST") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
   let payload;
@@ -166,6 +178,7 @@ const ROUTES = {
   contacts: handleContacts,
   providers: handleProviders,
   "update-booking": handleUpdateBooking,
+  "site-visits": handleSiteVisits,
 };
 
 export default async function handler(req, res) {

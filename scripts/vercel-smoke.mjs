@@ -2,7 +2,7 @@
 /**
  * Hit production (or any base URL) API endpoints; expect JSON, not HTML.
  * Run: npm run vercel:smoke
- *      npm run vercel:smoke -- https://your-domain.vercel.app
+ *      npm run vercel:smoke -- https://clipservice.app
  */
 const base = (process.argv[2] || process.env.SITE_URL || "https://clipservice.app").replace(/\/$/, "");
 

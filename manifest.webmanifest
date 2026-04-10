@@ -2,8 +2,9 @@
   "name": "Clip Services — Local marketplace",
   "short_name": "Clip Services",
   "description": "Book verified runners, cleaners, handymen and more in Salford Quays & MediaCityUK.",
-  "start_url": "/",
-  "scope": "/",
+  "id": "https://clipservice.app/",
+  "start_url": "https://clipservice.app/",
+  "scope": "https://clipservice.app/",
   "display": "standalone",
   "background_color": "#07101F",
   "theme_color": "#07101F",
@@ -22,6 +23,5 @@
       "purpose": "any"
     }
   ],
-  "categories": ["business", "lifestyle"],
-  "id": "clip-services-v4"
+  "categories": ["business", "lifestyle"]
 }

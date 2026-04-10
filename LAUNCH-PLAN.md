@@ -1,7 +1,7 @@
 # Clip Services — Launch Plan
 
 **Launch Date:** Friday, 4 April 2026
-**Platform:** [clips-service.vercel.app](https://clips-service.vercel.app)
+**Platform:** [clipservice.app](https://clipservice.app)
 **Owner:** Sonia Chidinma Otikpa
 
 ---
@@ -14,7 +14,7 @@
   - `STRIPE_SECRET_KEY` → live key (`sk_live_...`)
   - Update `STRIPE_WEBHOOK_SECRET` for the production webhook endpoint
 - [ ] **Webhook endpoint** (do this in **Test** and again in **Live** when you go live):
-  - URL: `https://clips-service.vercel.app/api/stripe-webhook`
+  - URL: `https://clipservice.app/api/stripe-webhook`
   - Events: `checkout.session.completed`, `account.updated`
   - Copy the signing secret (`whsec_…`) → set as `STRIPE_WEBHOOK_SECRET` on Vercel (must match the same mode as `STRIPE_SECRET_KEY`: test `whsec_` with `sk_test_`, live `whsec_` with `sk_live_`)
   - A **test-mode** endpoint can be created via Stripe Dashboard → Developers → Webhooks → Add endpoint, or with the Stripe API
@@ -24,7 +24,7 @@
 
 ### 2. Domain & DNS
 
-- [ ] **Decide on custom domain** or keep `clips-service.vercel.app`
+- [x] **Custom domain** — [clipservice.app](https://clipservice.app) (Vercel preview URL optional for testing)
   - If custom domain: add it in Vercel Dashboard → Settings → Domains
   - Update `SITE_URL` environment variable to match
   - Stripe success/cancel URLs will use this automatically
@@ -50,7 +50,7 @@
 - [ ] **Review Privacy Policy** (`/privacy-policy`) — ensure GDPR/UK compliance
 - [ ] **Review Disclaimer** (`/disclaimer`) — ensure liability limitations are clear
 - [ ] **Check WhatsApp number** in footer and contact links — confirm it's active
-- [ ] **Check email address** in footer — `hello@clipservices.co.uk`
+- [ ] **Check email address** in footer — `clipservices26@gmail.com` (or your branded domain inbox when ready)
 - [ ] **Check social media links** — Instagram and TikTok profiles are live
 
 ### 6. User Experience
@@ -66,7 +66,7 @@
 
 ### 7. Admin Dashboard
 
-- [ ] **Login to admin** at `https://clips-service.vercel.app/admin`
+- [ ] **Login to admin** at `https://clipservice.app/admin`
 - [ ] **Set a strong ADMIN_TOKEN** (32+ characters, random) — update on Vercel
 - [ ] **Test all tabs** — Bookings, Applications, Providers
 - [ ] **Test CSV export** — download and verify data format
@@ -144,7 +144,7 @@ Book verified local providers — real people, real service, done today.
 📱 Install as an app on your phone
 🟢 Available now
 
-Book now → clips-service.vercel.app
+Book now → clipservice.app
 
 Want to offer your services? Apply for free on the site.
 
@@ -158,7 +158,7 @@ Hey! I just launched Clip Services — a local service marketplace for Salford Q
 
 You can book runners, cleaners, handymen, dog walkers, and more — all verified local providers.
 
-Check it out: clips-service.vercel.app
+Check it out: clipservice.app
 
 If you offer any services, you can apply to join for free! 💪
 ```

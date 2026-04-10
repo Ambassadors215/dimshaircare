@@ -2,7 +2,7 @@
 
 **Date:** 27 March 2026
 **Author:** Sonia Chidinma Otikpa
-**Deployment:** [clips-service.vercel.app](https://clips-service.vercel.app)
+**Deployment:** [clipservice.app](https://clipservice.app)
 **Status:** Pre-launch review complete
 
 ---

@@ -50,7 +50,7 @@
       .workspace-desc { font-size: 13px; color: var(--muted-text); line-height: 1.5; }
 
       /* DASHBOARD GRID */
-      .dash-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+      .dash-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
       .dash-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: border-color .25s, box-shadow .25s; cursor: default; position: relative; overflow: hidden; }
       .dash-card:hover { border-color: var(--border-glow); box-shadow: 0 0 24px rgba(0,200,240,.06); }
       .dash-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: 0; transition: opacity .3s; }
@@ -187,8 +187,10 @@
       }
 
       /* RESPONSIVE */
-      @media (max-width: 900px) {
+      @media (max-width: 1100px) {
         .dash-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 900px) {
         .config-row { grid-template-columns: 1fr; }
         .panel-head { flex-direction: column; align-items: stretch; }
         .tabs { overflow-x: auto; }
@@ -240,6 +242,7 @@
               <li><strong>Customer journey:</strong> They book from the marketplace → request appears under <strong>Negotiations</strong> and in their <span class="mono">/user/</span> dashboard → provider sends a price → customer accepts or counters → customer pays in <span class="mono">/user/</span> when agreed.</li>
               <li><strong>Negotiations tab (manual assign):</strong> Use only when a booking used a generic seed card (no published listing) or the provider email is missing. Paste the provider’s email and <strong>Assign Provider</strong> so they see the thread on <span class="mono">/provider/</span>.</li>
               <li><strong>Bookings tab:</strong> Operational status (new, awaiting payment, paid, etc.). Payment success is also driven by the Stripe webhook.</li>
+              <li><strong>Site visits tab:</strong> Recent page loads (marketplace, customer dashboard, provider dashboard, admin). Uses a hashed visitor id — not names or emails.</li>
             </ol>
             <p class="muted" style="font-size:12px;margin-top:14px;line-height:1.55;margin-bottom:0;">This panel is only visible in admin. Customers and providers never see it.</p>
           </div>
@@ -264,6 +267,12 @@
             <div class="dash-label c-amber">Negotiations</div>
             <div class="dash-value" id="statNegotiations">—</div>
             <div class="dash-status"><span class="dot dot-amber"></span> Active</div>
+          </div>
+          <div class="dash-card">
+            <span class="dash-icon">👁</span>
+            <div class="dash-label c-cyan">Page views</div>
+            <div class="dash-value" id="statSiteVisits">—</div>
+            <div class="dash-status"><span class="dot dot-green"></span> Last 500 in tab</div>
           </div>
         </div>
 
@@ -323,6 +332,7 @@
               <button class="tab" data-tab="contacts">Applications</button>
               <button class="tab" data-tab="marketplace">Marketplace listings</button>
               <button class="tab" data-tab="providers">Stripe Connect</button>
+              <button class="tab" data-tab="visits">Site visits</button>
             </div>
             <div class="panel-tools">
               <input class="input" id="searchInput" placeholder="Search…" style="width:200px" />
@@ -369,6 +379,18 @@
                 <table>
                   <thead><tr><th>Listing ID</th><th>Display name</th><th>Provider email</th><th>Category</th><th>Actions</th></tr></thead>
                   <tbody id="marketplaceTbody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div id="visitsView" class="hide">
+              <p class="muted" style="margin:0;padding:14px 20px;font-size:12px;line-height:1.55;border-bottom:1px solid var(--border);background:rgba(0,200,240,.04);">
+                <strong style="color:var(--cyan)">Anonymous traffic</strong> — path + time + coarse country (Vercel). <span class="mono">Visitor</span> is a hashed fingerprint (not an email or name). Keep a cookie banner / privacy policy if UK/EU traffic requires it.
+              </p>
+              <div style="overflow-x:auto;">
+                <table>
+                  <thead><tr><th>Time</th><th>Path</th><th>Country</th><th>Visitor</th><th>Referrer</th></tr></thead>
+                  <tbody id="visitsTbody"></tbody>
                 </table>
               </div>
             </div>
@@ -458,7 +480,8 @@
         contacts: [],
         providers: {},
         negotiations: [],
-        marketplace: []
+        marketplace: [],
+        siteVisits: []
       };
 
       const el = {
@@ -489,6 +512,9 @@
         statNegotiations: document.getElementById("statNegotiations"),
         marketplaceView: document.getElementById("marketplaceView"),
         marketplaceTbody: document.getElementById("marketplaceTbody"),
+        visitsView: document.getElementById("visitsView"),
+        visitsTbody: document.getElementById("visitsTbody"),
+        statSiteVisits: document.getElementById("statSiteVisits"),
         publishModal: document.getElementById("publishModal"),
         pubSaveBtn: document.getElementById("pubSaveBtn"),
         pubCancelBtn: document.getElementById("pubCancelBtn"),
@@ -605,6 +631,7 @@
         if (el.statBookings) el.statBookings.textContent = state.bookings.length;
         if (el.statContacts) el.statContacts.textContent = state.contacts.length;
         if (el.statNegotiations) el.statNegotiations.textContent = state.negotiations.length;
+        if (el.statSiteVisits) el.statSiteVisits.textContent = state.siteVisits.length;
       }
 
       function renderMarketplaceTable() {
@@ -662,6 +689,7 @@
         el.contactsView.classList.toggle("hide", state.tab !== "contacts");
         if (el.marketplaceView) el.marketplaceView.classList.toggle("hide", state.tab !== "marketplace");
         el.providersView.classList.toggle("hide", state.tab !== "providers");
+        if (el.visitsView) el.visitsView.classList.toggle("hide", state.tab !== "visits");
 
         renderNegotiations();
         renderMarketplaceTable();
@@ -735,18 +763,20 @@
       async function refreshAll() {
         setStatus(el.dataStatus, "Loading…");
         try {
-          const [bookings, contacts, provData, negsData, mpData] = await Promise.all([
+          const [bookings, contacts, provData, negsData, mpData, visData] = await Promise.all([
             api("/api/admin?action=bookings"),
             api("/api/admin?action=contacts"),
             api("/api/admin?action=providers").catch(() => ({ providers: {} })),
             api("/api/admin?action=negotiations").catch(() => ({ items: [] })),
-            api("/api/admin?action=marketplace").catch(() => ({ items: [] }))
+            api("/api/admin?action=marketplace").catch(() => ({ items: [] })),
+            api("/api/admin?action=site-visits").catch(() => ({ items: [] }))
           ]);
           state.bookings = bookings.items || [];
           state.contacts = contacts.items || [];
           state.providers = provData.providers || {};
           state.negotiations = negsData.items || [];
           state.marketplace = mpData.items || [];
+          state.siteVisits = visData.items || [];
           setStatus(el.dataStatus, `${state.bookings.length} bookings · ${state.negotiations.length} negotiations · ${state.marketplace.length} live listings · ${state.contacts.length} applications`, "ok");
           render();
         } catch (e) {
@@ -839,8 +869,12 @@
           const rows = [["createdAt","name","email","phone","details"],
             ...filterRows(state.contacts).map((c) => [c.createdAt,c.name,c.email,c.phone || "",c.message])];
           downloadCsv(`applications-${new Date().toISOString().slice(0,10)}.csv`, rows);
+        } else if (state.tab === "visits") {
+          const rows = [["ts","path","country","visitor","referrer"],
+            ...filterRows(state.siteVisits).map((v) => [v.ts,v.path,v.country || "",v.visitor || "",v.ref || ""])];
+          downloadCsv(`site-visits-${new Date().toISOString().slice(0,10)}.csv`, rows);
         } else {
-          setStatus(el.dataStatus, "Switch to Bookings or Applications to export CSV.", "err");
+          setStatus(el.dataStatus, "Switch to Bookings, Applications, or Site visits to export CSV.", "err");
         }
       });
 
@@ -962,5 +996,6 @@
       render();
       if (state.token) { testAuth().then(refreshAll); }
     </script>
+    <script src="/site-track.js" defer></script>
   </body>
 </html>
