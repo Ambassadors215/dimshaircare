@@ -5,6 +5,9 @@
   "author": "Sonia Chidinma Otikpa",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=18.x"
+  },
   "scripts": {
     "start": "node server.js",
     "verify-env": "node scripts/verify-env.mjs",
