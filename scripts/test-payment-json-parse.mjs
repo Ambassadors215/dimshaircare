@@ -4,7 +4,7 @@
  * Run: npm run test:payment-parse
  */
 import { EventEmitter } from "node:events";
-import { parseJsonBody } from "../api/stripe-checkout.js";
+import { parseJsonBody } from "../lib/handlers/stripe-checkout.js";
 
 function streamReq(obj) {
   const e = new EventEmitter();

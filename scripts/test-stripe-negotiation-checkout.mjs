@@ -81,7 +81,7 @@ async function main() {
   }
 
   const { getNegotiations } = await import("../lib/kv-store.js");
-  const handler = (await import("../api/stripe-checkout.js")).default;
+  const handler = (await import("../lib/handlers/stripe-checkout.js")).default;
 
   const negs = await getNegotiations();
   const agreed = negs.find(

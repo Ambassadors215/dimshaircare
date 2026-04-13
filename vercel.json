@@ -17,14 +17,8 @@
     { "source": "/user/", "destination": "/user/index.html" }
   ],
   "functions": {
-    "api/admin/index.js": { "maxDuration": 30 },
-    "api/provider-auth.js": { "maxDuration": 30 },
-    "api/contact.js": { "maxDuration": 30 },
-    "api/booking.js": { "maxDuration": 30 },
-    "api/stripe-checkout.js": { "maxDuration": 60 },
-    "api/dashboard.js": { "maxDuration": 30 },
-    "api/negotiate.js": { "maxDuration": 30 },
-    "api/track-visit.js": { "maxDuration": 15 }
+    "api/[...path].js": { "maxDuration": 60 },
+    "api/admin/index.js": { "maxDuration": 30 }
   },
   "headers": [
     {

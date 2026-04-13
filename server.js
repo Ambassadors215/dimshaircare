@@ -39,22 +39,22 @@ let negotiateFn;
 let trackVisitFn;
 
 async function runTrackVisit(req, res) {
-  trackVisitFn ??= (await import("./api/track-visit.js")).default;
+  trackVisitFn ??= (await import("./lib/handlers/track-visit.js")).default;
   return trackVisitFn(req, res);
 }
 
 async function runStripeCheckout(req, res) {
-  stripeCheckoutFn ??= (await import("./api/stripe-checkout.js")).default;
+  stripeCheckoutFn ??= (await import("./lib/handlers/stripe-checkout.js")).default;
   return stripeCheckoutFn(req, res);
 }
 
 async function runDashboard(req, res) {
-  dashboardFn ??= (await import("./api/dashboard.js")).default;
+  dashboardFn ??= (await import("./lib/handlers/dashboard.js")).default;
   return dashboardFn(req, res);
 }
 
 async function runNegotiate(req, res) {
-  negotiateFn ??= (await import("./api/negotiate.js")).default;
+  negotiateFn ??= (await import("./lib/handlers/negotiate.js")).default;
   return negotiateFn(req, res);
 }
 const DATA_DIR = path.join(ROOT, "data");
