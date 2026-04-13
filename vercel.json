@@ -3,12 +3,10 @@
   "framework": null,
   "cleanUrls": true,
   "redirects": [
-    { "source": "/clip-services-marketplace", "destination": "/", "permanent": true },
-    { "source": "/clip-services-marketplace.html", "destination": "/", "permanent": true },
     { "source": "/index.html", "destination": "/", "permanent": true }
   ],
   "rewrites": [
-    { "source": "/", "destination": "/clip-services-marketplace.html" },
+    { "source": "/", "destination": "/clip-services-marketplace" },
     { "source": "/admin", "destination": "/admin/index.html" },
     { "source": "/admin/", "destination": "/admin/index.html" },
     { "source": "/provider", "destination": "/provider/index.html" },

@@ -247,16 +247,16 @@ const server = http.createServer(async (req, res) => {
       return send(res, 405, { "content-type": "text/plain; charset=utf-8" }, "Method Not Allowed");
     }
 
-    if (
-      url.pathname === "/clip-services-marketplace" ||
-      url.pathname === "/clip-services-marketplace.html" ||
-      url.pathname === "/index.html"
-    ) {
+    if (url.pathname === "/index.html") {
       const loc = "/" + (url.search || "");
       return send(res, 301, { Location: loc }, undefined);
     }
 
-    if (url.pathname === "/") {
+    if (
+      url.pathname === "/" ||
+      url.pathname === "/clip-services-marketplace" ||
+      url.pathname === "/clip-services-marketplace.html"
+    ) {
       const html = await fs.readFile(path.join(ROOT, "clip-services-marketplace.html"));
       return send(res, 200, { "content-type": "text/html; charset=utf-8" }, req.method === "HEAD" ? undefined : html);
     }
