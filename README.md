@@ -4,6 +4,8 @@
 
 **Live:** [clipservice.app](https://clipservice.app)
 
+This repository also contains **Dim's Haircare** (`dimshaircare.html`): on [dimshaircare.vercel.app](https://dimshaircare.vercel.app) the salon homepage is served; on Clip’s domain the marketplace is served (see `middleware.js` and [DEPLOYMENT.md](./DEPLOYMENT.md)).
+
 ---
 
 ## Overview
