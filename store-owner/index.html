@@ -4,66 +4,393 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>List your store — Clip Services</title>
-<meta name="description" content="Get your African, Caribbean or Asian store or market stall online on Clip Services. Stripe payments, WhatsApp orders, PWA — apply free.">
+<meta name="description" content="Apply to list your African, Caribbean or Asian store or market stall on Clip Services. Free to apply — Stripe, WhatsApp, reviews.">
 <meta name="theme-color" content="#8B3A3A">
 <link rel="manifest" href="/manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--terracotta:#8B3A3A;--cream:#F5F0E8;--brown:#2C1810;--muted:#5C4033;--gold:#D4A017;--white:#fff;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:Inter,system-ui,sans-serif;background:var(--cream);color:var(--brown);line-height:1.65;}
-.wrap{max-width:720px;margin:0 auto;padding:32px 20px 56px;}
-h1{font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.85rem,4vw,2.35rem);margin-bottom:12px;}
-.lead{font-size:1.1rem;color:var(--muted);margin-bottom:28px;}
-.cta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:40px;}
-.btn{display:inline-flex;align-items:center;justify-content:center;padding:14px 24px;border-radius:12px;font-weight:600;text-decoration:none;font-size:16px;min-height:48px;}
-.btn-primary{background:var(--terracotta);color:var(--white)!important;}
-.btn-gold{background:linear-gradient(135deg,var(--gold),#B8860B);color:var(--brown)!important;}
-.panel{background:var(--white);border-radius:16px;padding:24px;margin-bottom:24px;border:1px solid #E8DFD4;}
-.panel h2{font-family:"Playfair Display",Georgia,serif;font-size:1.35rem;margin-bottom:12px;color:var(--terracotta);}
-ul{margin-left:20px;}
-li{margin-bottom:8px;}
-.faq details{background:var(--white);padding:14px;border-radius:10px;margin-bottom:10px;border:1px solid #E8DFD4;}
+:root{--terracotta:#8B3A3A;--terracotta-d:#6B2E2E;--cream:#F5F0E8;--brown:#2C1810;--muted:#5C4033;--gold:#D4A017;--white:#fff;--border:#E0D6C8;--err:#B91C1C;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Inter,system-ui,sans-serif;background:var(--cream);color:var(--brown);line-height:1.6;}
+.wrap{max-width:720px;margin:0 auto;padding:28px 20px 64px;}
+.wide{max-width:920px;}
+h1{font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.75rem,4vw,2.35rem);margin-bottom:10px;}
+.lead{font-size:1.05rem;color:var(--muted);margin-bottom:8px;}
+.sub{margin-bottom:28px;font-size:15px;color:var(--muted);}
 a{color:var(--terracotta);font-weight:600;}
-.back{display:inline-block;margin-bottom:20px;}
+.back{display:inline-block;margin-bottom:22px;font-size:14px;}
+.cta-row{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0 32px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 22px;border-radius:12px;font-weight:600;text-decoration:none;font-size:15px;min-height:48px;border:none;cursor:pointer;font-family:inherit;}
+.btn-primary{background:var(--terracotta);color:var(--white)!important;}
+.btn-primary:hover{background:var(--terracotta-d);}
+.btn-primary:disabled{opacity:.55;cursor:not-allowed;}
+.btn-ghost{background:transparent;color:var(--terracotta)!important;border:2px solid var(--terracotta);}
+.panel{background:var(--white);border-radius:16px;padding:26px 24px;margin-bottom:22px;border:1px solid var(--border);box-shadow:0 4px 24px rgba(44,24,16,.06);}
+.panel h2{font-family:"Playfair Display",Georgia,serif;font-size:1.35rem;margin-bottom:14px;color:var(--terracotta);}
+.panel h3{font-size:15px;margin:20px 0 10px;color:var(--brown);}
+.form-section{margin-bottom:22px;}
+.form-section legend{font-weight:700;font-size:14px;margin-bottom:12px;color:var(--brown);}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--brown);}
+.field .hint{font-size:12px;font-weight:400;color:var(--muted);margin-top:4px;}
+.req{color:var(--err);}
+input[type=text],input[type=email],input[type=tel],input[type=url],select,textarea{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font-size:16px;font-family:inherit;background:var(--white);}
+textarea{min-height:100px;resize:vertical;}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(139,58,58,.35);outline-offset:1px;}
+.chk-grid{display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:8px;}
+.chk{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;cursor:pointer;}
+.chk input{width:18px;height:18px;accent-color:var(--terracotta);}
+.radio-row{display:flex;flex-wrap:wrap;gap:12px 20px;margin-top:8px;}
+.radio-row label{display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer;font-size:14px;}
+.radio-row input{accent-color:var(--terracotta);}
+.form-status{margin-top:16px;padding:14px;border-radius:10px;font-size:14px;display:none;}
+.form-status.ok{display:block;background:#DCFCE7;color:#14532D;border:1px solid #86EFAC;}
+.form-status.err{display:block;background:#FEE2E2;color:#7F1D1D;border:1px solid #FECACA;}
+ul.bullets{margin-left:1.2em;}
+ul.bullets li{margin-bottom:6px;}
+.faq details{background:var(--white);padding:14px;border-radius:10px;margin-bottom:10px;border:1px solid var(--border);}
+@media (min-width:768px){
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="wrap wide">
   <a class="back" href="/">← Back to home</a>
-  <h1>List your store on Clip Services</h1>
-  <p class="lead">Free to apply. No technical knowledge required. We provide Stripe Connect payments, WhatsApp order notifications, reviews, identity verification, and your own listing on clipservice.app.</p>
-  <div class="cta">
-    <a class="btn btn-primary" href="/provider/">Open store dashboard</a>
-    <a class="btn btn-gold" href="https://wa.me/447487588706?text=Hi%2C%20I%20want%20to%20list%20my%20store%20on%20Clip%20Services">WhatsApp us</a>
+  <h1>List your store or stall</h1>
+  <p class="lead"><strong>Clip Services Ltd</strong> — UK marketplace for African, Caribbean &amp; Asian independent stores and market traders.</p>
+  <p class="sub">Free to apply. We use this form to review your business — no technical skills required. After approval, you’ll get a dashboard login, Stripe Connect onboarding, and WhatsApp order alerts.</p>
+
+  <div class="cta-row">
+    <a class="btn btn-ghost" href="/provider/">Already approved? Open dashboard</a>
+    <a class="btn btn-ghost" href="https://wa.me/447487588706?text=Hi%2C%20I%27m%20applying%20to%20list%20my%20store%20on%20Clip%20Services">WhatsApp us</a>
   </div>
+
+  <section class="panel" aria-labelledby="apply-h">
+    <h2 id="apply-h">Application form</h2>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px;">Fields marked <span class="req">*</span> are required. We’ll never sell your data — see our <a href="/privacy-policy">Privacy Policy</a>.</p>
+
+    <form id="store-application-form" novalidate>
+      <fieldset class="form-section">
+        <legend>Business</legend>
+        <div class="field">
+          <label for="businessName">Trading / business name <span class="req">*</span></label>
+          <input type="text" id="businessName" name="businessName" required maxlength="200" autocomplete="organization" placeholder="e.g. Mama’s Caribbean Groceries">
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label for="listingType">How do you sell? <span class="req">*</span></label>
+            <select id="listingType" name="listingType" required>
+              <option value="">Select…</option>
+              <option value="physical_store">Physical shop / unit</option>
+              <option value="market_stall">Market stall (regular)</option>
+              <option value="online_only">Online-only (delivery / post)</option>
+              <option value="hybrid">Shop + stall / hybrid</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="yearsTrading">Years trading <span class="req">*</span></label>
+            <select id="yearsTrading" name="yearsTrading" required>
+              <option value="">Select…</option>
+              <option value="under1">Under 1 year</option>
+              <option value="1-3">1–3 years</option>
+              <option value="3-5">3–5 years</option>
+              <option value="5plus">5+ years</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <span class="label-like" style="display:block;font-size:13px;font-weight:600;margin-bottom:8px;">Communities you primarily serve <span class="req">*</span> (tick all that apply)</span>
+          <div class="chk-grid" role="group" aria-label="Communities">
+            <label class="chk"><input type="checkbox" name="community" value="African"> African</label>
+            <label class="chk"><input type="checkbox" name="community" value="Caribbean"> Caribbean</label>
+            <label class="chk"><input type="checkbox" name="community" value="Asian"> Asian</label>
+          </div>
+          <p class="hint">We use this to help customers find you — not to exclude anyone.</p>
+        </div>
+        <div class="field">
+          <label for="productLines">What do you sell? <span class="req">*</span></label>
+          <textarea id="productLines" name="productLines" required maxlength="4000" placeholder="e.g. Fresh produce, spices, halal meat, hair products, fabrics…"></textarea>
+        </div>
+        <div class="field">
+          <label for="companyNumber">Company number (if Ltd) — optional</label>
+          <input type="text" id="companyNumber" name="companyNumber" maxlength="20" inputmode="numeric" autocomplete="off" placeholder="e.g. 12345678">
+        </div>
+        <div class="field">
+          <span style="display:block;font-size:13px;font-weight:600;margin-bottom:8px;">VAT registered?</span>
+          <div class="radio-row">
+            <label><input type="radio" name="vat" value="yes"> Yes</label>
+            <label><input type="radio" name="vat" value="no"> No</label>
+            <label><input type="radio" name="vat" value="unsure" checked> Not sure</label>
+          </div>
+        </div>
+        <div class="field">
+          <label for="foodReg">Food business / FSA registration (if applicable)</label>
+          <input type="text" id="foodReg" name="foodReg" maxlength="200" placeholder="Optional — helps us verify food sellers faster">
+        </div>
+        <div class="field">
+          <label for="website">Website or main social link — optional</label>
+          <input type="url" id="website" name="website" maxlength="500" placeholder="https://…">
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend>Contact &amp; location</legend>
+        <div class="grid2">
+          <div class="field">
+            <label for="contactName">Your full name <span class="req">*</span></label>
+            <input type="text" id="contactName" name="contactName" required maxlength="120" autocomplete="name" placeholder="Applicant name">
+          </div>
+          <div class="field">
+            <label for="phone">Mobile (WhatsApp) <span class="req">*</span></label>
+            <input type="tel" id="phone" name="phone" required maxlength="40" autocomplete="tel" placeholder="+44…">
+          </div>
+        </div>
+        <div class="field">
+          <label for="email">Email <span class="req">*</span></label>
+          <input type="email" id="email" name="email" required maxlength="120" autocomplete="email" placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label for="addressLine">Street address or trading location <span class="req">*</span></label>
+          <input type="text" id="addressLine" name="addressLine" required maxlength="200" autocomplete="street-address">
+        </div>
+        <div class="grid2">
+          <div class="field">
+            <label for="city">City <span class="req">*</span></label>
+            <input type="text" id="city" name="city" required maxlength="80" autocomplete="address-level2" placeholder="e.g. Manchester">
+          </div>
+          <div class="field">
+            <label for="postcode">Postcode <span class="req">*</span></label>
+            <input type="text" id="postcode" name="postcode" required maxlength="12" autocomplete="postal-code" placeholder="e.g. M1 1AA">
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend>Verification (optional)</legend>
+        <div class="field">
+          <label for="idDoc">Photo of ID (passport or driving licence) — optional</label>
+          <input type="file" id="idDoc" name="idDoc" accept="image/jpeg,image/png,image/webp,.pdf">
+          <p class="hint">JPEG, PNG, Webp or PDF. Max 2&nbsp;MB. Used only for seller verification.</p>
+        </div>
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend>Almost done</legend>
+        <div class="field">
+          <label for="howHeard">How did you hear about Clip Services?</label>
+          <select id="howHeard" name="howHeard">
+            <option value="">Select…</option>
+            <option value="whatsapp">WhatsApp / friend</option>
+            <option value="instagram">Instagram</option>
+            <option value="tiktok">TikTok</option>
+            <option value="market">At a market</option>
+            <option value="search">Google / search</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="chk">
+            <input type="checkbox" id="stallPlan" name="stallPlan">
+            I’m interested in the <strong>£15/month digital market stall</strong> add-on
+          </label>
+        </div>
+        <div class="field">
+          <label for="notes">Anything else we should know?</label>
+          <textarea id="notes" name="notes" maxlength="4000" placeholder="Allergen handling, collection times, delivery radius…"></textarea>
+        </div>
+        <div class="field">
+          <label class="chk">
+            <input type="checkbox" id="consent" name="consent" required>
+            I agree to the <a href="/terms" target="_blank" rel="noopener">Terms</a>, <a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>, and <a href="/disclaimer" target="_blank" rel="noopener">Disclaimer</a> <span class="req">*</span>
+          </label>
+        </div>
+      </fieldset>
+
+      <button type="submit" class="btn btn-primary" id="submitBtn">Submit application</button>
+      <div id="formStatus" class="form-status" role="status" aria-live="polite"></div>
+    </form>
+  </section>
 
   <div class="panel">
     <h2>What you get</h2>
-    <ul>
-      <li>Your store page on clipservice.app</li>
-      <li>Unlimited product lines (managed via dashboard)</li>
-      <li>Stripe Connect — secure payouts</li>
-      <li>WhatsApp notifications for new orders</li>
-      <li>Customer reviews &amp; ratings</li>
-      <li>PWA — customers can install the app</li>
+    <ul class="bullets">
+      <li>Your own store listing on clipservice.app</li>
+      <li>Digital catalogue — managed in your dashboard</li>
+      <li>Stripe Connect — secure card payments &amp; payouts</li>
+      <li>Order notifications to your WhatsApp</li>
+      <li>Customer reviews to build trust</li>
+      <li>Installable PWA for repeat customers</li>
     </ul>
   </div>
 
   <div class="panel" id="stall">
-    <h2>Market stall (£15/month)</h2>
-    <p>Perfect if you trade at physical markets and want a digital stall for “what’s on the table today.” Customers order and collect — grow beyond market day.</p>
-    <p style="margin-top:14px"><a class="btn btn-primary" href="https://wa.me/447487588706?text=I%27m%20interested%20in%20the%20%C2%A315%2Fmonth%20market%20stall%20plan">Enquire about stall listing</a></p>
+    <h2>Market stall add-on (£15/month)</h2>
+    <p>For traders who want a digital stall for “what’s selling today” — customers order and collect; grow beyond market day. Tick the box in the form or <a href="https://wa.me/447487588706?text=I%27m%20interested%20in%20the%20%C2%A315%2Fmonth%20stall%20plan">message us on WhatsApp</a>.</p>
   </div>
 
   <div class="faq" id="faq">
     <h2 style="font-family:'Playfair Display',Georgia,serif;margin-bottom:14px;">Business FAQ</h2>
-    <details><summary>How long does onboarding take?</summary><p>Many stores go live within 48 hours after we verify your details and catalogue.</p></details>
-    <details><summary>What are your fees?</summary><p>We use a subscription plus fair transaction fees — designed for thin retail margins, not 25–30% delivery-app rates. Exact numbers are confirmed when you apply.</p></details>
-    <details><summary>Where is Clip Services based?</summary><p><strong>Clip Services Ltd</strong> is a UK registered company (Manchester). We serve traders and customers across the UK.</p></details>
+    <details><summary>How long does onboarding take?</summary><p>Many stores go live within 48 hours after we verify your details.</p></details>
+    <details><summary>What are your fees?</summary><p>A small subscription plus fair transaction fees — not 25–30% app delivery rates. Exact figures are confirmed when we approve you.</p></details>
+    <details><summary>Do I need my own website?</summary><p>No. Your Clip listing and dashboard are enough to take orders.</p></details>
   </div>
 
   <p style="margin-top:28px;font-size:14px;color:var(--muted);">Email: <a href="mailto:clipservices26@gmail.com">clipservices26@gmail.com</a></p>
 </div>
+
+<script>
+(function () {
+  var form = document.getElementById("store-application-form");
+  var statusEl = document.getElementById("formStatus");
+  var submitBtn = document.getElementById("submitBtn");
+
+  function showStatus(ok, text) {
+    statusEl.className = "form-status " + (ok ? "ok" : "err");
+    statusEl.textContent = text;
+    statusEl.style.display = "block";
+  }
+
+  function buildMessage(data) {
+    var comm = data.communities.length ? data.communities.join(", ") : "(none selected)";
+    var lines = [
+      "[STORE APPLICATION]",
+      "",
+      "Business / trading name: " + data.businessName,
+      "Listing type: " + data.listingType,
+      "Years trading: " + data.yearsTrading,
+      "Communities served: " + comm,
+      "",
+      "Product lines / categories:",
+      data.productLines,
+      "",
+      "Company number (Ltd): " + (data.companyNumber || "—"),
+      "VAT registered: " + data.vat,
+      "Food / FSA reg: " + (data.foodReg || "—"),
+      "Website / social: " + (data.website || "—"),
+      "",
+      "Contact name: " + data.contactName,
+      "Email: " + data.email,
+      "Phone / WhatsApp: " + data.phone,
+      "Address: " + data.addressLine,
+      "City: " + data.city,
+      "Postcode: " + data.postcode,
+      "",
+      "How heard: " + (data.howHeard || "—"),
+      "Interested in £15/mo stall plan: " + (data.stallPlan ? "yes" : "no"),
+      "",
+      "Additional notes:",
+      data.notes || "—",
+    ];
+    return lines.join("\n");
+  }
+
+  function fileToAttachment(file) {
+    return new Promise(function (resolve, reject) {
+      if (file.size > 2 * 1024 * 1024) {
+        reject(new Error("File too large (max 2 MB)"));
+        return;
+      }
+      var r = new FileReader();
+      r.onload = function () {
+        var dataUrl = r.result;
+        var comma = dataUrl.indexOf(",");
+        var b64 = comma >= 0 ? dataUrl.slice(comma + 1) : dataUrl;
+        resolve({ name: file.name, type: file.type || "application/octet-stream", data: b64 });
+      };
+      r.onerror = function () {
+        reject(new Error("Could not read file"));
+      };
+      r.readAsDataURL(file);
+    });
+  }
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    statusEl.style.display = "none";
+
+    var communities = Array.prototype.slice
+      .call(form.querySelectorAll('input[name="community"]:checked'))
+      .map(function (c) {
+        return c.value;
+      });
+    if (communities.length === 0) {
+      showStatus(false, "Please tick at least one community you serve.");
+      return;
+    }
+
+    var vatEl = form.querySelector('input[name="vat"]:checked');
+    var data = {
+      businessName: form.businessName.value.trim(),
+      listingType: form.listingType.value,
+      yearsTrading: form.yearsTrading.value,
+      communities: communities,
+      productLines: form.productLines.value.trim(),
+      companyNumber: form.companyNumber.value.trim(),
+      vat: vatEl ? vatEl.value : "",
+      foodReg: form.foodReg.value.trim(),
+      website: form.website.value.trim(),
+      contactName: form.contactName.value.trim(),
+      phone: form.phone.value.trim(),
+      email: form.email.value.trim(),
+      addressLine: form.addressLine.value.trim(),
+      city: form.city.value.trim(),
+      postcode: form.postcode.value.trim(),
+      howHeard: form.howHeard.value,
+      stallPlan: form.stallPlan.checked,
+      notes: form.notes.value.trim(),
+    };
+
+    if (!form.consent.checked) {
+      showStatus(false, "Please accept the Terms, Privacy Policy, and Disclaimer.");
+      return;
+    }
+
+    var message = buildMessage(data);
+    var payload = {
+      name: data.contactName,
+      email: data.email,
+      phone: data.phone,
+      applicationType: "store-owner",
+      message: message,
+      attachments: [],
+    };
+
+    var fileInput = document.getElementById("idDoc");
+    if (fileInput.files && fileInput.files[0]) {
+      try {
+        payload.attachments = [await fileToAttachment(fileInput.files[0])];
+      } catch (err) {
+        showStatus(false, err.message || "Could not attach file.");
+        return;
+      }
+    }
+
+    submitBtn.disabled = true;
+    try {
+      var res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      var json = await res.json().catch(function () {
+        return {};
+      });
+      if (res.ok && json.ok) {
+        showStatus(true, "Application received. We’ll email you shortly and aim to respond within 48 hours. Check your spam folder.");
+        form.reset();
+      } else {
+        showStatus(false, (json && json.error) || "Something went wrong. Try again or WhatsApp us.");
+      }
+    } catch (err) {
+      showStatus(false, "Network error. Check your connection or message us on WhatsApp.");
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+})();
+</script>
 </body>
 </html>
