@@ -1,13 +1,13 @@
 {
-  "name": "Clip Services — African & Asian talent marketplace",
+  "name": "Clip Services — African, Caribbean & Asian marketplace",
   "short_name": "Clip Services",
-  "description": "Greater Manchester digital marketplace: verified African & Asian talent and local pros. Book, pay securely, get push alerts for every booking step.",
+  "description": "UK marketplace for independent African, Caribbean and Asian stores and market traders. Shop online — Stripe secure, WhatsApp orders, installable app.",
   "id": "https://clipservice.app/",
   "start_url": "https://clipservice.app/",
   "scope": "https://clipservice.app/",
   "display": "standalone",
-  "background_color": "#07101F",
-  "theme_color": "#07101F",
+  "background_color": "#F5F0E8",
+  "theme_color": "#8B3A3A",
   "orientation": "portrait-primary",
   "icons": [
     {

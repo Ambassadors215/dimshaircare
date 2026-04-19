@@ -14,6 +14,7 @@ import connect from "../lib/handlers/connect.js";
 import stripeWebhook from "../lib/handlers/stripe-webhook.js";
 import stripeCheckout from "../lib/handlers/stripe-checkout.js";
 import trackVisit from "../lib/handlers/track-visit.js";
+import publicStats from "../lib/handlers/public-stats.js";
 
 const handlers = {
   booking,
@@ -28,6 +29,7 @@ const handlers = {
   "stripe-webhook": stripeWebhook,
   "stripe-checkout": stripeCheckout,
   "track-visit": trackVisit,
+  "public-stats": publicStats,
 };
 
 function notFound(res) {

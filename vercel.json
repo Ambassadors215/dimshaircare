@@ -12,7 +12,11 @@
     { "source": "/provider", "destination": "/provider/index.html" },
     { "source": "/provider/", "destination": "/provider/index.html" },
     { "source": "/user", "destination": "/user/index.html" },
-    { "source": "/user/", "destination": "/user/index.html" }
+    { "source": "/user/", "destination": "/user/index.html" },
+    { "source": "/stores", "destination": "/stores/index.html" },
+    { "source": "/stores/", "destination": "/stores/index.html" },
+    { "source": "/store-owner", "destination": "/store-owner/index.html" },
+    { "source": "/store-owner/", "destination": "/store-owner/index.html" }
   ],
   "functions": {
     "api/[...path].js": { "maxDuration": 60 },

@@ -1,2467 +1,778 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-GB">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clip Services — African & Asian talent · Greater Manchester digital marketplace</title>
-<meta name="description" content="Book verified African & Asian talent and local pros in Greater Manchester: runners, cleaners, braids & beauty, handymen, dog walking, tech help. Card-secure. PWA alerts.">
-<meta name="theme-color" content="#07101F">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='20' width='100' height='100' fill='%2307101F'/><text x='50' y='68' text-anchor='middle' font-size='52' font-family='sans-serif' font-weight='800' fill='%2300C8F0'>CS</text></svg>">
+<title>Clip Services — African, Caribbean & Asian Marketplace</title>
+<meta name="description" content="The UK's marketplace for independent African, Caribbean and Asian stores and market traders. Authentic products. Real community. Order online. Stripe secure.">
+<meta name="theme-color" content="#8B3A3A">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='18' width='100' height='100' fill='%238B3A3A'/><text x='50' y='68' text-anchor='middle' font-size='48' font-family='Georgia' font-weight='700' fill='%23D4A017'>C</text></svg>">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Clip Services — African & Asian digital marketplace (Greater Manchester)">
-<meta property="og:description" content="Verified talent for hair & beauty, errands, home help & more. Local-first in Salford Quays & MediaCityUK — pay securely, get PWA notifications.">
+<meta property="og:title" content="Clip Services — African, Caribbean & Asian Marketplace">
+<meta property="og:description" content="Discover independent stores and market stalls across the UK. Your community, online.">
 <meta property="og:url" content="https://clipservice.app/">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Clip Services — African & Asian talent marketplace">
-<meta name="twitter:description" content="Greater Manchester: verified pros, secure checkout, negotiation & booking alerts on web + PWA.">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://clipservice.app/">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/icons/icon-192.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --navy: #0A0E1A;
-  --navy2: #0F1424;
-  --surface: #131A2E;
-  --card: #182040;
-  --card2: #1E2850;
-  --border: #1C2848;
-  --border2: #2A3E6E;
-  --white: #E0E8F8;
-  --muted: #A0B4D8;
-  --faint: #4E6890;
-  --cyan: #00C8F0;
-  --cyan2: #0099BB;
-  --amber: #F59E0B;
-  --green: #10B981;
-  --red: #EF4444;
-  --purple: #8B5CF6;
-  --glow: 0 0 20px rgba(0,200,240,.06);
-  --glow-hover: 0 0 30px rgba(0,200,240,.1);
+  --terracotta: #8B3A3A;
+  --terracotta-dark: #6B2E2E;
+  --gold: #D4A017;
+  --gold-soft: #E8C547;
+  --cream: #F5F0E8;
+  --cream-dark: #E8DFD4;
+  --brown: #2C1810;
+  --brown-muted: #5C4033;
+  --forest: #2D5016;
+  --white: #FFFFFF;
   --radius: 16px;
   --radius-sm: 10px;
-  --radius-pill: 999px;
+  --shadow: 0 8px 32px rgba(44, 24, 16, 0.08);
+  --shadow-hover: 0 12px 40px rgba(139, 58, 58, 0.15);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
-body{background:var(--navy);color:var(--white);font-family:'DM Sans',sans-serif;font-weight:400;font-size:16px;line-height:1.7;overflow-x:hidden;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:Inter,system-ui,sans-serif;font-weight:400;font-size:16px;line-height:1.65;color:var(--brown);background:var(--cream);-webkit-font-smoothing:antialiased;}
+a{color:var(--terracotta);text-decoration-thickness:1px;}
+a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px;}
+.skip-link{position:absolute;left:-9999px;z-index:999;}
+.skip-link:focus{left:8px;top:8px;padding:8px 16px;background:var(--brown);color:var(--cream);}
 
-/* GRID BG */
-.grid-bg{position:fixed;inset:0;background-image:linear-gradient(rgba(0,200,240,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,240,0.025) 1px,transparent 1px);background-size:56px 56px;pointer-events:none;z-index:0;}
-body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:0.02;pointer-events:none;z-index:9999;}
+.font-display{font-family:"Playfair Display",Georgia,serif;font-weight:800;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px;}
+@media (min-width:768px){.wrap{padding:0 32px;}}
 
-/* ===== NAV ===== */
-nav{position:fixed;top:38px;left:0;right:0;z-index:200;padding:20px 56px;display:flex;align-items:center;justify-content:space-between;transition:all 0.35s;}
-nav.scrolled{background:rgba(10,14,26,0.94);border-bottom:1px solid var(--border);backdrop-filter:blur(24px);padding:16px 56px;top:0;}
-.logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-0.02em;text-decoration:none;color:var(--white);display:flex;align-items:center;gap:10px;line-height:0;}
-.logo-c{color:var(--cyan);}
-.logo-img{display:block;height:58px;width:auto;max-width:min(280px,58vw);object-fit:contain;border-radius:10px;flex-shrink:0;}
-nav.scrolled .logo-img{height:50px;max-width:min(260px,55vw);}
-.footer-brand .logo-img{height:68px;max-width:320px;margin-bottom:14px;}
-.pulse{width:8px;height:8px;background:var(--green);border-radius:50%;animation:pulse 2s ease infinite;}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
-.nav-links{display:flex;align-items:center;gap:28px;}
-.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .2s;}
-.nav-links a:hover{color:var(--white);}
-.nav-btn{background:var(--cyan);color:var(--navy)!important;padding:10px 22px;border-radius:var(--radius-sm);font-weight:500!important;transition:background .2s,transform .15s!important;}
-.nav-btn:hover{background:var(--cyan2)!important;transform:translateY(-1px);}
-.nav-dash-secondary{text-decoration:none!important;color:var(--cyan)!important;padding:10px 16px;border-radius:var(--radius-sm);border:1px solid rgba(0,200,240,.28);font-size:14px;font-weight:600;min-height:44px;display:inline-flex;align-items:center;justify-content:center;}
-.nav-dash-secondary:hover{color:var(--white)!important;border-color:rgba(0,200,240,.45);background:rgba(0,200,240,.06);}
-.nav-toggle{display:none;background:none;border:1px solid var(--border);color:var(--muted);padding:8px 12px;cursor:pointer;font-size:18px;border-radius:var(--radius-sm);}
+/* Top bar */
+.topbar{background:var(--terracotta);color:var(--cream);text-align:center;padding:10px 16px;font-size:13px;font-weight:500;}
+.topbar strong{color:var(--gold-soft);}
 
-/* ===== TABS (USER / PROVIDER) ===== */
-.mode-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 56px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;row-gap:10px;position:fixed;top:108px;left:0;right:0;z-index:199;transition:top .35s;}
-nav.scrolled + .mode-bar{top:62px;}
-.mode-bar-tabs{display:flex;align-items:stretch;}
-.mode-bar-cta{display:flex;align-items:center;gap:10px;}
-.mode-cta{font-size:13px;font-weight:600;text-decoration:none;padding:10px 18px;border-radius:var(--radius-pill);border:1px solid rgba(0,200,240,.28);color:var(--cyan);transition:background .2s,color .2s,border-color .2s;white-space:nowrap;font-family:'DM Sans',sans-serif;min-height:44px;display:inline-flex;align-items:center;justify-content:center;}
-.mode-cta:hover{background:rgba(0,200,240,.08);color:var(--white);border-color:rgba(0,200,240,.45);}
-.page-customer .mode-cta-provider{display:none!important;}
-.page-provider .mode-cta-customer{display:none!important;}
-.nav-only-customer{display:none!important;}
-.nav-only-provider{display:none!important;}
-.page-customer .nav-only-customer{display:inline-flex!important;}
-.page-provider .nav-only-provider{display:inline-flex!important;}
-.mode-tab{padding:16px 32px;font-size:16px;font-weight:600;letter-spacing:.03em;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'DM Sans',sans-serif;}
-.mode-tab.active{color:var(--cyan);border-bottom-color:var(--cyan);}
-.mode-tab:hover{color:var(--white);}
+/* Nav */
+header.site{background:var(--white);border-bottom:1px solid var(--cream-dark);position:sticky;top:0;z-index:100;}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;max-width:1180px;margin:0 auto;flex-wrap:wrap;gap:12px;}
+.brand{display:flex;flex-direction:column;gap:2px;}
+.brand-name{font-family:"Playfair Display",Georgia,serif;font-size:1.5rem;font-weight:800;color:var(--terracotta);line-height:1.1;}
+.brand-tag{font-size:12px;color:var(--brown-muted);max-width:280px;}
+.nav-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:var(--radius-sm);font-family:Inter,sans-serif;font-size:15px;font-weight:600;border:none;cursor:pointer;transition:transform .15s,box-shadow .2s;min-height:48px;}
+.btn:active{transform:scale(.98);}
+.btn-primary{background:var(--terracotta);color:var(--white);}
+.btn-primary:hover{background:var(--terracotta-dark);}
+.btn-secondary{background:var(--white);color:var(--terracotta);border:2px solid var(--terracotta);}
+.btn-secondary:hover{background:var(--cream);}
+.btn-gold{background:linear-gradient(135deg,var(--gold),#B8860B);color:var(--brown);}
+.btn-gold:hover{filter:brightness(1.05);}
 
-/* Views */
-.view{display:none;padding-top:168px;}
-.view.active{display:block;}
+/* Hero */
+.hero{padding:48px 0 56px;background:linear-gradient(165deg,var(--cream) 0%,#EDE8E0 50%,var(--cream-dark) 100%);position:relative;overflow:hidden;}
+.hero::before{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238B3A3A' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4V0H2v4H0v2h4v4H2v2h4v2h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");opacity:.6;pointer-events:none;}
+.hero-inner{position:relative;z-index:1;text-align:center;max-width:920px;margin:0 auto;}
+.hero h1{font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.85rem,5vw,3rem);font-weight:800;color:var(--brown);line-height:1.12;margin-bottom:16px;}
+.hero-sub{font-size:clamp(1rem,2.4vw,1.2rem);color:var(--brown-muted);max-width:640px;margin:0 auto 28px;}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:36px;}
+.trust-row{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 24px;font-size:14px;color:var(--brown-muted);}
+.trust-item{display:inline-flex;align-items:center;gap:8px;background:var(--white);padding:10px 16px;border-radius:999px;box-shadow:var(--shadow);border:1px solid var(--cream-dark);}
+.trust-item strong{font-family:Inter,sans-serif;font-weight:700;color:var(--terracotta);font-variant-numeric:tabular-nums;}
 
-/* ===== SHARED ===== */
-section{padding:96px 56px;position:relative;z-index:1;}
-.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
-.eyebrow::before{content:'';width:22px;height:1px;background:var(--cyan);}
-h2.stitle{font-family:'Syne',sans-serif;font-size:clamp(30px,4vw,52px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-bottom:12px;}
-h2.stitle em{font-style:italic;color:var(--cyan);}
-.sdesc{color:var(--muted);font-size:16px;max-width:520px;margin-bottom:52px;}
-.divbg{background:var(--navy2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+/* Section common */
+section{padding:56px 0;}
+section.alt{background:var(--white);}
+.section-head{text-align:center;margin-bottom:40px;}
+.section-head h2{font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.6rem,4vw,2.25rem);color:var(--brown);margin-bottom:10px;}
+.section-head p{color:var(--brown-muted);max-width:640px;margin:0 auto;font-size:1.05rem;}
 
-.btn-p{background:var(--cyan);color:var(--navy);text-decoration:none;padding:15px 34px;font-size:14px;font-weight:600;border-radius:var(--radius-sm);display:inline-flex;align-items:center;gap:8px;transition:all .25s;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 20px rgba(0,200,240,.2);}
-.btn-p:hover{background:var(--cyan2);transform:translateY(-2px);box-shadow:0 6px 28px rgba(0,200,240,.3);}
-.btn-s{color:var(--muted);text-decoration:none;padding:15px 22px;font-size:14px;border:1px solid var(--border);border-radius:var(--radius-sm);display:inline-flex;align-items:center;gap:8px;transition:all .25s;background:none;cursor:pointer;font-family:'DM Sans',sans-serif;}
-.btn-s:hover{color:var(--white);border-color:rgba(0,200,240,.3);box-shadow:var(--glow);}
-.btn-ghost{background:none;border:1px solid var(--border);color:var(--muted);padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .25s;}
-.btn-ghost:hover{border-color:rgba(0,200,240,.3);color:var(--cyan);box-shadow:var(--glow);}
+/* Community navigator */
+.comm-tabs{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:28px;}
+.comm-tab{font-family:Inter,sans-serif;font-size:16px;font-weight:600;padding:16px 28px;border-radius:var(--radius);border:2px solid var(--cream-dark);background:var(--white);cursor:pointer;transition:all .2s;color:var(--brown);}
+.comm-tab:hover{border-color:var(--gold);background:var(--cream);}
+.comm-tab[aria-selected="true"]{background:var(--terracotta);color:var(--white);border-color:var(--terracotta);}
+.comm-panels{max-width:900px;margin:0 auto;}
+.comm-panel{display:none;}
+.comm-panel.active{display:block;}
+.chip-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;justify-content:center;}
+.chip{font-size:13px;padding:8px 14px;background:var(--cream);border-radius:999px;color:var(--brown-muted);border:1px solid var(--cream-dark);}
+.comm-featured{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;}
+.mini-card{background:var(--white);border-radius:var(--radius);padding:18px;border:1px solid var(--cream-dark);box-shadow:var(--shadow);}
+.mini-card h3{font-size:17px;margin-bottom:8px;color:var(--terracotta);}
+.mini-card p{font-size:14px;color:var(--brown-muted);}
 
-/* reveal */
-.r{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease;}
-.r.v{opacity:1;transform:none;}
-.rd1{transition-delay:.1s;}.rd2{transition-delay:.2s;}.rd3{transition-delay:.3s;}
+/* Categories */
+.cat-rows{display:flex;flex-direction:column;gap:32px;}
+.cat-row h3{font-size:14px;text-transform:uppercase;letter-spacing:.08em;color:var(--terracotta);margin-bottom:14px;font-weight:700;}
+.cat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+@media (min-width:640px){.cat-grid{grid-template-columns:repeat(3,1fr);}}
+@media (min-width:900px){.cat-grid{grid-template-columns:repeat(6,1fr);}}
+.cat-cell{background:var(--white);border:1px solid var(--cream-dark);border-radius:var(--radius-sm);padding:16px 12px;text-align:center;font-size:14px;font-weight:600;color:var(--brown);transition:box-shadow .2s,border-color .2s;}
+.cat-cell:hover{box-shadow:var(--shadow-hover);border-color:var(--gold);}
+.cat-cell .ico{font-size:1.75rem;display:block;margin-bottom:8px;}
 
-/* ===== CUSTOMER HERO ===== */
-.c-hero{min-height:calc(100vh - 128px);display:flex;flex-direction:column;justify-content:center;padding:80px 56px;position:relative;overflow:hidden;}
-.c-hero-glow{position:absolute;top:10%;right:10%;width:700px;height:700px;background:radial-gradient(circle,rgba(0,200,240,.06) 0%,transparent 65%);pointer-events:none;}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,200,240,.08);border:1px solid rgba(0,200,240,.18);color:var(--cyan);font-size:12px;letter-spacing:.06em;padding:8px 18px;border-radius:var(--radius-pill);margin-bottom:24px;width:fit-content;box-shadow:0 0 16px rgba(0,200,240,.06);}
-.hero-badge .bl{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.5s ease infinite;}
-.c-hero h1{font-family:'Syne',sans-serif;font-size:clamp(44px,7vw,92px);font-weight:800;line-height:.95;letter-spacing:-.04em;max-width:820px;margin-bottom:24px;}
-.c-hero h1 .hl{color:var(--cyan);}
-.c-hero h1 .it{font-style:italic;font-weight:700;}
-.c-hero p{font-size:clamp(15px,1.8vw,18px);color:var(--muted);max-width:500px;margin-bottom:44px;}
-.hero-acts{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+/* Local market */
+.stall-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
+.stall-card{background:linear-gradient(145deg,#FFF9F0 0%,var(--white) 40%,#FFF5E6 100%);border:2px solid #E8D4B8;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;}
+.stall-photo{height:140px;background:linear-gradient(135deg,var(--terracotta) 0%,#C4A574 100%);display:flex;align-items:center;justify-content:center;font-size:3rem;color:rgba(255,255,255,.9);}
+.stall-body{padding:18px;flex:1;display:flex;flex-direction:column;}
+.stall-body h3{font-family:"Playfair Display",Georgia,serif;font-size:1.2rem;margin-bottom:4px;color:var(--brown);}
+.stall-meta{font-size:13px;color:var(--brown-muted);margin-bottom:10px;}
+.stall-desc{font-size:14px;color:var(--brown-muted);flex:1;margin-bottom:14px;}
+.stall-card .btn{width:100%;padding:10px;font-size:14px;}
 
-.hide{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+/* Cities */
+.city-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+@media (min-width:600px){.city-grid{grid-template-columns:repeat(3,1fr);}}
+@media (min-width:900px){.city-grid{grid-template-columns:repeat(5,1fr);}}
+.city-card{background:var(--white);border:1px solid var(--cream-dark);border-radius:var(--radius-sm);padding:18px 14px;text-align:center;transition:all .2s;}
+.city-card:hover{border-color:var(--terracotta);box-shadow:var(--shadow);}
+.city-card .n{font-family:Inter,sans-serif;font-weight:800;font-size:1.5rem;color:var(--terracotta);}
+.city-card .l{font-size:14px;font-weight:600;color:var(--brown);margin-top:6px;}
 
-/* CATEGORY FILTER (browse grid) */
-.active-cat-bar{display:none;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:12px 16px;margin-bottom:20px;background:rgba(0,200,240,.06);border:1px solid rgba(0,200,240,.18);border-radius:var(--radius-sm);font-size:13px;color:var(--muted);}
-.active-cat-bar.visible{display:flex;}
-.active-cat-bar strong{color:var(--white);font-weight:600;}
-.active-cat-bar button{background:none;border:1px solid var(--border);color:var(--cyan);padding:8px 14px;border-radius:var(--radius-pill);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:border-color .2s,background .2s;}
-.active-cat-bar button:hover{border-color:rgba(0,200,240,.35);background:rgba(0,200,240,.06);}
-.cat-chip{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:10px 18px;border-radius:var(--radius-pill);font-size:13px;cursor:pointer;transition:all .22s;font-family:'DM Sans',sans-serif;box-shadow:var(--glow);}
-.cat-chip:hover,.cat-chip.active{background:rgba(0,200,240,.1);border-color:rgba(0,200,240,.35);color:var(--cyan);box-shadow:var(--glow-hover);}
-.price-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:8px;}
-.price-panel-note{font-size:12px;color:var(--muted);line-height:1.55;margin-top:10px;}
-.price-row{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border);}
-.price-row:last-child{border-bottom:none;}
-.price-row span:first-child{color:var(--muted);}
-.price-row span:last-child{font-family:'Syne',sans-serif;font-weight:700;color:var(--cyan);}
+/* Featured scroll */
+.featured-wrap{overflow:hidden;margin:0 -20px;padding:0 20px;}
+@media (min-width:768px){.featured-wrap{margin:0 -32px;padding:0 32px;}}
+.featured-track{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;-webkit-overflow-scrolling:touch;scrollbar-width:thin;}
+.featured-track::-webkit-scrollbar{height:8px;}
+.featured-track::-webkit-scrollbar-thumb{background:var(--cream-dark);border-radius:4px;}
+.store-card{flex:0 0 min(300px,85vw);scroll-snap-align:start;background:var(--white);border-radius:var(--radius);border:1px solid var(--cream-dark);overflow:hidden;box-shadow:var(--shadow);}
+.store-card-img{height:120px;background:linear-gradient(120deg,var(--forest),var(--terracotta));display:flex;align-items:center;justify-content:center;font-size:2.5rem;}
+.store-card-body{padding:16px;}
+.store-card-body h3{font-size:1.1rem;margin-bottom:4px;}
+.store-card-body .city{font-size:13px;color:var(--brown-muted);}
+.store-cats{font-size:12px;color:var(--forest);margin:8px 0;}
+.stars{color:var(--gold);letter-spacing:2px;font-size:14px;}
 
-/* CATEGORY PILLS */
-.cats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:56px;}
-.cat{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:10px 20px;border-radius:var(--radius-pill);font-size:14px;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:8px;box-shadow:var(--glow);}
-.cat:hover,.cat.active{background:rgba(0,200,240,.1);border-color:rgba(0,200,240,.35);color:var(--cyan);box-shadow:var(--glow-hover);}
+/* Cultural calendar */
+.cal-track{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:12px;-webkit-overflow-scrolling:touch;}
+.cal-card{flex:0 0 min(260px,80vw);scroll-snap-align:start;background:var(--white);border:1px solid var(--cream-dark);border-radius:var(--radius-sm);padding:18px;min-height:120px;display:flex;flex-direction:column;justify-content:space-between;}
+.cal-card h4{font-size:15px;color:var(--terracotta);margin-bottom:6px;}
+.cal-card p{font-size:13px;color:var(--brown-muted);}
+.cal-card a{font-size:14px;font-weight:600;margin-top:10px;}
 
-/* FEATURED SERVICE CARDS */
-.featured-services{padding:80px 56px;position:relative;z-index:1;}
-.svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:32px;}
-.svc-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;box-shadow:var(--glow);display:flex;flex-direction:column;align-items:center;aspect-ratio:1/1;justify-content:center;}
-.svc-card:hover{border-color:rgba(0,200,240,.35);transform:translateY(-4px);box-shadow:var(--glow-hover),0 16px 50px rgba(0,0,0,.25);}
-.svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity .3s;}
-.svc-card:hover::before{opacity:.6;}
-.svc-card-icon{width:64px;height:64px;border-radius:18px;background:rgba(0,200,240,.08);border:1px solid rgba(0,200,240,.15);display:flex;align-items:center;justify-content:center;margin-bottom:16px;transition:all .3s;}
-.svc-card:hover .svc-card-icon{background:rgba(0,200,240,.14);border-color:rgba(0,200,240,.3);}
-.svc-card-icon svg{width:32px;height:32px;}
-.svc-card-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:6px;}
-.svc-card-price{font-size:12px;color:var(--cyan);font-weight:600;margin-bottom:4px;}
-.svc-card-count{font-size:12px;color:var(--faint);margin-bottom:14px;}
-.svc-card-tags{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;}
-.svc-card-tag{font-size:10px;background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:6px;color:var(--muted);}
-.svc-card-tag--pick{cursor:pointer;transition:border-color .2s,background .2s,color .2s;}
-.svc-card-tag--pick:hover{border-color:rgba(0,200,240,.45);background:rgba(0,200,240,.08);color:var(--cyan);}
-.svc-card-tag--pick:focus{outline:none;}
-.svc-card-tag--pick:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
-.svc-card-tag--more{cursor:default;opacity:.85;}
-.svc-card-badge{position:absolute;top:12px;right:12px;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:var(--radius-pill);font-weight:600;background:rgba(245,158,11,.12);color:#FCD34D;border:1px solid rgba(245,158,11,.2);}
+/* Impact */
+.impact{background:linear-gradient(180deg,var(--brown) 0%,#1a0f0a 100%);color:var(--cream);padding:64px 0;}
+.impact h2{color:var(--gold-soft);text-align:center;margin-bottom:8px;}
+.impact-sub{text-align:center;color:rgba(245,240,232,.75);margin-bottom:40px;font-size:15px;}
+.impact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;}
+@media (min-width:768px){.impact-grid{grid-template-columns:repeat(4,1fr);}}
+.impact-stat{text-align:center;padding:20px;}
+.impact-num{font-family:Inter,sans-serif;font-weight:800;font-size:clamp(2rem,5vw,3rem);color:var(--gold);line-height:1.1;font-variant-numeric:tabular-nums;}
+.impact-label{font-size:14px;color:rgba(245,240,232,.85);margin-top:8px;}
 
-/* PROVIDER CARDS */
-.providers-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2px;}
-.pcard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:border-color .25s,transform .25s,box-shadow .25s;cursor:pointer;position:relative;box-shadow:var(--glow);}
-.pcard:hover{border-color:rgba(0,200,240,.3);transform:translateY(-3px);box-shadow:var(--glow-hover),0 12px 40px rgba(0,0,0,.2);}
-.pcard-top{padding:24px 24px 20px;display:flex;align-items:flex-start;gap:14px;}
-.pcard-avatar{width:52px;height:52px;border-radius:14px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 12px rgba(0,200,240,.06);}
-.pcard-avatar svg{width:26px;height:26px;}
-.pcard-info{flex:1;min-width:0;}
-.pcard-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:2px;}
-.pcard-provider-note{font-size:11px;color:var(--faint);font-style:italic;margin-top:2px;}
-.pcard-badge{position:absolute;top:16px;right:16px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:var(--radius-pill);font-weight:600;}
-.bg-top{background:rgba(245,158,11,.12);color:#FCD34D;border:1px solid rgba(245,158,11,.2);}
-.bg-new{background:rgba(16,185,129,.12);color:#6EE7B7;border:1px solid rgba(16,185,129,.2);}
-.bg-busy{background:rgba(239,68,68,.1);color:#F87171;border:1px solid rgba(239,68,68,.2);}
-.pcard-mid{padding:0 24px 16px;font-size:14px;color:var(--muted);line-height:1.6;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
-.pcard-services{padding:0 24px 16px;display:flex;flex-wrap:wrap;gap:6px;}
-.ptag{font-size:11px;background:var(--surface);border:1px solid var(--border);padding:5px 12px;border-radius:8px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase;}
-.ptag--pick{cursor:pointer;transition:border-color .2s,background .2s,color .2s;}
-.ptag--pick:hover{border-color:rgba(0,200,240,.45);background:rgba(0,200,240,.08);color:var(--cyan);}
-.ptag--pick:focus{outline:none;}
-.ptag--pick:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
-.ptag--more{cursor:default;opacity:.85;}
-.pcard-opts{font-size:13px;color:var(--muted);}
-.pcard-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-.book-btn{background:var(--cyan);color:var(--navy);border:none;padding:11px 22px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
-.book-btn:hover{background:var(--cyan2);transform:translateY(-1px);}
+/* How it works */
+.how-grid{display:grid;gap:28px;}
+@media (min-width:900px){.how-grid{grid-template-columns:repeat(3,1fr);}}
+.how-col{background:var(--white);border:1px solid var(--cream-dark);border-radius:var(--radius);padding:24px;}
+.how-col h3{font-family:"Playfair Display",Georgia,serif;font-size:1.25rem;margin-bottom:16px;color:var(--terracotta);}
+.how-col ol{padding-left:20px;}
+.how-col li{margin-bottom:10px;font-size:15px;color:var(--brown-muted);}
 
-/* HOW SECTION */
-.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;}
-.how-step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:36px 28px;position:relative;overflow:hidden;transition:border-color .25s,box-shadow .25s;}
-.how-step::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);transform:scaleX(0);transform-origin:left;transition:transform .4s;}
-.how-step:hover::before{transform:scaleX(1);}
-.how-step:hover{border-color:rgba(0,200,240,.15);box-shadow:var(--glow);}
-.how-num{font-family:'Syne',sans-serif;font-size:56px;font-weight:800;color:var(--border);line-height:1;margin-bottom:16px;}
-.how-step h3{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:8px;}
-.how-step p{font-size:14px;color:var(--muted);line-height:1.6;}
+/* Why cards */
+.why-grid{display:grid;gap:20px;}
+@media (min-width:768px){.why-grid{grid-template-columns:repeat(3,1fr);}}
+.why-card{background:var(--white);border-radius:var(--radius);padding:26px;border:1px solid var(--cream-dark);box-shadow:var(--shadow);}
+.why-card h3{font-size:1.15rem;margin-bottom:12px;color:var(--terracotta);}
+.why-card p{font-size:15px;color:var(--brown-muted);}
 
-/* COMMISSION BANNER */
-.commission-banner{background:linear-gradient(135deg,rgba(0,200,240,.08) 0%,rgba(139,92,246,.05) 100%);border:1px solid rgba(0,200,240,.15);padding:48px 56px;margin:0 56px;border-radius:var(--radius);display:grid;grid-template-columns:1fr auto;align-items:center;gap:40px;box-shadow:0 0 40px rgba(0,200,240,.06);}
-.cb-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;margin-bottom:8px;}
-.cb-sub{color:var(--muted);font-size:14px;max-width:500px;}
-.commission-pills{display:flex;gap:24px;flex-wrap:wrap;margin-top:20px;}
-.cpill{background:var(--card);border:1px solid var(--border);padding:12px 20px;border-radius:var(--radius-sm);text-align:center;}
-.cpill-pct{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:var(--cyan);}
-.cpill-lbl{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;margin-top:2px;}
+/* Owner CTA */
+.owner-cta{background:linear-gradient(135deg,var(--terracotta) 0%,var(--terracotta-dark) 100%);color:var(--cream);padding:56px 0;text-align:center;}
+.owner-cta h2{font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.5rem,4vw,2rem);margin-bottom:12px;}
+.owner-cta p{opacity:.95;max-width:560px;margin:0 auto 24px;}
+.check-list{list-style:none;text-align:left;max-width:480px;margin:0 auto 28px;}
+.check-list li{padding:8px 0 8px 32px;position:relative;font-size:15px;}
+.check-list li::before{content:"✅";position:absolute;left:0;}
+.owner-cta .hero-cta{margin-bottom:0;}
 
-/* CATEGORIES SECTION */
-.cat-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2px;}
-.cat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;cursor:pointer;transition:all .25s;text-align:center;box-shadow:var(--glow);}
-.cat-card:hover{border-color:rgba(0,200,240,.3);background:var(--surface);box-shadow:var(--glow-hover);transform:translateY(-2px);}
-.cat-icon{margin-bottom:12px;display:flex;align-items:center;justify-content:center;height:44px;}
-.cat-icon svg{width:40px;height:40px;}
-.cat-name{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px;}
-.cat-count{font-size:13px;color:var(--muted);}
+/* Footer */
+footer.site-footer{background:var(--brown);color:rgba(245,240,232,.88);padding:48px 0 24px;font-size:14px;}
+.footer-grid{display:grid;gap:32px;margin-bottom:36px;}
+@media (min-width:768px){.footer-grid{grid-template-columns:repeat(2,1fr);}}
+@media (min-width:1000px){.footer-grid{grid-template-columns:repeat(4,1fr);}}
+footer h4{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:14px;}
+footer ul{list-style:none;}
+footer li{margin-bottom:8px;}
+footer a{color:rgba(245,240,232,.9);}
+footer a:hover{color:var(--gold-soft);}
+.footer-bottom{border-top:1px solid rgba(245,240,232,.15);padding-top:24px;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:center;font-size:13px;}
+.social{display:flex;gap:14px;}
+.social a{font-weight:600;}
 
-/* BOOKING MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto;backdrop-filter:blur(4px);}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--card);border:1px solid var(--border2);width:100%;max-width:680px;border-radius:20px;position:relative;animation:min .3s ease;box-shadow:0 24px 80px rgba(0,0,0,.4),var(--glow-hover);}
-@keyframes min{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
-.modal-close{position:absolute;top:18px;right:20px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;border-radius:50%;transition:all .25s;}
-.modal-close:hover{border-color:rgba(0,200,240,.3);color:var(--white);background:rgba(0,200,240,.08);}
-.modal-head{padding:40px 40px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;}
-.modal-avatar{width:56px;height:56px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;box-shadow:0 0 16px rgba(0,200,240,.06);}
-.modal-title{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;}
-.modal-sub{font-size:13px;color:var(--muted);margin-top:2px;}
-.modal-body{padding:32px 40px;}
-.modal-body h4{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:10px;margin-top:24px;}
-.modal-body h4:first-child{margin-top:0;}
-.modal-about{font-size:14px;color:var(--muted);line-height:1.7;margin-bottom:8px;}
-.modal-services-list{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
-.msvc{background:var(--surface);border:1px solid var(--border);padding:6px 14px;font-size:12px;color:var(--muted);border-radius:8px;}
-.modal-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;margin-bottom:8px;}
-.mstat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;text-align:center;}
-.mstat-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--white);display:block;}
-.mstat-lbl{font-size:10px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;}
-.modal-foot{padding:24px 40px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
-.modal-price-big{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;}
-.modal-price-note{font-size:12px;color:var(--faint);}
-
-/* BOOKING FORM */
-.booking-form{display:flex;flex-direction:column;gap:14px;margin-top:8px;}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-label{display:block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin-bottom:7px;}
-input,select,textarea{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--white);padding:13px 16px;font-size:16px;font-family:'DM Sans',sans-serif;font-weight:300;outline:none;border-radius:var(--radius-sm);transition:border-color .25s,box-shadow .25s;appearance:none;}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%238A9DC0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px;cursor:pointer;}
-input:focus,select:focus,textarea:focus{border-color:rgba(0,200,240,.5);box-shadow:0 0 0 3px rgba(0,200,240,.1);}
-input::placeholder,textarea::placeholder{color:var(--faint);}
-textarea{resize:vertical;min-height:80px;}
-
-/* ===== PROVIDER VIEW ===== */
-.p-hero{background:linear-gradient(160deg,var(--navy2) 0%,rgba(7,16,31,0) 100%);padding:80px 56px;border-bottom:1px solid var(--border);position:relative;z-index:1;}
-.p-hero h1{font-family:'Syne',sans-serif;font-size:clamp(40px,6vw,80px);font-weight:800;letter-spacing:-.04em;line-height:.95;margin-bottom:20px;}
-.p-hero h1 .hl{color:var(--cyan);}
-.p-hero p{color:var(--muted);font-size:16px;max-width:500px;margin-bottom:40px;}
-.earnings-display{display:flex;gap:2px;margin-bottom:48px;}
-.earn-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;box-shadow:var(--glow);transition:all .25s;}
-.earn-card:hover{border-color:rgba(0,200,240,.2);box-shadow:var(--glow-hover);}
-.earn-num{font-family:'Syne',sans-serif;font-size:42px;font-weight:800;color:var(--cyan);letter-spacing:-.02em;}
-.earn-lbl{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:.1em;margin-top:4px;}
-
-/* BENEFITS */
-.benefits-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;}
-.benefit{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px 28px;transition:all .25s;box-shadow:var(--glow);}
-.benefit:hover{border-color:rgba(0,200,240,.2);box-shadow:var(--glow-hover);transform:translateY(-2px);}
-.benefit-icon{margin-bottom:16px;display:flex;align-items:center;width:48px;height:48px;border-radius:14px;background:rgba(0,200,240,.08);justify-content:center;}
-.benefit-icon svg{width:22px;height:22px;}
-.benefit h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;}
-.benefit p{font-size:14px;color:var(--muted);line-height:1.6;}
-
-/* APPLICATION FORM */
-.app-form-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:48px;box-shadow:var(--glow);}
-.app-form-wrap h3{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;margin-bottom:8px;}
-.app-form-wrap > p{color:var(--muted);font-size:14px;margin-bottom:36px;}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-.form-group{display:flex;flex-direction:column;}
-.form-full{grid-column:1/-1;}
-.char-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
-.char-tag{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:8px 16px;border-radius:var(--radius-sm);font-size:12px;cursor:pointer;transition:all .25s;display:flex;align-items:center;gap:6px;}
-.char-tag.selected{background:rgba(0,200,240,.1);border-color:rgba(0,200,240,.35);color:var(--cyan);box-shadow:var(--glow);}
-.char-tag input{display:none;}
-.kyc-divider{grid-column:1/-1;height:0;border-top:1px solid var(--border);margin:20px 0 8px;}
-.kyc-heading{grid-column:1/-1;font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin:0 0 4px;display:flex;align-items:center;gap:10px;}
-.kyc-heading .kyc-badge{font-size:9px;letter-spacing:.1em;font-weight:600;background:var(--cyan);color:var(--navy);padding:3px 10px;border-radius:20px;text-transform:uppercase;}
-.kyc-note{grid-column:1/-1;font-size:12px;color:var(--muted);line-height:1.6;margin:-4px 0 8px;}
-.upload-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:28px 20px;text-align:center;cursor:pointer;transition:all .25s;position:relative;}
-.upload-zone:hover,.upload-zone.dragover{border-color:rgba(0,200,240,.4);background:rgba(0,200,240,.04);box-shadow:var(--glow);}
-.upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;}
-.upload-zone .uz-icon{font-size:28px;margin-bottom:8px;}
-.upload-zone .uz-label{font-size:13px;font-weight:500;margin-bottom:4px;}
-.upload-zone .uz-hint{font-size:11px;color:var(--faint);}
-.upload-preview{margin-top:10px;display:none;position:relative;}
-.upload-preview img{max-width:100%;max-height:160px;border-radius:4px;border:1px solid var(--border);}
-.upload-preview .up-name{font-size:11px;color:var(--muted);margin-top:4px;}
-.upload-preview .up-remove{position:absolute;top:4px;right:4px;background:var(--navy);border:1px solid var(--border);color:var(--white);border-radius:50%;width:22px;height:22px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.rate-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-.rate-opt{background:var(--surface);border:1px solid var(--border);padding:14px;text-align:center;border-radius:var(--radius-sm);cursor:pointer;transition:all .25s;}
-.rate-opt:hover,.rate-opt.active{border-color:rgba(0,200,240,.35);background:rgba(0,200,240,.07);box-shadow:var(--glow);}
-.rate-opt-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--white);}
-.rate-opt-lbl{font-size:11px;color:var(--faint);margin-top:3px;}
-.form-note{font-size:12px;color:var(--faint);margin-top:8px;line-height:1.6;}
-
-/* HOW PROVIDERS WORK */
-.provider-how{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;}
-.phow{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;transition:all .25s;box-shadow:var(--glow);}
-.phow:hover{border-color:rgba(0,200,240,.15);box-shadow:var(--glow-hover);}
-.phow-num{font-family:'Syne',sans-serif;font-size:48px;font-weight:800;color:var(--border);margin-bottom:14px;}
-.phow h3{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:8px;}
-.phow p{font-size:13px;color:var(--muted);line-height:1.6;}
-
-/* FAQ */
-.faq-list{max-width:720px;}
-.faq-item{border-bottom:1px solid var(--border);}
-.faq-q{width:100%;background:none;border:none;color:var(--white);text-align:left;padding:18px 0;font-size:15px;font-family:'DM Sans',sans-serif;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:14px;transition:color .2s;}
-.faq-q:hover{color:var(--cyan);}
-.faq-icon{color:var(--faint);font-size:18px;flex-shrink:0;transition:transform .3s,color .2s;}
-.faq-item.open .faq-icon{transform:rotate(45deg);color:var(--cyan);}
-.faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s;}
-.faq-item.open .faq-a{max-height:500px;padding-bottom:18px;}
-.faq-a p{color:var(--muted);font-size:14px;line-height:1.7;}
-
-/* MARQUEE */
-.mq-wrap{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:12px 0;overflow:hidden;white-space:nowrap;position:relative;z-index:1;}
-.mq-track{display:inline-block;animation:mq 32s linear infinite;}
-.mq-track span{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);padding:0 24px;}
-.mq-track .dot{color:var(--cyan);}
-@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-
-/* FOOTER */
-footer{background:var(--navy2);border-top:1px solid var(--border);padding:56px 56px 36px;position:relative;z-index:1;}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr;gap:32px;margin-bottom:40px;}
-.footer-brand p{color:var(--faint);font-size:13px;margin-top:12px;line-height:1.7;max-width:240px;}
-.fcol h4{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:16px;}
-.fcol a{display:block;color:var(--muted);text-decoration:none;font-size:13px;margin-bottom:8px;transition:color .2s;}
-.fcol a:hover{color:var(--white);}
-.footer-bottom{border-top:1px solid var(--border);padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;}
-.footer-bottom p{font-size:12px;color:var(--faint);}
-
-/* WA FLOAT */
-.wa{position:fixed;bottom:28px;right:28px;z-index:500;background:#25D366;color:#fff;width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;text-decoration:none;box-shadow:0 4px 24px rgba(37,211,102,.4);animation:float 3s ease-in-out infinite;}
-.wa:hover{transform:scale(1.1);}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-.wa-tip{position:absolute;right:66px;background:var(--card);border:1px solid var(--border);color:var(--white);font-size:12px;padding:8px 14px;border-radius:var(--radius-sm);white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;box-shadow:var(--glow);}
-.wa:hover .wa-tip{opacity:1;}
-
-/* TOAST */
-.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--card);border:1px solid rgba(0,200,240,.3);color:var(--white);padding:16px 24px;font-size:13px;border-radius:var(--radius);z-index:9000;opacity:0;transition:all .35s;white-space:nowrap;box-shadow:0 12px 40px rgba(0,0,0,.4),var(--glow-hover);}
-.toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
-
-/* PAYMENT SECTION */
-.pay-methods{display:grid;grid-template-columns:1fr;gap:2px;margin-bottom:36px;max-width:480px;}
-.pay-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 24px;text-align:center;transition:all .25s;box-shadow:var(--glow);}
-.pay-card:hover{border-color:rgba(0,200,240,.3);box-shadow:var(--glow-hover);}
-.pay-card.recommended{border-color:rgba(16,185,129,.3);position:relative;box-shadow:0 0 24px rgba(16,185,129,.08);}
-.pay-card.recommended::after{content:'RECOMMENDED';position:absolute;top:0;left:50%;transform:translateX(-50%) translateY(-50%);background:var(--green);color:var(--navy);font-size:9px;letter-spacing:.1em;font-weight:600;padding:4px 14px;border-radius:var(--radius-pill);}
-.pay-icon{font-size:36px;margin-bottom:14px;display:block;}
-.pay-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;margin-bottom:6px;}
-.pay-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:14px;}
-.pay-detail{font-size:11px;color:var(--faint);line-height:1.6;}
-.pay-badge{display:inline-block;font-size:10px;padding:3px 10px;border-radius:20px;margin-top:10px;}
-.pb-free{background:rgba(16,185,129,.12);color:#6EE7B7;border:1px solid rgba(16,185,129,.2);}
-.pb-fast{background:rgba(0,200,240,.12);color:#67E8F9;border:1px solid rgba(0,200,240,.2);}
-.pb-soon{background:rgba(139,92,246,.12);color:#C4B5FD;border:1px solid rgba(139,92,246,.2);}
-
-.pay-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:36px 0;}
-.pf-step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px 16px;text-align:center;position:relative;}
-.pf-step::after{content:'→';position:absolute;right:-10px;top:50%;transform:translateY(-50%);color:var(--faint);font-size:18px;z-index:2;}
-.pf-step:last-child::after{display:none;}
-.pf-num{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;color:var(--border);margin-bottom:8px;}
-.pf-step h4{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:4px;}
-.pf-step p{font-size:11px;color:var(--muted);line-height:1.5;}
-
-.pay-breakdown{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px 32px;max-width:480px;margin:28px 0;}
-.pb-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px;}
-.pb-row:last-child{border-bottom:none;}
-.pb-label{color:var(--muted);}
-.pb-val{font-family:'Syne',sans-serif;font-weight:600;}
-.pb-val.cyan{color:var(--cyan);}
-.pb-val.green{color:var(--green);}
-.pb-total{border-top:2px solid var(--cyan);margin-top:4px;padding-top:14px;}
-
-.pay-trust{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;margin-top:36px;}
-.pt{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px;text-align:center;transition:all .25s;}
-.pt:hover{border-color:rgba(0,200,240,.15);box-shadow:var(--glow);}
-.pt-icon{font-size:24px;margin-bottom:8px;display:block;}
-.pt-label{font-size:11px;color:var(--muted);line-height:1.5;}
-
-/* STATUS BAR */
-.sbar{background:var(--cyan);color:var(--navy);text-align:center;font-size:13px;font-weight:600;letter-spacing:.05em;padding:10px 16px;display:flex;align-items:center;justify-content:center;gap:14px;position:fixed;top:0;left:0;right:0;z-index:201;transition:opacity .3s;}
-.sbar-close{background:none;border:none;color:var(--navy);cursor:pointer;font-size:16px;padding:0 4px;}
-.sbar-spacer{height:38px;}
-
-/* PWA install + push prompts */
-.pwa-bar{position:fixed;bottom:0;left:0;right:0;z-index:480;background:var(--card);border-top:1px solid var(--border);padding:14px 18px;padding-bottom:max(14px,env(safe-area-inset-bottom));display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:13px;box-shadow:0 -8px 40px rgba(0,0,0,.4);}
-.pwa-bar[hidden]{display:none!important;}
-.pwa-bar span{flex:1;min-width:140px;color:var(--muted);}
-.pwa-bar-btn{background:var(--cyan);color:var(--navy);border:none;padding:10px 18px;border-radius:var(--radius-sm);font-weight:600;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;}
-.pwa-bar-close{background:none;border:none;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;padding:4px 8px;}
-.push-email-input{flex:1;min-width:160px;max-width:min(100%,280px);padding:10px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--navy2);color:var(--white);font-family:'DM Sans',sans-serif;font-size:14px;}
-.push-email-input::placeholder{color:var(--faint);}
-.push-email-input:focus{outline:none;border-color:rgba(0,200,240,.4);}
-.push-bar{bottom:0;border-bottom:none;}
-#pwa-bar:not([hidden]) ~ .push-bar{bottom:56px;border-bottom:1px solid var(--border);}
-
-/* iOS install guide overlay */
-.ios-guide-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9500;display:none;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(6px);}
-.ios-guide-overlay.open{display:flex;}
-.ios-guide{background:var(--card);border-top-left-radius:20px;border-top-right-radius:20px;width:100%;max-width:420px;padding:28px 24px 36px;padding-bottom:max(36px,env(safe-area-inset-bottom));animation:iosSlide .35s ease;}
-@keyframes iosSlide{from{transform:translateY(100%)}to{transform:none}}
-.ios-guide-close{float:right;background:none;border:1px solid var(--border);color:var(--muted);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;}
-.ios-guide h3{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;margin-bottom:6px;clear:both;}
-.ios-guide h3 span{color:var(--cyan);}
-.ios-guide>p{color:var(--muted);font-size:13px;margin-bottom:24px;line-height:1.6;}
-.ios-steps{list-style:none;counter-reset:ios;padding:0;margin:0;}
-.ios-steps li{counter-increment:ios;display:flex;gap:14px;align-items:flex-start;margin-bottom:20px;font-size:14px;color:var(--white);line-height:1.5;}
-.ios-steps li::before{content:counter(ios);flex-shrink:0;width:28px;height:28px;background:var(--cyan);color:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;}
-.ios-steps .step-icon{font-size:20px;display:inline;}
-.ios-steps .step-sub{color:var(--muted);font-size:12px;display:block;margin-top:2px;}
-.ios-guide-arrow{text-align:center;margin-top:16px;font-size:28px;animation:bounce 1.5s ease infinite;}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
-
-/* Modal: mobile-first scroll + sticky actions */
-.modal{display:flex;flex-direction:column;max-height:min(94vh,900px);}
-.modal-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
-.book-fieldset{border:1px solid var(--border);border-radius:var(--radius);padding:20px 18px;margin-bottom:16px;background:rgba(0,200,240,.03);transition:border-color .25s,box-shadow .25s;}
-.book-fieldset:focus-within{border-color:rgba(0,200,240,.3);box-shadow:0 0 20px rgba(0,200,240,.06);}
-.book-fieldset legend{font-family:'Syne',sans-serif;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);padding:0 10px;}
-.field-error{font-size:11px;color:var(--red);margin-top:6px;display:none;}
-.field-error.show{display:block;animation:shake .35s ease;}
-@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
-input.user-invalid,select.user-invalid,textarea.user-invalid{border-color:var(--red)!important;box-shadow:0 0 0 2px rgba(239,68,68,.15);}
-input:focus,select:focus,textarea:focus{box-shadow:0 0 0 3px rgba(0,200,240,.12);}
-
-/* Step progress bar */
-.form-progress{display:flex;gap:0;margin-bottom:20px;}
-.form-progress-step{flex:1;text-align:center;padding:10px 4px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);border-bottom:3px solid var(--border);transition:all .3s;}
-.form-progress-step.active{color:var(--cyan);border-bottom-color:var(--cyan);}
-.form-progress-step.done{color:var(--green);border-bottom-color:var(--green);}
-
-/* Sticky mobile submit */
-.booking-submit-wrap{position:sticky;bottom:0;background:var(--card);padding:16px 0 0;margin:0 -16px;padding-left:16px;padding-right:16px;z-index:5;border-top:1px solid var(--border);margin-top:auto;}
-
-/* Improved touch targets */
-.btn-p,.btn-s,.btn-ghost,.book-btn,.pwa-bar-btn,.nav-btn{min-height:44px;display:inline-flex;align-items:center;justify-content:center;}
-.faq-q{min-height:48px;}
-.char-tag{min-height:44px;}
-.rate-opt{min-height:48px;}
-.cat{min-height:40px;}
-.pcard{-webkit-tap-highlight-color:transparent;}
-input[type="checkbox"]{appearance:none;-webkit-appearance:none;min-width:22px;min-height:22px;width:22px;height:22px;border:2px solid var(--border);border-radius:6px;background:var(--surface);cursor:pointer;position:relative;transition:all .25s ease;flex-shrink:0;}
-input[type="checkbox"]:hover{border-color:var(--cyan);}
-input[type="checkbox"]:checked{background:var(--cyan);border-color:var(--cyan);}
-input[type="checkbox"]:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;font-weight:700;color:var(--navy);line-height:1;}
-
-/* ===== TABLET (max 900px) ===== */
-@media(max-width:900px){
-  .featured-services{padding:60px 20px;}
-  .svc-grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
-  .svc-card{aspect-ratio:auto;padding:20px 16px;}
-  .svc-card-icon{width:52px;height:52px;margin-bottom:12px;}
-  .svc-card-name{font-size:14px;}
-  nav{padding:14px 20px;}
-  nav.scrolled{padding:10px 20px;}
-  .nav-links{display:none!important;}
-  .nav-links.mobile-open{display:flex!important;flex-direction:column;position:fixed;top:160px;right:20px;background:var(--card);border:1px solid var(--border);padding:20px;border-radius:var(--radius);gap:16px;z-index:300;box-shadow:0 16px 48px rgba(0,0,0,.4),var(--glow);}
-  .nav-links.mobile-open a{padding:10px 0;font-size:15px;}
-  .nav-toggle{display:block;min-width:44px;min-height:44px;}
-  .logo-img{height:48px;max-width:min(240px,52vw);}
-  nav.scrolled .logo-img{height:42px;max-width:min(220px,50vw);}
-  .mode-bar{padding:0 20px;}
-  .mode-tab{padding:14px 18px;font-size:14px;font-weight:600;}
-  section{padding:64px 20px;}
-  .c-hero,.p-hero{padding:60px 20px;}
-  .c-hero{min-height:auto;padding-top:40px;padding-bottom:40px;}
-  .how-grid,.provider-how{grid-template-columns:1fr 1fr;}
-  .benefits-grid{grid-template-columns:1fr;}
-  .form-grid{grid-template-columns:1fr;}
-  .form-row{grid-template-columns:1fr;}
-  .rate-options{grid-template-columns:repeat(2,1fr);}
-  .footer-grid{grid-template-columns:1fr 1fr;gap:28px;}
-  footer{padding:40px 20px 28px;}
-  .providers-grid{grid-template-columns:1fr;}
-  .modal-overlay{padding:0;align-items:stretch;}
-  .modal{max-width:100%;max-height:100vh;border-radius:0;border:none;}
-  .modal-head{padding:20px 16px 16px;position:sticky;top:0;background:var(--card);z-index:6;border-bottom:1px solid var(--border);}
-  .modal-body{padding:16px;flex:1;overflow-y:auto;}
-  .modal-close{top:12px;right:12px;width:40px;height:40px;z-index:7;}
-  .modal-foot{padding:16px;}
-  .modal-title{font-size:18px;}
-  .booking-submit-wrap{margin:0 -16px;padding:12px 16px;position:sticky;bottom:0;}
-  .app-form-wrap{padding:28px 20px;}
-  .earnings-display{flex-direction:column;}
-  .earn-num{font-size:32px;}
-  .earn-card{padding:20px 24px;}
-  .commission-banner{grid-template-columns:1fr;margin:0 20px;padding:32px 24px;}
-  .cb-title{font-size:22px;}
-  .cat-cards{grid-template-columns:repeat(2,1fr);}
-  .modal-stats{grid-template-columns:repeat(3,1fr);}
-  .pay-flow{grid-template-columns:1fr;}
-  .pf-step::after{display:none;}
-  .pay-trust{grid-template-columns:repeat(2,1fr);}
-  .pay-breakdown{max-width:100%;}
-  .toast{white-space:normal;max-width:90vw;text-align:center;bottom:70px;}
-  .sbar{font-size:11px;padding:6px 12px;gap:8px;}
-  .wa{width:50px;height:50px;font-size:22px;bottom:calc(72px + env(safe-area-inset-bottom));right:16px;}
-  .pwa-bar{padding:10px 12px;gap:8px;font-size:12px;}
-  .pwa-bar-btn{padding:10px 14px;font-size:12px;}
-  .pcard-foot{flex-direction:column;gap:12px;align-items:stretch;}
-  .pcard-foot .book-btn{width:100%;text-align:center;padding:12px 16px;}
-}
-
-/* ===== SMALL PHONE (max 480px) ===== */
-@media(max-width:480px){
-  .svc-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
-  .svc-card{padding:16px 12px;}
-  .svc-card-icon{width:44px;height:44px;margin-bottom:10px;}
-  .svc-card-name{font-size:13px;}
-  .svc-card-count{font-size:11px;}
-  .svc-card-tags{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-top:6px;max-height:52px;overflow:hidden;}
-  .svc-card-tag{font-size:8px;padding:2px 6px;}
-  .featured-services{padding:40px 16px;}
-  .logo-img{height:42px;max-width:min(200px,70vw);}
-  nav.scrolled .logo-img{height:36px;}
-  .footer-brand .logo-img{height:56px;max-width:100%;}
-  .mode-tab{padding:12px 14px;font-size:13px;font-weight:600;}
-  .c-hero h1{font-size:clamp(32px,10vw,44px);}
-  .hero-badge{font-size:10px;padding:5px 10px;}
-  .cats{gap:6px;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:4px;}
-  .cats::-webkit-scrollbar{display:none;}
-  .cat{padding:7px 12px;font-size:12px;white-space:nowrap;flex-shrink:0;}
-  .how-grid,.provider-how{grid-template-columns:1fr;}
-  .footer-grid{grid-template-columns:1fr;}
-  .cat-cards{grid-template-columns:1fr;}
-  .pay-trust{grid-template-columns:repeat(2,1fr);}
-  .commission-banner{margin:0 10px;padding:24px 18px;}
-  .commission-pills{gap:8px;}
-  .cpill{padding:10px 14px;}
-  .cpill-pct{font-size:22px;}
-  .modal-stats{grid-template-columns:1fr;}
-  .mstat{padding:12px;}
-  .sbar{font-size:10px;gap:6px;flex-wrap:wrap;}
-  .earn-num{font-size:28px;}
-  .earn-lbl{font-size:10px;}
-  .footer-bottom{flex-direction:column;text-align:center;gap:10px;}
-  .p-hero h1{font-size:clamp(32px,10vw,40px);}
-  h2.stitle{font-size:clamp(24px,6vw,30px);}
-  .sdesc{font-size:14px;}
-  .benefit{padding:24px 20px;}
-  .phow{padding:20px;}
-  .how-step{padding:24px 20px;}
-  .how-num{font-size:40px;}
-  .phow-num{font-size:36px;}
-  .pf-num{font-size:24px;}
-  .pf-step{padding:16px 12px;}
-  .pb-row{font-size:13px;}
-  .app-form-wrap{padding:20px 16px;}
-  .app-form-wrap h3{font-size:22px;}
-  .rate-options{grid-template-columns:repeat(3,1fr);gap:6px;}
-  .rate-opt{padding:10px 8px;}
-  .rate-opt-val{font-size:16px;}
-  .hero-acts{flex-direction:column;width:100%;}
-  .hero-acts .btn-p,.hero-acts .btn-s{width:100%;text-align:center;justify-content:center;}
-  .form-progress-step{font-size:8px;padding:8px 2px;}
-  .char-tags{gap:6px;}
-  .char-tag{font-size:11px;padding:6px 10px;}
-}
-::-webkit-scrollbar{width:6px;height:6px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
-::-webkit-scrollbar-thumb:hover{background:var(--faint);}
+.pwa-hint{font-size:12px;color:var(--brown-muted);margin-top:24px;text-align:center;}
 </style>
 </head>
-<body class="page-customer">
-<script>
-(function () {
-  var p = location.pathname.replace(/\/$/, "") || "/";
-  if (p === "/clip-services-marketplace" || p === "/clip-services-marketplace.html") {
-    history.replaceState({}, "", "/" + location.search + location.hash);
-  }
-})();
-</script>
-<div class="grid-bg"></div>
-<div class="toast" id="toast"></div>
-
-<!-- STATUS BAR -->
-<div class="sbar" id="sbar">
-  <span>🟢</span>
-  <span>Clip Services is live — Clippers Quays & Salford Quays · Manchester</span>
-  <button class="sbar-close" onclick="document.getElementById('sbar').style.display='none';document.getElementById('sbar-spacer').style.display='none';document.getElementById('nav').style.top='0';document.getElementById('modebar').style.top='70px';">×</button>
-</div>
-<div class="sbar-spacer" id="sbar-spacer"></div>
-
-<div id="pwa-bar" class="pwa-bar" hidden>
-  <span id="pwa-bar-text">Install Clip Services on your phone — book in one tap</span>
-  <button type="button" class="pwa-bar-btn" id="pwa-install-btn">Install</button>
-  <button type="button" class="pwa-bar-close" id="pwa-bar-dismiss" aria-label="Dismiss">×</button>
-</div>
-<div id="push-prompt" class="pwa-bar push-bar" hidden>
-  <div style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:8px">
-    <span id="push-prompt-text">Get <strong>your</strong> booking &amp; payment alerts on this phone — use the same email as <a href="/user/" style="color:var(--cyan)">My bookings</a>.</span>
-    <input type="email" id="push-email-input" class="push-email-input" placeholder="Your booking email" autocomplete="email" inputmode="email" />
-  </div>
-  <button type="button" class="pwa-bar-btn" id="push-enable-btn">Enable alerts</button>
-  <button type="button" class="pwa-bar-close" id="push-dismiss" aria-label="Dismiss">×</button>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="topbar" role="status">
+  <strong>Clip Services Ltd</strong> · UK registered · <span id="topbar-tagline">African, Caribbean & Asian Marketplace — Your Community, Online</span>
 </div>
 
-<!-- iOS install guide -->
-<div class="ios-guide-overlay" id="iosGuide">
-  <div class="ios-guide">
-    <button class="ios-guide-close" id="iosGuideClose" aria-label="Close">×</button>
-    <h3>Install <span>Clip Services</span></h3>
-    <p>Add to your home screen for the full app experience — fast loading, offline access, and booking notifications.</p>
-    <ol class="ios-steps">
-      <li>
-        <div>Tap the <span class="step-icon">⬆️</span> <strong>Share</strong> button at the bottom of Safari
-          <span class="step-sub">(the square with an arrow pointing up)</span>
+<header class="site">
+  <div class="nav-inner">
+    <div class="brand">
+      <span class="brand-name">Clip Services</span>
+      <span class="brand-tag">African, Caribbean & Asian Marketplace — Your Community, Online</span>
+    </div>
+    <nav class="nav-actions" aria-label="Primary">
+      <a class="btn btn-secondary" href="/stores">Browse Stores</a>
+      <a class="btn btn-primary" href="/store-owner">List Your Store</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <!-- 1 HERO -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero-inner">
+      <h1 id="hero-title" class="font-display">The UK's African, Caribbean &amp; Asian Marketplace</h1>
+      <p class="hero-sub">Discover and shop from independent African, Caribbean and Asian stores and market stalls across the UK. Authentic products. Real community. Order online.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="/stores">Browse Stores &amp; Stalls</a>
+        <a class="btn btn-gold" href="/store-owner">List Your Store</a>
+      </div>
+      <div class="trust-row" aria-label="Trust indicators">
+        <span class="trust-item">🏪 <strong id="trust-stores">—</strong> Stores &amp; Stalls Listed</span>
+        <span class="trust-item">🛒 <strong id="trust-orders">—</strong> Orders Processed</span>
+        <span class="trust-item">🇬🇧 UK Registered Company</span>
+        <span class="trust-item">🔒 Stripe Secure Payments</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 COMMUNITY NAVIGATOR -->
+  <section class="alt" aria-labelledby="comm-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="comm-title" class="font-display">Find your community</h2>
+        <p>Browse stores and specialties by African, Caribbean, or Asian heritage — then explore featured sellers and categories.</p>
+      </div>
+      <div class="comm-tabs" role="tablist" aria-label="Community">
+        <button type="button" class="comm-tab" role="tab" id="tab-a" aria-selected="true" aria-controls="panel-a" data-community="african">🌍 African</button>
+        <button type="button" class="comm-tab" role="tab" id="tab-c" aria-selected="false" aria-controls="panel-c" data-community="caribbean">🌴 Caribbean</button>
+        <button type="button" class="comm-tab" role="tab" id="tab-as" aria-selected="false" aria-controls="panel-as" data-community="asian">🍜 Asian</button>
+      </div>
+      <div class="comm-panels">
+        <div class="comm-panel active" id="panel-a" role="tabpanel" aria-labelledby="tab-a">
+          <div class="chip-wrap">
+            <span class="chip">Nigerian</span><span class="chip">Ghanaian</span><span class="chip">Kenyan</span><span class="chip">Somali</span>
+            <span class="chip">South African</span><span class="chip">Ugandan</span><span class="chip">Zimbabwean</span>
+          </div>
+          <div class="comm-featured" id="featured-african"></div>
         </div>
-      </li>
-      <li>
-        <div>Scroll down and tap <strong>"Add to Home Screen"</strong>
-          <span class="step-sub">It has a <span class="step-icon">➕</span> icon next to it</span>
+        <div class="comm-panel" id="panel-c" role="tabpanel" aria-labelledby="tab-c" hidden>
+          <div class="chip-wrap">
+            <span class="chip">Jamaican</span><span class="chip">Trinidadian</span><span class="chip">Barbadian</span><span class="chip">Guyanese</span>
+            <span class="chip">Haitian</span><span class="chip">Grenadian</span><span class="chip">St Lucian</span><span class="chip">Bajan</span>
+          </div>
+          <div class="comm-featured" id="featured-caribbean"></div>
         </div>
-      </li>
-      <li>
-        <div>Tap <strong>"Add"</strong> in the top right
-          <span class="step-sub">Clip Services will appear on your home screen like a real app</span>
+        <div class="comm-panel" id="panel-as" role="tabpanel" aria-labelledby="tab-as" hidden>
+          <div class="chip-wrap">
+            <span class="chip">South Asian</span><span class="chip">Indian</span><span class="chip">Pakistani</span><span class="chip">Bangladeshi</span><span class="chip">Sri Lankan</span>
+            <span class="chip">East Asian</span><span class="chip">Chinese</span><span class="chip">Korean</span><span class="chip">Japanese</span>
+            <span class="chip">South East Asian</span><span class="chip">Filipino</span><span class="chip">Thai</span><span class="chip">Malaysian</span><span class="chip">Vietnamese</span>
+            <span class="chip">Middle Eastern</span><span class="chip">Lebanese</span><span class="chip">Turkish</span><span class="chip">Moroccan</span><span class="chip">Egyptian</span>
+          </div>
+          <div class="comm-featured" id="featured-asian"></div>
         </div>
-      </li>
-    </ol>
-    <div class="ios-guide-arrow">⬇</div>
-  </div>
-</div>
-
-<!-- NAV -->
-<nav id="nav">
-  <a href="#" class="logo" onclick="switchView('customer');window.scrollTo({top:0,behavior:'smooth'});return false;" aria-label="Clip Services — Home"><img class="logo-img" src="/icons/clip-logo-full.svg" alt="Clip Services — Manchester" width="400" height="120" decoding="async" fetchpriority="high" /></a>
-  <div class="nav-links">
-    <a href="#" onclick="switchView('customer');return false;">Find a Service</a>
-    <a href="#" onclick="switchView('provider');return false;">Offer Your Service</a>
-    <a href="#" onclick="switchView('customer','how-c');return false;">How It Works</a>
-    <a href="#" onclick="switchView('customer','payment');return false;">Payment</a>
-    <a href="/user/" class="nav-only-customer nav-dash-secondary">My bookings</a>
-    <a href="#" onclick="switchView('provider');return false;" class="nav-btn">Join as Provider</a>
-    <a href="/provider/" class="nav-only-provider nav-btn" style="background:rgba(0,200,240,.12);border:1px solid rgba(0,200,240,.25);">Provider dashboard</a>
-  </div>
-  <button class="nav-toggle" onclick="toggleMobileMenu()">☰</button>
-</nav>
-
-<!-- MODE BAR -->
-<div class="mode-bar" id="modebar">
-  <div class="mode-bar-tabs">
-    <button type="button" class="mode-tab active" id="tab-customer" onclick="switchView('customer')">🔍 I need a service</button>
-    <button type="button" class="mode-tab" id="tab-provider" onclick="switchView('provider')">🙋 I offer a service</button>
-  </div>
-  <div class="mode-bar-cta">
-    <a href="/user/" class="mode-cta mode-cta-customer">My bookings</a>
-    <a href="/provider/" class="mode-cta mode-cta-provider">Provider dashboard</a>
-  </div>
-</div>
-
-<!-- WA FLOAT -->
-<a href="https://wa.me/447487588706?text=Hi%2C%20I%20found%20Clip%20Services%20and%20want%20to%20know%20more!" class="wa" target="_blank">
-  <span class="wa-tip">Chat with us</span>💬
-</a>
-
-<!-- ============================================================ -->
-<!-- CUSTOMER VIEW -->
-<!-- ============================================================ -->
-<div class="view active" id="view-customer">
-
-  <!-- HERO -->
-  <div class="c-hero">
-    <div class="c-hero-glow"></div>
-    <div class="hero-badge"><span class="bl"></span>African & Asian talent · Greater Manchester</div>
-    <h1 class="r">Find <span class="hl">trusted</span><br>local <span class="it">help,</span><br>instantly.</h1>
-    <p class="r rd1">A digital marketplace built for <strong>African & Asian</strong> talent and verified local pros — braids & beauty, errands, cleaning, handyman, dog walking & more. Anchored in Salford Quays & MediaCityUK. Real people. Card-secure. Notifications on every step.</p>
-    <p class="r rd2" style="font-size:13px;color:var(--faint);max-width:560px;margin-top:-28px;margin-bottom:36px;line-height:1.55;border-left:2px solid rgba(0,200,240,.22);padding-left:14px">Engagement: email + PWA push for bookings, payments, negotiations & status — so customers and pros never miss a move.</p>
-
-    <div class="hero-acts r rd3">
-      <a href="#servicesSection" class="btn-p" onclick="switchView('customer');return true;">Browse services</a>
-      <button type="button" class="btn-s" onclick="switchView('provider')">Offer a service</button>
-    </div>
-
-  </div>
-
-  <!-- FEATURED SERVICES -->
-  <div class="featured-services" id="servicesSection">
-    <select id="catFilter" class="hide" aria-hidden="true" tabindex="-1" onchange="filterProviders()">
-      <option value="">All categories</option>
-      <option value="runner">Runner</option>
-      <option value="cleaning">Cleaning</option>
-      <option value="handyman">Handyman</option>
-      <option value="dog">Dog Walking</option>
-      <option value="grocery">Groceries</option>
-      <option value="delivery">Delivery</option>
-      <option value="beauty">Hair & Beauty</option>
-      <option value="tech">Tech Help</option>
-    </select>
-    <div class="eyebrow">Our services</div>
-    <h2 class="stitle r">Browse <em>services</em></h2>
-    <p class="sdesc r">Every price starts with the service provider — we never set rates for them. Sample menus on some cards are guides only; the provider confirms your quote after you request.</p>
-    <div class="active-cat-bar" id="activeCatBar" aria-live="polite">
-      <span>Showing <strong id="activeCatLabel"></strong> — open a card for that provider’s price list.</span>
-      <button type="button" onclick="setCategoryFilter('')">Show all categories</button>
-    </div>
-    <div class="svc-grid" id="svcGrid"></div>
-    <div class="providers-grid" id="providersGrid" style="margin-top:32px;"></div>
-  </div>
-
-  <!-- MARQUEE -->
-  <div class="mq-wrap">
-    <div class="mq-track">
-      <span class="dot">✦</span><span>Grocery runs</span>
-      <span class="dot">✦</span><span>Flat cleaning</span>
-      <span class="dot">✦</span><span>Handyman services</span>
-      <span class="dot">✦</span><span>Dog walking</span>
-      <span class="dot">✦</span><span>Pharmacy runs</span>
-      <span class="dot">✦</span><span>IKEA pickup</span>
-      <span class="dot">✦</span><span>African braids & hair</span>
-      <span class="dot">✦</span><span>Halal-friendly errands</span>
-      <span class="dot">✦</span><span>Asian beauty & tech</span>
-      <span class="dot">✦</span><span>Nails & lashes</span>
-      <span class="dot">✦</span><span>Tech support</span>
-      <span class="dot">✦</span><span>Parcel & returns</span>
-      <span class="dot">✦</span><span>Wig install</span>
-      <span class="dot">✦</span><span>Grocery runs</span>
-      <span class="dot">✦</span><span>Flat cleaning</span>
-      <span class="dot">✦</span><span>Handyman services</span>
-      <span class="dot">✦</span><span>Dog walking</span>
-      <span class="dot">✦</span><span>Pharmacy runs</span>
-      <span class="dot">✦</span><span>IKEA pickup</span>
-      <span class="dot">✦</span><span>African braids & hair</span>
-      <span class="dot">✦</span><span>Halal-friendly errands</span>
-      <span class="dot">✦</span><span>Asian beauty & tech</span>
-      <span class="dot">✦</span><span>Nails & lashes</span>
-      <span class="dot">✦</span><span>Tech support</span>
-      <span class="dot">✦</span><span>Parcel & returns</span>
-      <span class="dot">✦</span><span>Wig install</span>
-    </div>
-  </div>
-
-  <!-- HOW IT WORKS (CUSTOMER) -->
-  <section id="how-c">
-    <div class="eyebrow">Simple process</div>
-    <h2 class="stitle r">How it <em>works</em></h2>
-    <p class="sdesc r">Book any service in under 2 minutes. No apps. No accounts. Just results.</p>
-    <div class="how-grid">
-      <div class="how-step r">
-        <div class="how-num">01</div>
-        <h3>Browse categories</h3>
-        <p>Find a verified provider for exactly what you need — filter by service type, then request a booking.</p>
       </div>
-      <div class="how-step r rd1">
-        <div class="how-num">02</div>
-        <h3>Book instantly</h3>
-        <p>Fill in the booking form with your details, pick a date and time, and pay securely by card. Done in under 2 minutes.</p>
-      </div>
-      <div class="how-step r rd2">
-        <div class="how-num">03</div>
-        <h3>Service delivered</h3>
-        <p>Your provider arrives, completes the service, and you pay securely through Clip Services. We handle everything.</p>
-      </div>
-      <div class="how-step r rd3">
-        <div class="how-num">04</div>
-        <h3>Rate & review</h3>
-        <p>Leave an honest review to help others. Build the community. Top providers get promoted to the top of the list.</p>
-      </div>
+      <p class="pwa-hint">Tip: Install our app for faster reordering and stock alerts — Add to Home Screen on your phone.</p>
     </div>
   </section>
 
-  <!-- PAYMENT METHODS -->
-  <!-- Platform fee % is stated in /terms and /disclaimer (not repeated here on purpose). -->
-  <section class="divbg" id="payment">
-    <div class="eyebrow">Secure payments</div>
-    <h2 class="stitle r">How <em>payments</em> work</h2>
-    <p class="sdesc r">All payments are handled securely through Stripe. You and your provider agree on a price, then you pay securely by card.</p>
-
-    <div class="pay-methods r">
-      <div class="pay-card recommended">
-        <span class="pay-icon">💳</span>
-        <div class="pay-name">Secure Card Payment (Stripe)</div>
-        <div class="pay-desc">Pay by debit or credit card on our secure Stripe checkout page when you book. Visa, Mastercard, Amex, and more. Instant email receipt from Stripe.</div>
-        <div class="pay-detail">Submit a service request, agree a price with your provider, then pay securely through Stripe. All major cards accepted.</div>
-        <span class="pay-badge pb-fast">Pay at booking</span>
+  <!-- 3 SHOP BY CATEGORY -->
+  <section aria-labelledby="cat-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="cat-title" class="font-display">Shop by category</h2>
+        <p>Food, groceries, and cultural essentials from communities across the UK.</p>
       </div>
-    </div>
-
-    <h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin:40px 0 8px;">Payment flow</h3>
-    <p style="color:var(--muted);font-size:14px;margin-bottom:8px;max-width:520px;">Every payment goes through Clip Services. You never pay a provider directly. This protects both you and the provider.</p>
-
-    <div class="pay-flow r">
-      <div class="pf-step">
-        <div class="pf-num">01</div>
-        <h4>Book</h4>
-        <p>Submit your booking request through the website</p>
-      </div>
-      <div class="pf-step">
-        <div class="pf-num">02</div>
-        <h4>Confirm</h4>
-        <p>Agree a price with your provider</p>
-      </div>
-      <div class="pf-step">
-        <div class="pf-num">03</div>
-        <h4>Pay</h4>
-        <p>Pay securely by card on Stripe checkout</p>
-      </div>
-      <div class="pf-step">
-        <div class="pf-num">04</div>
-        <h4>Service</h4>
-        <p>Provider arrives and completes the service</p>
-      </div>
-      <div class="pf-step">
-        <div class="pf-num">05</div>
-        <h4>Done</h4>
-        <p>Provider paid within 24hrs. You leave a review</p>
-      </div>
-    </div>
-
-    <div class="pay-trust r">
-      <div class="pt">
-        <span class="pt-icon">🔒</span>
-        <div class="pt-label">Pay before<br>service starts</div>
-      </div>
-      <div class="pt">
-        <span class="pt-icon">🧾</span>
-        <div class="pt-label">Full breakdown<br>before you pay</div>
-      </div>
-      <div class="pt">
-        <span class="pt-icon">🛡</span>
-        <div class="pt-label">Refund policy<br>if things go wrong</div>
-      </div>
-      <div class="pt">
-        <span class="pt-icon">📱</span>
-        <div class="pt-label">Stripe<br>protected</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SERVICE CATEGORIES -->
-  <section id="categories">
-    <div class="eyebrow">Browse by category</div>
-    <h2 class="stitle r">All the help<br><em>you need.</em></h2>
-    <p class="sdesc r">From everyday errands to specialist services — Clip Services connects you with local experts for everything.</p>
-    <div class="cat-cards">
-      <div class="cat-card r" onclick="filterCat('runner')">
-        <span class="cat-icon" id="ci-runner"></span>
-        <div class="cat-name">Runner & Errands</div>
-        <div class="cat-count">Grocery, pharmacy, parcels</div>
-      </div>
-      <div class="cat-card r rd1" onclick="filterCat('cleaning')">
-        <span class="cat-icon" id="ci-cleaning"></span>
-        <div class="cat-name">Cleaning</div>
-        <div class="cat-count">Flat, deep clean, end-of-tenancy</div>
-      </div>
-      <div class="cat-card r rd2" onclick="filterCat('handyman')">
-        <span class="cat-icon" id="ci-handyman"></span>
-        <div class="cat-name">Handyman</div>
-        <div class="cat-count">Flat-pack, repairs, plumbing</div>
-      </div>
-      <div class="cat-card r" onclick="filterCat('dog')">
-        <span class="cat-icon" id="ci-dog"></span>
-        <div class="cat-name">Dog Walking</div>
-        <div class="cat-count">Daily walks, pet sitting</div>
-      </div>
-      <div class="cat-card r rd1" onclick="filterCat('beauty')">
-        <span class="cat-icon" id="ci-beauty"></span>
-        <div class="cat-name">Hair & Beauty</div>
-        <div class="cat-count">Braids, wigs, nails, lashes</div>
-      </div>
-      <div class="cat-card r rd2" onclick="filterCat('tech')">
-        <span class="cat-icon" id="ci-tech"></span>
-        <div class="cat-name">Tech Help</div>
-        <div class="cat-count">Setup, repairs, WiFi, printing</div>
-      </div>
-      <div class="cat-card r" onclick="filterCat('delivery')">
-        <span class="cat-icon" id="ci-delivery"></span>
-        <div class="cat-name">Delivery & Pickup</div>
-        <div class="cat-count">Furniture, appliances, IKEA</div>
-      </div>
-      <div class="cat-card r rd1" onclick="switchView('provider')">
-        <span class="cat-icon" id="ci-plus"></span>
-        <div class="cat-name">Add Your Service</div>
-        <div class="cat-count">Offer what you do best</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- COMMISSION BANNER -->
-  <section style="padding:60px 0;">
-    <div class="commission-banner r">
-      <div>
-        <div class="cb-title">Are you a service provider?</div>
-        <div class="cb-sub">Join Clip Services and get bookings from hundreds of residents and businesses in Salford Quays. We handle the platform, payments, and customer trust.</div>
-      </div>
-      <button class="btn-p" onclick="switchView('provider')" style="white-space:nowrap;">Apply to join →</button>
-    </div>
-  </section>
-
-  <!-- CUSTOMER FAQ -->
-  <section class="divbg" id="faq-c">
-    <div class="eyebrow">Questions</div>
-    <h2 class="stitle r">Customer FAQ</h2>
-    <div class="faq-list r">
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">How do I pay for services? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Payment is handled securely through Clip Services via Stripe. You agree a price with the provider and pay securely by card. You only pay once the service is confirmed.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Are providers verified and safe? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Yes. Every provider goes through our verification process before being listed — ID check, reference check, and a brief interview. All cleaning and in-home service providers are DBS checked. You'll see a verified badge on all approved profiles.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">What if I'm unhappy with the service? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Message us on WhatsApp immediately. We mediate all disputes and will either arrange a redo or find a resolution that works for you. Provider ratings are public — repeated complaints result in removal from the platform.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Can I book the same provider regularly? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Yes — and we encourage it. Regular bookings with the same provider build trust and often result in better rates. You can message your preferred provider directly via our platform once you've made a first booking.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">What payment methods do you accept? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>We accept all major debit and credit cards (Visa, Mastercard, Amex) through Stripe Checkout. When you book, you're redirected to Stripe's secure payment page — your card details never touch our servers. You'll receive an instant email receipt. All payments go through Clip Services — never directly to a provider.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">When do I pay — before or after the service? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>You pay when you and the provider agree on a price. The booking form shows your total, then you pay securely by card through Stripe.</p></div>
-      </div>
-            <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Can I get a refund? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Yes. If you cancel more than 2 hours before the booking, you get a full refund. If you cancel within 2 hours, 50% goes to the provider as compensation. If the service quality is unsatisfactory, message us on WhatsApp immediately and we will arrange a redo or issue a refund.</p></div>
-      </div>
-    </div>
-  </section>
-
-</div><!-- end customer view -->
-
-
-<!-- ============================================================ -->
-<!-- PROVIDER VIEW -->
-<!-- ============================================================ -->
-<div class="view" id="view-provider">
-
-  <!-- PROVIDER HERO -->
-  <div class="p-hero">
-    <div class="eyebrow">For service providers</div>
-    <h1 class="r">Turn your skills<br>into <span class="hl">income.</span></h1>
-    <p class="r rd1">Get listed on Clip Services and start receiving bookings from residents, professionals, and businesses in Salford Quays. Free to join. You keep the majority of every booking.</p>
-    <p class="r rd1" style="font-size:14px;max-width:560px;margin-top:-28px;margin-bottom:0">Customers do not sign up — they book in a few steps. <strong>Only service providers</strong> apply to join the platform.</p>
-
-    <div class="earnings-display r rd2">
-      <div class="earn-card">
-        <div class="earn-num">£150–400</div>
-        <div class="earn-lbl">Avg weekly earnings per provider</div>
-      </div>
-      <div class="earn-card">
-        <div class="earn-num">Free</div>
-        <div class="earn-lbl">To join the platform</div>
-      </div>
-    </div>
-
-    <div class="hero-acts r rd3" style="flex-wrap:wrap;gap:10px;">
-      <a href="#apply" class="btn-p">Apply to join — it's free</a>
-      <a href="/provider/" class="btn-s" style="border:1px solid rgba(0,200,240,.35);">Provider dashboard →</a>
-      <button class="btn-s" onclick="switchView('customer')">Browse as customer instead</button>
-    </div>
-    <p class="r rd3" style="font-size:13px;color:var(--muted);max-width:520px;margin-top:12px;">Already approved? Open the dashboard with the <strong>same email</strong> you gave us when you applied. After we publish your listing, customer requests appear there for pricing and negotiation.</p>
-  </div>
-
-  <!-- BENEFITS -->
-  <section class="divbg">
-    <div class="eyebrow">Why join Clip Services</div>
-    <h2 class="stitle r">We send you <em>customers.</em><br>You do what you do best.</h2>
-    <p class="sdesc r">No marketing needed. No cold calling. No chasing payments. Just bookings in your WhatsApp.</p>
-    <div class="benefits-grid">
-      <div class="benefit r">
-        <span class="benefit-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.86 19.86 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.86 19.86 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></span>
-        <h3>Instant booking notifications</h3>
-        <p>Every new booking comes straight to your WhatsApp. No platform to log into. No dashboard to manage. Just a message with the job details and customer info.</p>
-      </div>
-      <div class="benefit r rd1">
-        <span class="benefit-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span>
-        <h3>You set your own rates</h3>
-        <p>Tell us your hourly rate or fixed fee per service. A small platform fee is included. You keep the majority of every booking.</p>
-      </div>
-      <div class="benefit r rd2">
-        <span class="benefit-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></span>
-        <h3>Build your reputation</h3>
-        <p>Every great job earns you a public review. Top-rated providers get featured at the top of the listings and promoted in our social media content — free advertising for you.</p>
-      </div>
-      <div class="benefit r">
-        <span class="benefit-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
-        <h3>Secure payments, always</h3>
-        <p>Clip Services collects payment before the job starts and transfers your share within 24 hours of completion. You never chase a customer for money again.</p>
-      </div>
-      <div class="benefit r rd1">
-        <span class="benefit-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
-        <h3>Hyper-local customer base</h3>
-        <p>Our customers are in Clippers Quays, Salford Quays, and MediaCityUK — minutes from you. Short travel times mean more jobs per day and less time wasted.</p>
-      </div>
-      <div class="benefit r rd2">
-        <span class="benefit-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>
-        <h3>Grow as we grow</h3>
-        <p>As Clip Services expands across Manchester, your profile reaches more customers. Early providers get featured status — permanent top placement on the listings page.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- HOW PROVIDERS WORK -->
-  <section>
-    <div class="eyebrow">Provider journey</div>
-    <h2 class="stitle r">How it works<br><em>for you.</em></h2>
-    <div class="provider-how">
-      <div class="phow r">
-        <div class="phow-num">01</div>
-        <h3>Apply below</h3>
-        <p>Fill in the form with your services, rate, and a bit about yourself. We review within 48 hours.</p>
-      </div>
-      <div class="phow r rd1">
-        <div class="phow-num">02</div>
-        <h3>Get verified</h3>
-        <p>We do a quick verification — ID check and a short call. Takes under 20 minutes. You're then live on the platform.</p>
-      </div>
-      <div class="phow r rd2">
-        <div class="phow-num">03</div>
-        <h3>Receive bookings</h3>
-        <p>Customers book you through Clip Services. You get a WhatsApp message with the details. Accept or decline — your choice.</p>
-      </div>
-      <div class="phow r rd3">
-        <div class="phow-num">04</div>
-        <h3>Get paid</h3>
-        <p>Complete the job. We transfer your share to your account within 24 hours. No invoicing needed.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- APPLICATION FORM -->
-  <section class="divbg" id="apply">
-    <div class="eyebrow">Join the platform</div>
-    <h2 class="stitle r">Apply to offer your <em>service.</em></h2>
-    <p class="sdesc r">For <strong>service providers only</strong> — customers book on the site without signing up. Tell us what you do and we’ll be in touch within 48 hours to verify you and get you listed.</p>
-
-    <div class="app-form-wrap r">
-      <h3>Provider Application</h3>
-      <p>Free to apply. Takes 3 minutes. We review every application personally.</p>
-
-      <form id="applyForm" onsubmit="handleApply(event)">
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Your full name</label>
-            <input type="text" id="af-name" placeholder="First and last name" required autocomplete="name">
-          </div>
-          <div class="form-group">
-            <label>WhatsApp number</label>
-            <input type="tel" id="af-phone" placeholder="+44 7700 000 000" required inputmode="tel" autocomplete="tel" maxlength="22">
-          </div>
-          <div class="form-group">
-            <label>Email address</label>
-            <input type="email" id="af-email" placeholder="you@email.com" required autocomplete="email">
-          </div>
-          <div class="form-group">
-            <label>Your postcode</label>
-            <input type="text" id="af-postcode" placeholder="e.g. M50 3XP" required autocomplete="postal-code" maxlength="10" style="text-transform:uppercase;">
-          </div>
-
-          <div class="form-group form-full">
-            <label>What services do you offer? (select all that apply)</label>
-            <div class="char-tags" id="serviceTags">
-              <div class="char-tag" onclick="toggleTag(this)" data-value="runner">🏃 Runner & Errands</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="cleaning">🧹 Flat Cleaning</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="deep-clean">🧽 Deep Cleaning</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="handyman">🔧 Handyman & Repairs</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="flatpack">📦 Flat-pack Assembly</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="dog">🐕 Dog Walking</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="petsit">🐾 Pet Sitting</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="grocery">🛒 Grocery Runs</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="pharmacy">💊 Pharmacy Runs</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="delivery">🚗 Delivery & Pickup</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="nails">💅 Nail Technician</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="lashes">👁 Lashes & Brows</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="hair">💇 Mobile Hair</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="tech">💻 Tech Support</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="ironing">👕 Ironing & Laundry</div>
-              <div class="char-tag" onclick="toggleTag(this)" data-value="other">✦ Other</div>
-            </div>
-          </div>
-
-          <div class="form-group form-full">
-            <label>Your hourly rate or fixed price</label>
-            <div class="rate-options" id="rateOptions">
-              <div class="rate-opt" onclick="selectRate(this,'£10–15/hr')"><div class="rate-opt-val">£10–15</div><div class="rate-opt-lbl">per hour</div></div>
-              <div class="rate-opt" onclick="selectRate(this,'£15–20/hr')"><div class="rate-opt-val">£15–20</div><div class="rate-opt-lbl">per hour</div></div>
-              <div class="rate-opt" onclick="selectRate(this,'£20–30/hr')"><div class="rate-opt-val">£20–30</div><div class="rate-opt-lbl">per hour</div></div>
-              <div class="rate-opt" onclick="selectRate(this,'£30+/hr')"><div class="rate-opt-val">£30+</div><div class="rate-opt-lbl">per hour</div></div>
-              <div class="rate-opt" onclick="selectRate(this,'Fixed per job')"><div class="rate-opt-val">Fixed</div><div class="rate-opt-lbl">per job</div></div>
-              <div class="rate-opt" onclick="selectRate(this,'Custom/discuss')"><div class="rate-opt-val">Custom</div><div class="rate-opt-lbl">let's discuss</div></div>
-            </div>
-            <div class="form-note">You set your own rate. A small platform fee is included. You keep the majority of every booking.</div>
-          </div>
-
-          <div class="form-group form-full">
-            <label>Tell us about yourself & your experience</label>
-            <textarea id="af-experience" placeholder="How long have you been offering this service? Any relevant experience, qualifications, or tools you have? Why would customers love working with you?" style="min-height:110px;"></textarea>
-          </div>
-
-          <div class="kyc-divider"></div>
-          <div class="kyc-heading">Identity Verification <span class="kyc-badge">Required</span></div>
-          <div class="kyc-note">We verify every provider before they're listed. This information is kept private and used only for verification purposes.</div>
-
-          <div class="form-group">
-            <label>Date of birth</label>
-            <input type="date" id="af-dob" required>
-            <div class="form-note">You must be 18 or over to provide services.</div>
-          </div>
-          <div class="form-group">
-            <label>Government-issued ID type</label>
-            <select id="af-id-type" required>
-              <option value="">Select...</option>
-              <option value="passport">UK/Foreign Passport</option>
-              <option value="driving-licence">UK Driving Licence</option>
-              <option value="brp">Biometric Residence Permit (BRP)</option>
-              <option value="national-id">National Identity Card (EU/EEA)</option>
-            </select>
-          </div>
-
-          <div class="form-group form-full">
-            <label>Upload a photo of your ID (front side)</label>
-            <div class="upload-zone" id="uzId">
-              <input type="file" id="af-id-file" accept="image/*,.pdf" aria-label="Upload ID photo">
-              <div class="uz-icon">📄</div>
-              <div class="uz-label">Tap or drag to upload your ID</div>
-              <div class="uz-hint">Passport, driving licence, or BRP — clear photo, all corners visible. Max 5 MB.</div>
-            </div>
-            <div class="upload-preview" id="previewId">
-              <img id="previewIdImg" alt="ID preview">
-              <button type="button" class="up-remove" onclick="clearUpload('Id')">&times;</button>
-              <div class="up-name" id="previewIdName"></div>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Right to work in the UK</label>
-            <select id="af-right-to-work" required>
-              <option value="">Select...</option>
-              <option value="british-citizen">British citizen</option>
-              <option value="settled-status">EU Settled Status</option>
-              <option value="pre-settled">EU Pre-Settled Status</option>
-              <option value="visa-work">Work visa / Skilled Worker</option>
-              <option value="student-visa">Student visa (limited hours)</option>
-              <option value="other-right">Other right to work</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>DBS check status</label>
-            <select id="af-dbs" required>
-              <option value="">Select...</option>
-              <option value="have-basic">I have a valid Basic DBS</option>
-              <option value="have-enhanced">I have a valid Enhanced DBS</option>
-              <option value="willing">I don't have one but I'm willing to get one</option>
-              <option value="not-applicable">Not applicable to my service</option>
-            </select>
-            <div class="form-note">Required for in-home services (cleaning, childcare, pet sitting). We can help you apply.</div>
-          </div>
-
-          <div class="form-group">
-            <label>Emergency contact name</label>
-            <input type="text" id="af-emergency-name" placeholder="Full name" required>
-          </div>
-          <div class="form-group">
-            <label>Emergency contact number</label>
-            <input type="tel" id="af-emergency-phone" placeholder="+44 7xxx xxxxxx" required inputmode="tel" maxlength="22">
-          </div>
-
-          <div class="kyc-divider"></div>
-
-          <div class="form-group form-full">
-            <label>Your availability</label>
-            <div class="char-tags" id="availTags">
-              <div class="char-tag" onclick="toggleTag(this)">Mon–Fri mornings</div>
-              <div class="char-tag" onclick="toggleTag(this)">Mon–Fri afternoons</div>
-              <div class="char-tag" onclick="toggleTag(this)">Mon–Fri evenings</div>
-              <div class="char-tag" onclick="toggleTag(this)">Weekends</div>
-              <div class="char-tag" onclick="toggleTag(this)">Late nights (10pm–2am)</div>
-              <div class="char-tag" onclick="toggleTag(this)">Flexible / anytime</div>
-            </div>
-          </div>
-
-          <div class="form-group form-full">
-            <label>Do you have your own transport?</label>
-            <select id="af-transport">
-              <option value="">Select...</option>
-              <option>Yes — car</option>
-              <option>Yes — van</option>
-              <option>Yes — motorbike/scooter</option>
-              <option>Yes — bicycle</option>
-              <option>No — on foot / public transport</option>
-            </select>
-          </div>
-
-          <div class="form-group form-full">
-            <label>How did you hear about Clip Services?</label>
-            <select id="af-source">
-              <option value="">Select...</option>
-              <option>TikTok</option>
-              <option>Instagram</option>
-              <option>Twitter/X</option>
-              <option>Word of mouth</option>
-              <option>Flyer/poster</option>
-              <option>Google search</option>
-              <option>Other</option>
-            </select>
-          </div>
-
-          <div class="form-full" style="margin-top:8px;">
-            <div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;">
-              <input type="checkbox" id="af-consent" required style="width:auto;margin-top:3px;">
-              <label for="af-consent" style="font-size:12px;color:var(--muted);text-transform:none;letter-spacing:0;line-height:1.5;cursor:pointer;">I confirm the information provided is accurate. I agree to Clip Services' <a href="/terms" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Terms</a>, <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Privacy Policy</a>, and <a href="/disclaimer" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Disclaimer</a>.</label>
-            </div>
-            <button type="submit" class="btn-p" id="applyBtn" style="width:100%;justify-content:center;padding:18px;">Submit my application →</button>
-            <div class="form-note" style="text-align:center;margin-top:12px;">We review every application personally and respond within 48 hours via WhatsApp. Free to apply — no commitment required.</div>
+      <div class="cat-rows">
+        <div class="cat-row">
+          <h3>Food &amp; grocery</h3>
+          <div class="cat-grid">
+            <a class="cat-cell" href="/stores?category=produce"><span class="ico">🌿</span>Fresh Produce</a>
+            <a class="cat-cell" href="/stores?category=meat"><span class="ico">🥩</span>Meat &amp; Protein</a>
+            <a class="cat-cell" href="/stores?category=staples"><span class="ico">🌾</span>Staples &amp; Grains</a>
+            <a class="cat-cell" href="/stores?category=oils"><span class="ico">🫙</span>Oils &amp; Condiments</a>
+            <a class="cat-cell" href="/stores?category=ready"><span class="ico">🍲</span>Ready Meals &amp; Snacks</a>
+            <a class="cat-cell" href="/stores?category=drinks"><span class="ico">🥤</span>Drinks &amp; Beverages</a>
           </div>
         </div>
-      </form>
-    </div>
-  </section>
-
-  <!-- PROVIDER FAQ -->
-  <section id="faq-p">
-    <div class="eyebrow">Provider questions</div>
-    <h2 class="stitle r">Common questions<br>from providers.</h2>
-    <div class="faq-list r">
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">How much does it cost to join? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Completely free. There are no joining fees, no monthly subscriptions, and no setup costs. A small platform fee is included in each booking, but customers pay that, not you. You keep the majority of every booking.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">How quickly will I get my first booking? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Most new providers get their first booking within 7 days of going live. Cleaning and runner services get bookings fastest. We also actively promote new providers on our social media to drive initial traffic to your profile.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Can I decline bookings I don't want? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Yes — always. You're not an employee. You set your own schedule and can accept or decline any booking. We just ask that you respond within 30 minutes to maintain good platform ratings.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">When and how do I get paid? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Clip Services collects payment from the customer before or at the start of the job. Your share is transferred via bank transfer within 24 hours of job completion. No chasing. No invoices. Automatic every time.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">What if a customer doesn't answer or cancels last minute? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Customers pay a non-refundable deposit on all bookings. If they cancel within 2 hours of the scheduled time, you receive 50% of the booking fee as compensation. We protect your time.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">How does payment work for providers? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>Payments are fully automated via Stripe. When a customer pays, your share is sent to the bank account you connect in Stripe (Connect). You never need to chase customers, create invoices, or handle cash on-site. Payouts typically arrive within a few business days, depending on Stripe and your bank.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Do I need a business bank account? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><p>No — a personal bank account works fine. During Stripe onboarding, you link your bank account (Monzo, Barclays, any UK bank) and Stripe pays you directly. Most of our providers use their regular current account. If you earn over £1,000 per year, we recommend registering as self-employed with HMRC for tax purposes.</p></div>
+        <div class="cat-row">
+          <h3>Non-food</h3>
+          <div class="cat-grid">
+            <a class="cat-cell" href="/stores?category=beauty"><span class="ico">💇</span>Hair &amp; Beauty</a>
+            <a class="cat-cell" href="/stores?category=fashion"><span class="ico">👗</span>Fashion &amp; Fabric</a>
+            <a class="cat-cell" href="/stores?category=homeware"><span class="ico">🏠</span>Homeware &amp; Décor</a>
+            <a class="cat-cell" href="/stores?category=wellness"><span class="ico">🌿</span>Health &amp; Wellness</a>
+            <a class="cat-cell" href="/stores?category=culture"><span class="ico">🎵</span>Culture &amp; Lifestyle</a>
+            <a class="cat-cell" href="/stores?category=halal"><span class="ico">🕌</span>Halal Products</a>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-</div><!-- end provider view -->
+  <!-- 4 LOCAL MARKET -->
+  <section class="alt" aria-labelledby="market-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="market-title" class="font-display">The Local Market — Online</h2>
+        <p>Browse digital stalls from African, Caribbean, and Asian market traders across the UK. The community market, wherever you are.</p>
+      </div>
+      <p style="text-align:center;max-width:720px;margin:0 auto 32px;color:var(--brown-muted);">From Nigerian fabric sellers in Birmingham to Caribbean fishmongers in Brixton — the local market stall has gone digital. Browse, buy, and support independent traders from your phone.</p>
+      <div class="stall-grid" id="stall-grid"></div>
+    </div>
+  </section>
 
+  <!-- 5 BROWSE BY CITY -->
+  <section id="cities" aria-labelledby="city-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="city-title" class="font-display">Browse by city</h2>
+        <p>We're growing store coverage across the UK — start in your city.</p>
+      </div>
+      <div class="city-grid" id="city-grid"></div>
+    </div>
+  </section>
 
-<!-- BOOKING MODAL -->
-<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
-  <div class="modal">
-    <button class="modal-close" onclick="document.getElementById('modalOverlay').classList.remove('open');document.body.style.overflow=''">✕</button>
-    <div class="modal-head">
-      <div class="modal-avatar" id="m-avatar"></div>
-      <div>
-        <div class="modal-title" id="m-name"></div>
-        <div class="modal-sub" id="m-role"></div>
+  <!-- 6 FEATURED STORES -->
+  <section class="alt" aria-labelledby="feat-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="feat-title" class="font-display">Featured stores</h2>
+        <p>Independent shops and traders you can order from today.</p>
+      </div>
+      <div class="featured-wrap">
+        <div class="featured-track" id="featured-scroll" aria-label="Featured stores"></div>
       </div>
     </div>
-    <div class="modal-body">
-      <h4>About</h4>
-      <p class="modal-about" id="m-about"></p>
-      <div id="m-price-wrap" style="display:none">
-        <h4>Price list from this provider</h4>
-        <div class="price-panel" id="m-price-panel"></div>
-      </div>
-      <h4>Services offered</h4>
-      <div class="modal-services-list" id="m-svcs"></div>
-      <h4>Request this service</h4>
-      <form class="booking-form" id="bookingForm" onsubmit="handleBook(event)" novalidate>
-        <input type="hidden" id="bf-provider" value="">
-        <input type="hidden" id="bf-provider-id" value="">
-        <div class="form-progress" id="formProgress">
-          <div class="form-progress-step active" data-step="1">1 · Your details</div>
-          <div class="form-progress-step" data-step="2">2 · Service info</div>
-          <div class="form-progress-step" data-step="3">3 · Confirm</div>
-        </div>
-        <fieldset class="book-fieldset" data-step="1">
-          <legend>Step 1 · Your details</legend>
-          <div class="form-row">
-            <div>
-              <label for="bf-first">First name</label>
-              <input type="text" id="bf-first" placeholder="First name" required autocomplete="given-name" minlength="1">
-              <div class="field-error" id="bf-err-first">Please enter your first name.</div>
-            </div>
-            <div>
-              <label for="bf-last">Last name</label>
-              <input type="text" id="bf-last" placeholder="Last name" required autocomplete="family-name" minlength="1">
-              <div class="field-error" id="bf-err-last">Please enter your last name.</div>
-            </div>
-          </div>
-          <div class="form-row">
-            <div>
-              <label for="bf-phone">WhatsApp number</label>
-              <input type="tel" id="bf-phone" placeholder="+44 7xxx xxxxxx" required autocomplete="tel" inputmode="tel" maxlength="22">
-              <p class="form-note">We’ll confirm on WhatsApp — use the number you use for WhatsApp.</p>
-              <div class="field-error" id="bf-err-phone">Enter a valid phone number (at least 10 digits).</div>
-            </div>
-            <div>
-              <label for="bf-email">Email address</label>
-              <input type="email" id="bf-email" placeholder="you@email.com" required autocomplete="email">
-              <div class="field-error" id="bf-err-email">Enter a valid email address.</div>
-            </div>
-          </div>
-        </fieldset>
-        <fieldset class="book-fieldset" data-step="2">
-          <legend>Step 2 · Service details</legend>
-          <div>
-            <label for="bf-service">Service</label>
-            <select id="bf-service" required>
-              <option value="">Choose a service from this provider…</option>
-            </select>
-            <div class="field-error" id="bf-err-service">Please select a service.</div>
-          </div>
-          <div class="form-row">
-            <div>
-              <label for="bf-date">Preferred date</label>
-              <input type="date" id="bf-date" required>
-              <div class="field-error" id="bf-err-date">Choose a date.</div>
-            </div>
-            <div>
-              <label for="bf-time">Preferred time</label>
-              <input type="time" id="bf-time" required>
-              <div class="field-error" id="bf-err-time">Choose a time.</div>
-            </div>
-          </div>
-          <div>
-            <label for="bf-address">Your address / flat number</label>
-            <input type="text" id="bf-address" placeholder="Flat 12A, Clippers Quays, M50 3XP" required autocomplete="street-address">
-            <div class="field-error" id="bf-err-address">We need your address for the visit.</div>
-          </div>
-          <div>
-            <label for="bf-notes">Any extra details</label>
-            <textarea id="bf-notes" placeholder="Access codes, parking, pets, materials…" rows="3"></textarea>
-          </div>
-          <div style="background:rgba(0,200,240,.04);border:1px solid rgba(0,200,240,.15);border-radius:var(--radius-sm);padding:14px 16px;margin-top:4px;">
-            <p style="font-size:13px;color:var(--muted);line-height:1.6;margin:0;" id="bf-pricing-note">
-              <strong style="color:var(--cyan);">How pricing works:</strong> After you submit, your provider sends the price. You can accept or decline from your dashboard — and counter-offer only if they allow it.
-            </p>
-          </div>
-        </fieldset>
-        <div style="display:flex;align-items:flex-start;gap:10px;margin-top:4px;">
-          <input type="checkbox" id="bf-consent" required style="width:auto;margin-top:3px;">
-          <label for="bf-consent" style="font-size:12px;color:var(--muted);text-transform:none;letter-spacing:0;line-height:1.5;cursor:pointer;">I agree to Clip Services' <a href="/terms" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Terms of Service</a>, <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Privacy Policy</a>, and <a href="/disclaimer" target="_blank" rel="noopener noreferrer" style="color:var(--cyan);">Disclaimer</a>. I consent to receiving booking confirmations via WhatsApp and email.</label>
-        </div>
-        <div class="booking-submit-wrap">
-          <button type="submit" class="btn-p" id="bookBtn" style="width:100%;justify-content:center;">Submit Service Request</button>
-          <p style="font-size:12px;color:var(--faint);text-align:center;margin-top:8px;">Your request will be sent to a provider who will propose a price. No payment required yet.</p>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+  </section>
 
-<!-- FOOTER -->
-<footer>
-  <div class="footer-grid">
-    <div class="footer-brand">
-      <img class="logo-img" src="/icons/clip-logo-full.svg" alt="Clip Services — Manchester" width="400" height="120" decoding="async" loading="lazy" />
-      <p>Manchester's local service marketplace — connecting residents and businesses with verified local providers in Salford Quays.</p>
+  <!-- 7 CULTURAL CALENDAR -->
+  <section aria-labelledby="cal-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="cal-title" class="font-display">Coming up in your community</h2>
+        <p>Seasonal highlights — tap through to shops stocking relevant products.</p>
+      </div>
+      <div class="cal-track" id="cal-track"></div>
     </div>
-    <div class="fcol">
+  </section>
+
+  <!-- 8 LIVE IMPACT -->
+  <section class="impact" id="impact-stats" aria-labelledby="impact-title">
+    <div class="wrap">
+      <h2 id="impact-title" class="font-display">Live impact</h2>
+      <p class="impact-sub">Updated from our platform as stores join and orders are placed.</p>
+      <div class="impact-grid">
+        <div class="impact-stat"><div class="impact-num" data-target="0" id="impact-stores">0</div><div class="impact-label">Stores &amp; Stalls Listed</div></div>
+        <div class="impact-stat"><div class="impact-num" data-target="0" id="impact-orders">0</div><div class="impact-label">Orders Processed</div></div>
+        <div class="impact-stat"><div class="impact-num" data-target="0" id="impact-cities">0</div><div class="impact-label">Cities Served</div></div>
+        <div class="impact-stat"><div class="impact-num" data-target="24" id="impact-comm">0</div><div class="impact-label">Communities Represented</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 HOW IT WORKS -->
+  <section aria-labelledby="how-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="how-title" class="font-display">How it works</h2>
+      </div>
+      <div class="how-grid">
+        <div class="how-col">
+          <h3>For customers</h3>
+          <ol>
+            <li>Find your store or stall</li>
+            <li>Browse their products</li>
+            <li>Order online securely</li>
+            <li>Collect or receive delivery</li>
+          </ol>
+        </div>
+        <div class="how-col">
+          <h3>For store owners</h3>
+          <ol>
+            <li>Apply to list your store</li>
+            <li>Upload your products</li>
+            <li>Receive orders via WhatsApp</li>
+            <li>Get paid within 24 hours</li>
+          </ol>
+        </div>
+        <div class="how-col">
+          <h3>For market traders</h3>
+          <ol>
+            <li>List your stall for £15/month</li>
+            <li>Show what you are selling today</li>
+            <li>Customers order and collect</li>
+            <li>Grow beyond your market day</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 WHY CLIP SERVICES -->
+  <section class="alt" aria-labelledby="why-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="why-title" class="font-display">Why Clip Services</h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-card">
+          <h3>For your community</h3>
+          <p>Find authentic African, Caribbean and Asian products from independent stores that mainstream supermarkets do not stock. Delivered to your door or ready for collection.</p>
+        </div>
+        <div class="why-card">
+          <h3>For store owners</h3>
+          <p>Get your store online in 48 hours. No website needed. No technical skills needed. We handle the platform, payments, and customer trust — you focus on your products.</p>
+        </div>
+        <div class="why-card">
+          <h3>Low commission model</h3>
+          <p>We charge a small subscription and a fair transaction fee — not 25–30% like other delivery platforms. Designed for stores with thin margins. Designed to be profitable for you.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 STORE OWNER CTA -->
+  <section class="owner-cta" aria-labelledby="owner-title">
+    <div class="wrap">
+      <h2 id="owner-title" class="font-display">Own an African, Caribbean or Asian store or stall?</h2>
+      <p>Get your business online in 48 hours. Free to apply. No technical knowledge needed.</p>
+      <ul class="check-list">
+        <li>Your own store page on clipservice.app</li>
+        <li>Digital product catalogue — unlimited products</li>
+        <li>Stripe payment processing built in</li>
+        <li>Order notifications to your WhatsApp</li>
+        <li>Customer reviews building your reputation online</li>
+        <li>Reach customers across your entire city — not just your street</li>
+      </ul>
+      <div class="hero-cta">
+        <a class="btn btn-gold" href="/store-owner">List My Store</a>
+        <a class="btn btn-secondary" href="/store-owner#stall" style="background:rgba(255,255,255,.15);color:var(--cream);border-color:rgba(255,255,255,.4);">List My Market Stall</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
       <h4>For customers</h4>
-      <a href="#" onclick="switchView('customer');setTimeout(()=>filterCat('runner'),100);return false;">Runner services</a>
-      <a href="#" onclick="switchView('customer');setTimeout(()=>filterCat('cleaning'),100);return false;">Cleaning</a>
-      <a href="#" onclick="switchView('customer');setTimeout(()=>filterCat('handyman'),100);return false;">Handyman</a>
-      <a href="#" onclick="switchView('customer');setTimeout(()=>filterCat('beauty'),100);return false;">Beauty</a>
-      <a href="#" onclick="switchView('customer','payment');return false;">Payment</a>
-      <a href="#" onclick="switchView('customer','faq-c');return false;">FAQ</a>
-      <a href="/user/">My bookings</a>
+      <ul>
+        <li><a href="/stores">Browse Stores</a></li>
+        <li><a href="/stores#cities">Browse by City</a></li>
+        <li><a href="/stores#categories">Browse by Category</a></li>
+        <li><a href="/user/">Track My Order</a></li>
+        <li><a href="/stores#faq">FAQ</a></li>
+      </ul>
     </div>
-    <div class="fcol">
-      <h4>For providers</h4>
-      <a href="#" onclick="switchView('provider');return false;">Join the platform</a>
-      <a href="#" onclick="switchView('provider','apply');return false;">Apply now</a>
-      <a href="#" onclick="switchView('provider','faq-p');return false;">Provider FAQ</a>
-      <a href="https://wa.me/447487588706" target="_blank" rel="noopener noreferrer">WhatsApp us</a>
-      <a href="/provider/">Provider Dashboard</a>
+    <div>
+      <h4>For businesses</h4>
+      <ul>
+        <li><a href="/store-owner">List Your Store</a></li>
+        <li><a href="/store-owner#stall">List Your Market Stall</a></li>
+        <li><a href="/provider/">Store Dashboard</a></li>
+        <li><a href="/store-owner#faq">Business FAQ</a></li>
+        <li><a href="https://wa.me/447487588706">WhatsApp Us</a></li>
+      </ul>
     </div>
-    <div class="fcol">
+    <div>
+      <h4>About Clip Services</h4>
+      <ul>
+        <li><a href="/stores#mission">Our Mission</a></li>
+        <li><a href="/#impact-stats">Impact Data</a></li>
+        <li><a href="mailto:clipservices26@gmail.com?subject=Press">Press</a></li>
+        <li><a href="mailto:clipservices26@gmail.com">Contact</a></li>
+      </ul>
+    </div>
+    <div>
       <h4>Legal</h4>
-      <a href="/privacy-policy">Privacy Policy</a>
-      <a href="/terms">Terms of Service</a>
-      <a href="/disclaimer">Disclaimer</a>
+      <ul>
+        <li><a href="/privacy-policy">Privacy Policy</a></li>
+        <li><a href="/terms">Terms of Service</a></li>
+        <li><a href="/disclaimer">Disclaimer</a></li>
+      </ul>
     </div>
-    <div class="fcol">
-      <h4>Contact</h4>
-      <a href="https://wa.me/447487588706" target="_blank">WhatsApp</a>
-      <a href="https://instagram.com/clip_services" target="_blank" rel="noopener noreferrer">Instagram @clip_services</a>
-      <a href="https://tiktok.com/@clip.service" target="_blank" rel="noopener noreferrer">TikTok @clip.service</a>
+  </div>
+  <div class="wrap footer-bottom">
+    <div class="social" aria-label="Social">
+      <a href="https://instagram.com/" rel="noopener noreferrer" target="_blank">Instagram</a>
+      <a href="https://tiktok.com/" rel="noopener noreferrer" target="_blank">TikTok</a>
+      <a href="https://wa.me/447487588706">WhatsApp</a>
+    </div>
+    <div>
       <a href="mailto:clipservices26@gmail.com">clipservices26@gmail.com</a>
+      · WhatsApp: <a href="tel:+447487588706">+44 7487 588 706</a>
     </div>
   </div>
-  <div class="footer-bottom">
-    <p>© 2026 Clip Services, Clippers Quays, Salford M50. All rights reserved. · <a href="/privacy-policy" style="color:var(--faint);text-decoration:none;">Privacy Policy</a> · <a href="/terms" style="color:var(--faint);text-decoration:none;">Terms of Service</a> · <a href="/disclaimer" style="color:var(--faint);text-decoration:none;">Disclaimer</a> · <a href="https://dimshaircare.vercel.app/" style="color:var(--faint);text-decoration:none;" target="_blank" rel="noopener noreferrer">Dim's Haircare</a> (salon)</p>
-  </div>
+  <p class="wrap" style="text-align:center;margin-top:20px;font-size:13px;opacity:.85;">
+    © 2026 Clip Services Ltd, Manchester. UK Registered Company.
+  </p>
 </footer>
 
 <script>
-// ===== SVG ICONS =====
-const SVC_ICONS = {
-  runner: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="17" cy="4" r="2"/><path d="M14 7l-2 2-3 3 2 3-2 4"/><path d="M6 14l2-2 4.5-1L15 7"/><path d="M15 17l3 4"/><path d="M10 22l1-5"/></svg>`,
-  cleaning: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="M8.5 8h7l1 14H7.5l1-14z"/><path d="M10 12v6"/><path d="M14 12v6"/><path d="M5 8h14"/></svg>`,
-  handyman: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>`,
-  dog: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5.172C10 3.782 8.884 2.5 7.5 2.5 6.116 2.5 5 3.782 5 5.172 5 6.56 7.5 9 7.5 9S10 6.56 10 5.172z"/><path d="M19 5.172C19 3.782 17.884 2.5 16.5 2.5S14 3.782 14 5.172C14 6.56 16.5 9 16.5 9S19 6.56 19 5.172z"/><path d="M12 10c-4 0-7 2-7 5s1 5 3 6h8c2-1 3-3 3-6s-3-5-7-5z"/><circle cx="9.5" cy="14" r="1" fill="#00C8F0"/><circle cx="14.5" cy="14" r="1" fill="#00C8F0"/></svg>`,
-  beauty: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4l6-16h2l2 4-6 12h4"/><path d="M8 8c0-2 1.5-4 4-4s4 2 4 4"/><path d="M4 20c0 1.1.9 2 2 2h12a2 2 0 002-2"/></svg>`,
-  tech: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`,
-  grocery: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>`,
-  delivery: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`,
-  plus: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00C8F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>`,
-  search: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5A78A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>`
-};
-
-// ===== PROVIDER DATA (seed + published from admin /api/listings) =====
-const SEED_PROVIDERS = [
-  {
-    id:1, icon:"runner", role:"Runner & Errands", category:"runner",
-    bio:"Need something picked up, dropped off, or delivered across Salford Quays? Our runners handle groceries, pharmacy trips, parcel returns, takeaway pickups, and late-night essentials.",
-    services:["Grocery Runs","Pharmacy Pickup","Parcel Returns","Takeaway Pickup","Late Night Runs"],
-    popular:true
-  },
-  {
-    id:2, icon:"cleaning", role:"Flat & Home Cleaning", category:"cleaning",
-    bio:"Professional apartment cleaning tailored to Salford Quays residences. Regular weekly cleans, deep cleans, end-of-tenancy turnarounds, and more — eco-friendly supplies included.",
-    services:["Regular Clean","Deep Clean","End of Tenancy","Oven & Appliance Clean","Move-in Clean"],
-    popular:true,
-    pricingNote:"Sample rates below are set by this provider. Final price is confirmed after you request — negotiation is on unless they turn it off.",
-    priceList:[
-      { item:"Regular clean (1-bed)", price:"from £45" },
-      { item:"Deep clean (2-bed)", price:"from £95" }
-    ]
-  },
-  {
-    id:3, icon:"handyman", role:"Handyman & Repairs", category:"handyman",
-    bio:"IKEA flat-pack assembly, TV mounting, shelving, door repairs, and minor plumbing fixes. No job too small. Providers bring their own tools and leave no mess behind.",
-    services:["Flat-pack Assembly","TV Mounting","Shelving & Fixtures","Minor Plumbing","Door & Lock Repairs"],
-    popular:false
-  },
-  {
-    id:4, icon:"dog", role:"Dog Walking & Pet Care", category:"dog",
-    bio:"Daily walks along the Salford Quays waterfront, group walks, puppy visits, and overnight pet sitting. All pet carers are DBS checked and insured.",
-    services:["Daily Walks","Group Walks","Dog Sitting","Puppy Visits","Cat & Pet Feeding"],
-    popular:true
-  },
-  {
-    id:5, icon:"beauty", role:"Hair, Nails, Lashes & Beauty", category:"beauty",
-    bio:"Mobile hair stylists and beauty technicians who come to you — no salon needed. Braids, wig installs, gel nails, lash extensions, and more. Providers set their own prices and availability.",
-    services:["Braids & Cornrows","Wig Install & Revamp","Silk Press","Gel Nails","Acrylic Nails","Lash Extensions","Eyebrow Threading","Waxing","Makeup"],
-    popular:true,
-    negotiationEnabled:false,
-    pricingNote:"Prices below are set by this provider. Counter-offers are off for this listing — you accept or decline their offer only.",
-    priceList:[
-      { item:"Braids / cornrows (mid-back)", price:"from £65" },
-      { item:"Gel nails (full set)", price:"£35–£45" }
-    ]
-  },
-  {
-    id:6, icon:"tech", role:"Tech Support & Setup", category:"tech",
-    bio:"Help setting up smart TVs, printers, WiFi extenders, gaming consoles, and laptops. Patient, clear instructions for all skill levels. Remote help also available.",
-    services:["TV Setup","WiFi & Router","Laptop Help","Smart Home Devices","Printer Setup"],
-    popular:false
-  },
-  {
-    id:7, icon:"grocery", role:"Grocery Shopping", category:"grocery",
-    bio:"Full grocery shop from Aldi, Tesco, M&S, or any supermarket — delivered to your door. Available 7 days a week including early mornings. Bulk orders welcome.",
-    services:["Full Grocery Shop","Water & Drinks","Pharmacy Runs","Bulk Shopping","Meal Prep Ingredients"],
-    popular:false
-  },
-  {
-    id:8, icon:"delivery", role:"Delivery & Man with Van", category:"delivery",
-    bio:"IKEA runs, appliance collection, furniture delivery, and small moves. Transit van available for items up to 3 metres. Available evenings and weekends.",
-    services:["IKEA Pickup","Appliance Collection","Furniture Delivery","Small Moves","Charity Drop-off"],
-    popular:false
-  },
-];
-
-let providers = [];
-
-function escHtml(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-function providerIdAttr(id) {
-  return encodeURIComponent(String(id));
-}
-
-function serviceDataAttrs(name) {
-  return ' data-service="' + encodeURIComponent(String(name)) + '" tabindex="0" role="button"';
-}
-
-/** Public label on marketplace cards (internal role/email unchanged for booking). */
-function cardListingTitle(p) {
-  var r = String(p && p.role != null ? p.role : '').trim();
-  if (!r) return 'Service provider';
-  if (/\bsonia\b/i.test(r) && /\botikpa\b/i.test(r)) return 'Hairstylist';
-  return r;
-}
-
-async function loadMarketplaceProviders() {
-  providers = SEED_PROVIDERS.map(function (p) { return Object.assign({}, p); });
-  try {
-    var r = await fetch('/api/listings');
-    var d = await r.json();
-    if (d.ok && d.items && d.items.length) {
-      d.items.forEach(function (it) {
-        if (it.id == null || String(it.id).trim() === '') {
-          console.warn('LISTINGS_SKIP_ROW', 'missing id', it);
-          return;
-        }
-        var row = {
-          id: it.id,
-          icon: SVC_ICONS[it.icon] ? it.icon : 'plus',
-          role: it.role || 'Service provider',
-          category: it.category || 'runner',
-          bio: it.bio || 'Services and prices are confirmed when you book.',
-          services: (it.services && it.services.length) ? it.services : ['See profile for details'],
-          popular: !!it.popular,
-          negotiationEnabled: it.negotiationEnabled !== false,
-          priceList: Array.isArray(it.priceList) ? it.priceList : [],
-          pricingNote: typeof it.pricingNote === 'string' ? it.pricingNote : '',
-        };
-        var ix = providers.findIndex(function (x) { return String(x.id) === String(it.id); });
-        if (ix >= 0) {
-          var prev = providers[ix];
-          providers[ix] = Object.assign({}, prev, row);
-          if (!Array.isArray(row.priceList) || !row.priceList.length) providers[ix].priceList = prev.priceList || [];
-          if (!row.pricingNote && prev.pricingNote) providers[ix].pricingNote = prev.pricingNote;
-        } else providers.push(row);
-      });
-    }
-  } catch (e) {
-    console.warn('Could not load /api/listings', e);
-  }
-  renderServiceCards(providers);
-  filterProviders();
-}
-
-function renderProviders(list) {
-  const grid = document.getElementById('providersGrid');
-  if (!list.length) {
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--faint);"><p style="font-size:16px;margin-bottom:8px;">No providers in this category yet.</p><p style="font-size:13px;"><button type="button" class="btn-ghost" onclick="setCategoryFilter(\'\')">Show all categories</button></p></div>';
-    return;
-  }
-  grid.innerHTML = list.map(p => `
-    <div class="pcard" data-provider-id="${providerIdAttr(p.id)}">
-      ${p.popular?'<span class="pcard-badge bg-top">Popular</span>':''}
-      <div class="pcard-top">
-        <div class="pcard-avatar">
-          ${SVC_ICONS[p.icon]||p.icon}
-        </div>
-        <div class="pcard-info">
-          <div class="pcard-name">${escHtml(cardListingTitle(p))}</div>
-          <div class="pcard-provider-note">Price & duration set by provider</div>
-        </div>
-      </div>
-      <div class="pcard-mid">${escHtml(p.bio)}</div>
-      <div class="pcard-services">
-        ${p.services.slice(0,5).map(s=>`<span class="ptag">${escHtml(s)}</span>`).join('')}
-        ${p.services.length>5?`<span class="ptag">+${p.services.length-5} more</span>`:''}
-      </div>
-      <div class="pcard-foot">
-        <span class="pcard-opts">${p.services.length} services available</span>
-        <button type="button" class="book-btn" data-provider-id="${providerIdAttr(p.id)}">Request Service</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderServiceCards(list) {
-  const grid = document.getElementById('svcGrid');
-  if (!grid) return;
-  grid.innerHTML = list.map(function (p) {
-    var priceLine = '';
-    if (p.priceList && p.priceList.length && p.priceList[0].price) {
-      priceLine = '<div class="svc-card-price">From ' + escHtml(String(p.priceList[0].price).replace(/^from\s+/i, '')) + '</div>';
-    }
-    return '<div class="svc-card" role="button" tabindex="0" data-provider-id="' + providerIdAttr(p.id) + '">' +
-    (p.popular ? '<span class="svc-card-badge">Popular</span>' : '') +
-    '<div class="svc-card-icon">' + (SVC_ICONS[p.icon] || '') + '</div>' +
-    '<div class="svc-card-name">' + escHtml(cardListingTitle(p)) + '</div>' +
-    priceLine +
-    '<div class="svc-card-count">' + p.services.length + ' services</div>' +
-    '<div class="svc-card-tags">' + p.services.slice(0,3).map(function (s) {
-      return '<span class="svc-card-tag svc-card-tag--pick"' + serviceDataAttrs(s) + '>' + escHtml(s) + '</span>';
-    }).join('') + '</div>' +
-    '</div>';
-  }).join('');
-}
-
-var CATEGORY_LABELS = { runner:'Runner', cleaning:'Cleaning', handyman:'Handyman', dog:'Dog care', beauty:'Beauty', tech:'Tech', grocery:'Groceries', delivery:'Delivery' };
-
-function filterProviders() {
-  const catEl = document.getElementById('catFilter');
-  const cat = catEl ? catEl.value : '';
-  const filtered = providers.filter(function (p) { return !cat || p.category === cat; });
-  renderServiceCards(filtered);
-  var bar = document.getElementById('activeCatBar');
-  var lbl = document.getElementById('activeCatLabel');
-  if (bar && lbl) {
-    if (cat) {
-      lbl.textContent = CATEGORY_LABELS[cat] || cat;
-      bar.classList.add('visible');
-    } else {
-      bar.classList.remove('visible');
-    }
-  }
-  if (cat) {
-    renderProviders(filtered);
-    document.getElementById('providersGrid').style.display = '';
-  } else {
-    document.getElementById('providersGrid').innerHTML = '';
-    document.getElementById('providersGrid').style.display = 'none';
-  }
-}
-
-function setCategoryFilter(cat) {
-  const sel = document.getElementById('catFilter');
-  if (sel) sel.value = cat || '';
-  filterProviders();
-}
-
-function filterCat(cat) {
-  switchView('customer');
-  setTimeout(function () {
-    setCategoryFilter(cat);
-    scrollToProviders();
-  }, 80);
-}
-
-function scrollToProviders() {
-  const el = document.getElementById('servicesSection');
-  if (el) el.scrollIntoView({behavior:'smooth',block:'start'});
-}
-
-function openModal(id, preselectService) {
-  const p = providers.find(x => String(x.id) === String(id));
-  if (!p) {
-    console.warn('openModal: unknown provider id', id);
-    showToast('This listing could not be opened. Try refreshing the page.');
-    return;
-  }
-  document.getElementById('m-avatar').innerHTML = SVC_ICONS[p.icon]||p.icon;
-  document.getElementById('m-name').textContent = cardListingTitle(p);
-  document.getElementById('m-role').textContent = p.services.length + ' services available';
-  document.getElementById('m-about').textContent = p.bio;
-  const wrap = document.getElementById('m-price-wrap');
-  const panel = document.getElementById('m-price-panel');
-  if (p.priceList && p.priceList.length && panel && wrap) {
-    var rows = p.priceList.map(function (row) {
-      return '<div class="price-row"><span>' + String(row.item).replace(/</g,'') + '</span><span>' + String(row.price).replace(/</g,'') + '</span></div>';
-    }).join('');
-    var note = p.pricingNote ? '<div class="price-panel-note">' + String(p.pricingNote).replace(/</g,'') + '</div>' : '';
-    panel.innerHTML = rows + note;
-    wrap.style.display = '';
-  } else if (wrap) {
-    wrap.style.display = 'none';
-  }
-  document.getElementById('m-svcs').innerHTML = p.services.map(function (s) {
-    return '<span class="msvc">' + escHtml(s) + '</span>';
-  }).join('');
-  var noteEl = document.getElementById('bf-pricing-note');
-  if (noteEl) {
-    var negOn = p.negotiationEnabled !== false;
-    noteEl.innerHTML = '<strong style="color:var(--cyan);">How pricing works:</strong> ' +
-      (negOn
-        ? 'After you submit, your provider sends their price. You can accept, decline, or counter-offer from your dashboard.'
-        : 'After you submit, your provider sends their price. This listing has counter-offers turned off — you can accept or decline only.');
-  }
-  document.getElementById('bookingForm').reset();
-  document.getElementById('bf-provider').value = cardListingTitle(p);
-  document.getElementById('bf-provider-id').value = String(p.id);
-  var bfSvc = document.getElementById('bf-service');
-  if (bfSvc) {
-    bfSvc.innerHTML = '';
-    var o0 = document.createElement('option');
-    o0.value = '';
-    o0.textContent = 'Choose a service from this provider…';
-    bfSvc.appendChild(o0);
-    (p.services || []).forEach(function (s) {
-      var o = document.createElement('option');
-      o.value = s;
-      o.textContent = s;
-      bfSvc.appendChild(o);
-    });
-    if (preselectService) {
-      var want = String(preselectService);
-      var okPick = (p.services || []).some(function (s) { return String(s) === want; });
-      if (okPick) {
-        bfSvc.value = want;
-        setTimeout(function () {
-          try {
-            bfSvc.focus();
-          } catch (errF) {}
-        }, 150);
-      }
-    }
-  }
-  const dateInput = document.getElementById('bf-date');
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  dateInput.min = tomorrow.toISOString().split('T')[0];
-  dateInput.value = '';
-  clearBookingFieldErrors();
-  document.getElementById('modalOverlay').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-
-function closeModal(e) {
-  if(e.target===document.getElementById('modalOverlay')){
-    document.getElementById('modalOverlay').classList.remove('open');
-    document.body.style.overflow='';
-  }
-}
-
-function clearBookingFieldErrors() {
-  document.querySelectorAll('#bookingForm .field-error').forEach((el) => el.classList.remove('show'));
-  document.querySelectorAll('#bookingForm input, #bookingForm textarea, #bookingForm select').forEach((el) => el.classList.remove('user-invalid'));
-}
-
-function validateBookingForm() {
-  clearBookingFieldErrors();
-  let ok = true;
-  function bad(id, errId) {
-    document.getElementById(errId)?.classList.add('show');
-    document.getElementById(id)?.classList.add('user-invalid');
-    ok = false;
-  }
-  if (!document.getElementById('bf-first').value.trim()) bad('bf-first', 'bf-err-first');
-  if (!document.getElementById('bf-last').value.trim()) bad('bf-last', 'bf-err-last');
-  const phone = document.getElementById('bf-phone').value.replace(/\D/g, '');
-  if (phone.length < 10) bad('bf-phone', 'bf-err-phone');
-  const em = document.getElementById('bf-email').value.trim();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) bad('bf-email', 'bf-err-email');
-  if (!document.getElementById('bf-service').value.trim()) bad('bf-service', 'bf-err-service');
-  if (!document.getElementById('bf-date').value) bad('bf-date', 'bf-err-date');
-  if (!document.getElementById('bf-time').value) bad('bf-time', 'bf-err-time');
-  if (!document.getElementById('bf-address').value.trim()) bad('bf-address', 'bf-err-address');
-  if (!document.getElementById('bf-consent').checked) {
-    showToast('⚠ Please agree to the Terms, Privacy Policy, and Disclaimer.');
-    ok = false;
-  }
-  if (!ok) {
-    const first = document.querySelector('#bookingForm .user-invalid');
-    if (first) {
-      first.scrollIntoView({ block: 'center', behavior: 'smooth' });
-      setTimeout(() => first.focus(), 350);
-    }
-  }
-  return ok;
-}
-
-async function handleBook(e) {
-  e.preventDefault();
-  if (!validateBookingForm()) return;
-  const btn = document.getElementById('bookBtn');
-  const origText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Submitting request...';
-
-  const provider = document.getElementById('bf-provider').value;
-  const address = document.getElementById('bf-address').value;
-  const notes = document.getElementById('bf-notes').value;
-  const fullNotes = 'Provider: ' + provider + '\nAddress: ' + address + (notes ? '\n' + notes : '');
-
-  const payload = {
-    service: document.getElementById('bf-service').value,
-    date: document.getElementById('bf-date').value,
-    time: document.getElementById('bf-time').value,
-    firstName: document.getElementById('bf-first').value,
-    lastName: document.getElementById('bf-last').value,
-    phone: document.getElementById('bf-phone').value,
-    email: document.getElementById('bf-email').value,
-    notes: fullNotes,
-    consent: document.getElementById('bf-consent').checked,
-    providerId: document.getElementById('bf-provider-id').value
-  };
-
-  try {
-    const res = await fetch('/api/booking', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    const data = await res.json();
-    if (data.ok) {
-      document.getElementById('modalOverlay').classList.remove('open');
-      document.body.style.overflow = '';
-      showToast('Service request submitted! Ref: ' + data.ref + '. A provider will send you a price offer shortly.');
-      document.getElementById('bookingForm').reset();
-      setTimeout(function() {
-        if (confirm('Your request has been submitted! Would you like to view your dashboard to track price negotiations?')) {
-          window.location.href = '/user/?email=' + encodeURIComponent(payload.email);
-        }
-      }, 800);
-    } else {
-      showToast('Something went wrong: ' + (data.error || 'Please try again.'));
-    }
-  } catch {
-    showToast('Network error. Please try again.');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = origText;
-  }
-}
-
-function toggleTag(el) {
-  el.classList.toggle('selected');
-}
-
-function selectRate(el, val) {
-  document.querySelectorAll('.rate-opt').forEach(r=>r.classList.remove('active'));
-  el.classList.add('active');
-  el.dataset.selectedRate = val;
-}
-
-function compressImage(file, maxWidth = 1200, quality = 0.7) {
-  return new Promise((resolve) => {
-    if (file.type === 'application/pdf') {
-      const reader = new FileReader();
-      reader.onload = () => resolve({ data: reader.result.split(',')[1], type: 'application/pdf', name: file.name });
-      reader.readAsDataURL(file);
-      return;
-    }
-    const img = new Image();
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      img.onload = () => {
-        const scale = img.width > maxWidth ? maxWidth / img.width : 1;
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width * scale;
-        canvas.height = img.height * scale;
-        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL('image/jpeg', quality);
-        resolve({ data: dataUrl.split(',')[1], type: 'image/jpeg', name: file.name.replace(/\.\w+$/, '.jpg') });
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function setupUploadZone(fieldId, suffix) {
-  const input = document.getElementById(fieldId);
-  const zone = input.closest('.upload-zone');
-  const preview = document.getElementById('preview' + suffix);
-  const previewImg = document.getElementById('preview' + suffix + 'Img');
-  const previewName = document.getElementById('preview' + suffix + 'Name');
-  function showFile(file) {
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { showToast('File too large — max 5 MB.'); input.value = ''; return; }
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      if (file.type === 'application/pdf') {
-        previewImg.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><rect width="80" height="80" rx="8" fill="%23152240"/><text x="40" y="48" text-anchor="middle" font-size="16" fill="%2300C8F0" font-family="sans-serif">PDF</text></svg>';
-      } else {
-        previewImg.src = e.target.result;
-      }
-      previewName.textContent = file.name + ' (' + (file.size / 1024).toFixed(0) + ' KB)';
-      preview.style.display = 'block';
-      zone.style.display = 'none';
-    };
-    reader.readAsDataURL(file);
-  }
-  input.addEventListener('change', () => showFile(input.files[0]));
-  zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
-  zone.addEventListener('drop', (e) => { e.preventDefault(); zone.classList.remove('dragover'); if (e.dataTransfer.files[0]) { input.files = e.dataTransfer.files; showFile(e.dataTransfer.files[0]); } });
-}
-
-function clearUpload(suffix) {
-  const preview = document.getElementById('preview' + suffix);
-  const zone = preview.previousElementSibling;
-  const input = zone.querySelector('input[type="file"]');
-  input.value = '';
-  preview.style.display = 'none';
-  zone.style.display = '';
-}
-
-function validateApplyForm() {
-  let ok = true;
-  const name = document.getElementById('af-name').value.trim();
-  const phone = document.getElementById('af-phone').value.replace(/\D/g, '');
-  const email = document.getElementById('af-email').value.trim();
-  const postcode = document.getElementById('af-postcode').value.trim();
-  const dob = document.getElementById('af-dob').value;
-  const idType = document.getElementById('af-id-type').value;
-  const rightToWork = document.getElementById('af-right-to-work').value;
-  const dbs = document.getElementById('af-dbs').value;
-  const emergencyName = document.getElementById('af-emergency-name').value.trim();
-  const emergencyPhone = document.getElementById('af-emergency-phone').value.replace(/\D/g, '');
-  const idFile = document.getElementById('af-id-file').files[0];
-  const consent = document.getElementById('af-consent').checked;
-
-  const fields = [
-    { el: 'af-name', valid: name.length >= 2 },
-    { el: 'af-phone', valid: phone.length >= 10 },
-    { el: 'af-email', valid: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) },
-    { el: 'af-postcode', valid: postcode.length >= 3 },
-    { el: 'af-dob', valid: !!dob && (new Date().getFullYear() - new Date(dob).getFullYear()) >= 18 },
-    { el: 'af-id-type', valid: !!idType },
-    { el: 'af-right-to-work', valid: !!rightToWork },
-    { el: 'af-dbs', valid: !!dbs },
-    { el: 'af-emergency-name', valid: emergencyName.length >= 2 },
-    { el: 'af-emergency-phone', valid: emergencyPhone.length >= 10 },
+(function () {
+  const EVENTS = [
+    { id: "ramadan", title: "Ramadan", desc: "Halal products, dates, iftar essentials" },
+    { id: "eid-fitr", title: "Eid al-Fitr", desc: "Celebration food, sweets" },
+    { id: "eid-adha", title: "Eid al-Adha", desc: "Halal meat, celebration" },
+    { id: "ng-independence", title: "Nigerian Independence Day (1 Oct)", desc: "Nigerian ingredients, party food" },
+    { id: "bhm", title: "Black History Month (October)", desc: "African & Caribbean stores featured" },
+    { id: "diwali", title: "Diwali", desc: "Asian sweets, ghee, spices" },
+    { id: "carnival", title: "Caribbean Carnival Season", desc: "Jerk, festival food, rum cake" },
+    { id: "christmas", title: "Christmas", desc: "Plantain, goat meat, jollof, suya, festive items" },
+    { id: "gh-independence", title: "Ghanaian Independence Day (6 Mar)", desc: "Ghanaian groceries" },
+    { id: "cny", title: "Chinese New Year", desc: "Rice, sauces, noodles, dumplings" },
   ];
-  fields.forEach(f => {
-    const el = document.getElementById(f.el);
-    if (el) el.classList.toggle('user-invalid', !f.valid);
-    if (!f.valid) ok = false;
-  });
 
-  if (!idFile) { ok = false; document.getElementById('uzId')?.classList.add('user-invalid'); }
-  else { document.getElementById('uzId')?.classList.remove('user-invalid'); }
+  function initials(name) {
+    return String(name || "S")
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((w) => w[0])
+      .join("")
+      .toUpperCase() || "S";
+  }
 
-  if (!consent) ok = false;
-  if (!ok) {
-    const first = document.querySelector('#applyForm .user-invalid');
-    if (first) { first.scrollIntoView({ block: 'center', behavior: 'smooth' }); setTimeout(() => first.focus(), 350); }
-    if (!consent && fields.every(f => f.valid) && idFile) {
-      showToast('Please agree to the Terms, Privacy Policy, and Disclaimer.');
-    } else if (!idFile) {
-      showToast('Please upload a clear photo of your ID (front).');
-    } else if (dob && (new Date().getFullYear() - new Date(dob).getFullYear()) < 18) {
-      showToast('You must be 18 or over to apply.');
-    } else {
-      showToast('Please fill in all required fields including identity verification.');
+  function renderMiniCard(item) {
+    const name = item.role || "Store";
+    const cat = item.category || "groceries";
+    return (
+      '<div class="mini-card"><h3>' +
+      escapeHtml(name) +
+      '</h3><p>' +
+      escapeHtml((item.services && item.services[0]) || cat.replace(/-/g, " ")) +
+      " · " +
+      escapeHtml(cat) +
+      '</p><a class="btn btn-secondary" style="margin-top:10px;padding:8px 14px;font-size:13px" href="/stores">View on map</a></div>'
+    );
+  }
+
+  function escapeHtml(s) {
+    const d = document.createElement("div");
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function splitListings(list, n) {
+    if (!list.length) return [[], [], []];
+    const a = [], b = [], c = [];
+    list.forEach((item, i) => {
+      const mod = i % 3;
+      if (mod === 0) a.push(item);
+      else if (mod === 1) b.push(item);
+      else c.push(item);
+    });
+    return [a, b, c];
+  }
+
+  async function loadListings() {
+    try {
+      const r = await fetch("/api/listings");
+      const j = await r.json();
+      return j.ok && Array.isArray(j.items) ? j.items : [];
+    } catch {
+      return [];
     }
   }
-  return ok;
-}
 
-async function handleApply(e) {
-  e.preventDefault();
-  if (!validateApplyForm()) return;
-  const btn = document.getElementById('applyBtn');
-  const origText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = 'Submitting…';
-
-  const services = [...document.querySelectorAll('#serviceTags .char-tag.selected')]
-    .map(el => el.dataset.value).join(', ');
-  const availability = [...document.querySelectorAll('#availTags .char-tag.selected')]
-    .map(t => t.textContent.trim()).join(', ');
-  const rateEl = document.querySelector('.rate-opt.active');
-  const rate = rateEl ? rateEl.dataset.selectedRate || rateEl.textContent.trim() : '';
-
-  const name = document.getElementById('af-name').value;
-  const phone = document.getElementById('af-phone').value;
-  const email = document.getElementById('af-email').value;
-  const postcode = document.getElementById('af-postcode').value;
-  const experience = document.getElementById('af-experience').value;
-  const transport = document.getElementById('af-transport').value;
-  const source = document.getElementById('af-source').value;
-  const dob = document.getElementById('af-dob').value;
-  const idType = document.getElementById('af-id-type').value;
-  const rightToWork = document.getElementById('af-right-to-work').value;
-  const dbs = document.getElementById('af-dbs').value;
-  const emergencyName = document.getElementById('af-emergency-name').value;
-  const emergencyPhone = document.getElementById('af-emergency-phone').value;
-
-  const idTypeLabels = { 'passport': 'Passport', 'driving-licence': 'Driving Licence', 'brp': 'BRP', 'national-id': 'National ID' };
-  const rtwLabels = { 'british-citizen': 'British Citizen', 'settled-status': 'EU Settled Status', 'pre-settled': 'EU Pre-Settled', 'visa-work': 'Work Visa', 'student-visa': 'Student Visa', 'other-right': 'Other' };
-  const dbsLabels = { 'have-basic': 'Has Basic DBS', 'have-enhanced': 'Has Enhanced DBS', 'willing': 'Willing to get DBS', 'not-applicable': 'N/A' };
-
-  const message = [
-    `[PROVIDER APPLICATION]`,
-    `Phone: ${phone}`,
-    `Postcode: ${postcode}`,
-    `Services: ${services || 'Not specified'}`,
-    `Rate: ${rate || 'Not specified'}`,
-    `Availability: ${availability || 'Not specified'}`,
-    `Transport: ${transport || 'Not specified'}`,
-    `Heard about us: ${source || 'Not specified'}`,
-    `Experience: ${experience}`,
-    `--- KYC VERIFICATION ---`,
-    `Date of Birth: ${dob}`,
-    `ID Type: ${idTypeLabels[idType] || idType}`,
-    `Right to Work: ${rtwLabels[rightToWork] || rightToWork}`,
-    `DBS Status: ${dbsLabels[dbs] || dbs}`,
-    `Emergency Contact: ${emergencyName} — ${emergencyPhone}`,
-    `ID Document: attached`
-  ].join('\n');
-
-  btn.textContent = 'Compressing documents…';
-  let attachments = [];
-  try {
-    const idFile = document.getElementById('af-id-file').files[0];
-    if (idFile) attachments.push(await compressImage(idFile));
-  } catch { /* proceed without attachments */ }
-
-  btn.textContent = 'Submitting application…';
-  try {
-    const res = await fetch('/api/contact', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ name, email, phone, message, applicationType: 'provider', attachments })
-    });
-    const data = await res.json();
-    if (data.ok) {
-      showToast('✓ Application received! We\'ll review your documents and WhatsApp you within 48 hours.');
-      e.target.reset();
-      document.querySelectorAll('.char-tag').forEach(t => t.classList.remove('selected'));
-      document.querySelectorAll('.rate-opt').forEach(r => r.classList.remove('active'));
-      clearUpload('Id');
-    } else {
-      showToast('⚠ ' + (data.error || 'Something went wrong. Please try again.'));
+  async function loadStats() {
+    try {
+      const r = await fetch("/api/public-stats");
+      const j = await r.json();
+      return j.ok ? j : null;
+    } catch {
+      return null;
     }
-  } catch {
-    showToast('⚠ Network error — please try again.');
-  } finally {
-    btn.disabled = false;
-    btn.textContent = origText;
-  }
-}
-
-function switchView(v, anchor) {
-  document.body.classList.toggle('page-customer', v === 'customer');
-  document.body.classList.toggle('page-provider', v === 'provider');
-  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
-  document.getElementById('view-'+v).classList.add('active');
-  document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
-  document.getElementById('tab-'+v).classList.add('active');
-  closeMobileMenu();
-  if (anchor) {
-    setTimeout(()=>{
-      const el = document.getElementById(anchor);
-      if (el) el.scrollIntoView({behavior:'smooth'});
-    }, 60);
-  } else {
-    window.scrollTo({top:0,behavior:'smooth'});
-  }
-}
-
-window.addEventListener('scroll',()=>{
-  const scrolled = window.scrollY > 40;
-  document.getElementById('nav').classList.toggle('scrolled', scrolled);
-  const sbar = document.getElementById('sbar');
-  const spacer = document.getElementById('sbar-spacer');
-  if (sbar && sbar.style.display !== 'none') {
-    sbar.style.opacity = scrolled ? '0' : '1';
-    sbar.style.pointerEvents = scrolled ? 'none' : '';
-  }
-});
-
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),4500);
-}
-
-function toggleFaq(btn){
-  const item=btn.closest('.faq-item');
-  const was=item.classList.contains('open');
-  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
-  if(!was)item.classList.add('open');
-}
-
-const ro=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('v');});
-},{threshold:0.1});
-document.querySelectorAll('.r').forEach(el=>ro.observe(el));
-
-function toggleMobileMenu(){
-  document.querySelector('.nav-links').classList.toggle('mobile-open');
-}
-function closeMobileMenu(){
-  document.querySelector('.nav-links').classList.remove('mobile-open');
-}
-
-// Inject SVG icons into static category cards and search icon
-['runner','cleaning','handyman','dog','beauty','tech','delivery','plus'].forEach(k => {
-  const el = document.getElementById('ci-'+k);
-  if (el) el.innerHTML = SVC_ICONS[k]||'';
-});
-
-function initMarketplaceCardClicks() {
-  var svcGrid = document.getElementById('svcGrid');
-  if (svcGrid && !svcGrid.dataset.delegated) {
-    svcGrid.dataset.delegated = '1';
-    svcGrid.addEventListener('click', function (e) {
-      var tag = e.target.closest('.svc-card-tag[data-service]');
-      if (tag && svcGrid.contains(tag)) {
-        e.stopPropagation();
-        var card = tag.closest('.svc-card');
-        if (!card || !svcGrid.contains(card)) return;
-        var raw = card.getAttribute('data-provider-id');
-        if (raw == null || raw === '') return;
-        var pid;
-        try { pid = decodeURIComponent(raw); } catch (err) { pid = raw; }
-        var svc = '';
-        try { svc = decodeURIComponent(tag.getAttribute('data-service') || ''); } catch (errSvc) { svc = tag.getAttribute('data-service') || ''; }
-        openModal(pid, svc);
-        return;
-      }
-      var card = e.target.closest('.svc-card');
-      if (!card || !svcGrid.contains(card)) return;
-      var raw = card.getAttribute('data-provider-id');
-      if (raw == null || raw === '') return;
-      var pid;
-      try { pid = decodeURIComponent(raw); } catch (err2) { pid = raw; }
-      openModal(pid);
-    });
-    svcGrid.addEventListener('keydown', function (e) {
-      if (e.key !== 'Enter' && e.key !== ' ') return;
-      var tag = e.target.closest('.svc-card-tag[data-service]');
-      if (tag && svcGrid.contains(tag)) {
-        e.preventDefault();
-        var card = tag.closest('.svc-card');
-        if (!card || !svcGrid.contains(card)) return;
-        var raw = card.getAttribute('data-provider-id');
-        if (raw == null || raw === '') return;
-        var pid;
-        try { pid = decodeURIComponent(raw); } catch (err3) { pid = raw; }
-        var svc = '';
-        try { svc = decodeURIComponent(tag.getAttribute('data-service') || ''); } catch (err4) { svc = tag.getAttribute('data-service') || ''; }
-        openModal(pid, svc);
-        return;
-      }
-      var card = e.target.closest('.svc-card');
-      if (!card || !svcGrid.contains(card)) return;
-      e.preventDefault();
-      var raw = card.getAttribute('data-provider-id');
-      if (raw == null || raw === '') return;
-      var pid;
-      try { pid = decodeURIComponent(raw); } catch (err5) { pid = raw; }
-      openModal(pid);
-    });
-  }
-  var provGrid = document.getElementById('providersGrid');
-  if (provGrid && !provGrid.dataset.delegated) {
-    provGrid.dataset.delegated = '1';
-    provGrid.addEventListener('click', function (e) {
-      var ptag = e.target.closest('.ptag[data-service]');
-      if (ptag && provGrid.contains(ptag)) {
-        e.stopPropagation();
-        var pcard = ptag.closest('.pcard');
-        if (!pcard || !provGrid.contains(pcard)) return;
-        var raw = pcard.getAttribute('data-provider-id');
-        if (raw == null || raw === '') return;
-        var pid;
-        try { pid = decodeURIComponent(raw); } catch (errP) { pid = raw; }
-        var svc = '';
-        try { svc = decodeURIComponent(ptag.getAttribute('data-service') || ''); } catch (errS) { svc = ptag.getAttribute('data-service') || ''; }
-        openModal(pid, svc);
-        return;
-      }
-      var btn = e.target.closest('.book-btn');
-      var card = e.target.closest('.pcard');
-      var el = btn || card;
-      if (!el || !provGrid.contains(el)) return;
-      var raw = el.getAttribute('data-provider-id');
-      if (raw == null || raw === '') return;
-      var pid;
-      try { pid = decodeURIComponent(raw); } catch (err3) { pid = raw; }
-      openModal(pid);
-    });
-    provGrid.addEventListener('keydown', function (e) {
-      if (e.key !== 'Enter' && e.key !== ' ') return;
-      var ptag = e.target.closest('.ptag[data-service]');
-      if (!ptag || !provGrid.contains(ptag)) return;
-      e.preventDefault();
-      var pcard = ptag.closest('.pcard');
-      if (!pcard || !provGrid.contains(pcard)) return;
-      var raw = pcard.getAttribute('data-provider-id');
-      if (raw == null || raw === '') return;
-      var pid;
-      try { pid = decodeURIComponent(raw); } catch (errK) { pid = raw; }
-      var svc = '';
-      try { svc = decodeURIComponent(ptag.getAttribute('data-service') || ''); } catch (errK2) { svc = ptag.getAttribute('data-service') || ''; }
-      openModal(pid, svc);
-    });
-  }
-}
-
-initMarketplaceCardClicks();
-loadMarketplaceProviders();
-
-(function smartFormInit() {
-  const phoneInput = document.getElementById('bf-phone');
-  if (phoneInput) {
-    phoneInput.addEventListener('input', function () {
-      let raw = this.value.replace(/[^\d+]/g, '');
-      if (raw.startsWith('+44')) {
-        const digits = raw.slice(3);
-        let formatted = '+44';
-        if (digits.length > 0) formatted += ' ' + digits.slice(0, 4);
-        if (digits.length > 4) formatted += ' ' + digits.slice(4, 7);
-        if (digits.length > 7) formatted += ' ' + digits.slice(7, 10);
-        this.value = formatted;
-      } else if (raw.startsWith('07') || raw.startsWith('00')) {
-        let formatted = raw.slice(0, 5);
-        if (raw.length > 5) formatted += ' ' + raw.slice(5, 8);
-        if (raw.length > 8) formatted += ' ' + raw.slice(8, 11);
-        this.value = formatted;
-      }
-    });
   }
 
-  function updateStepProgress() {
-    const steps = document.querySelectorAll('.form-progress-step');
-    if (!steps.length) return;
-    const s1 = !!(
-      document.getElementById('bf-first')?.value.trim() &&
-      document.getElementById('bf-last')?.value.trim() &&
-      document.getElementById('bf-phone')?.value.replace(/\D/g, '').length >= 10 &&
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(document.getElementById('bf-email')?.value.trim() || '')
-    );
-    const s2 = !!(
-      document.getElementById('bf-service')?.value.trim() &&
-      document.getElementById('bf-date')?.value &&
-      document.getElementById('bf-time')?.value &&
-      document.getElementById('bf-address')?.value.trim()
-    );
-    steps[0].classList.toggle('done', s1);
-    steps[0].classList.toggle('active', !s1);
-    steps[1].classList.toggle('done', s1 && s2);
-    steps[1].classList.toggle('active', s1 && !s2);
-    steps[2].classList.toggle('active', s1 && s2);
+  function fillFeatured(items) {
+    const [a, b, c] = splitListings(items);
+    const fa = document.getElementById("featured-african");
+    const fb = document.getElementById("featured-caribbean");
+    const fc = document.getElementById("featured-asian");
+    if (fa) fa.innerHTML = (a.length ? a : items).slice(0, 3).map(renderMiniCard).join("") || '<p class="mini-card">Stores coming soon — <a href="/store-owner">list yours first</a>.</p>';
+    if (fb) fb.innerHTML = (b.length ? b : items).slice(0, 3).map(renderMiniCard).join("") || '<p class="mini-card">Stores coming soon — <a href="/store-owner">list yours first</a>.</p>';
+    if (fc) fc.innerHTML = (c.length ? c : items).slice(0, 3).map(renderMiniCard).join("") || '<p class="mini-card">Stores coming soon — <a href="/store-owner">list yours first</a>.</p>';
   }
 
-  document.querySelectorAll('#bookingForm input, #bookingForm textarea, #bookingForm select').forEach(function (el) {
-    el.addEventListener('input', updateStepProgress);
-    el.addEventListener('change', updateStepProgress);
-    el.addEventListener('blur', function () {
-      if (!this.value && !this.required) return;
-      const id = this.id;
-      const errId = 'bf-err-' + id.replace('bf-', '');
-      const errEl = document.getElementById(errId);
-      if (!errEl) return;
-      let isValid = true;
-      if (id === 'bf-first' || id === 'bf-last' || id === 'bf-service' || id === 'bf-address') {
-        isValid = !!this.value.trim();
-      } else if (id === 'bf-phone') {
-        isValid = this.value.replace(/\D/g, '').length >= 10;
-      } else if (id === 'bf-email') {
-        isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value.trim());
-      } else if (id === 'bf-date' || id === 'bf-time') {
-        isValid = !!this.value;
-      }
-      this.classList.toggle('user-invalid', !isValid);
-      errEl.classList.toggle('show', !isValid);
-    });
-  });
-
-  const dateInput = document.getElementById('bf-date');
-  if (dateInput) {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    dateInput.min = tomorrow.toISOString().split('T')[0];
-  }
-
-  function formatUKPhone(input) {
-    input.addEventListener('input', function () {
-      let raw = this.value.replace(/[^\d+]/g, '');
-      if (raw.startsWith('+44')) {
-        const digits = raw.slice(3);
-        let f = '+44';
-        if (digits.length > 0) f += ' ' + digits.slice(0, 4);
-        if (digits.length > 4) f += ' ' + digits.slice(4, 7);
-        if (digits.length > 7) f += ' ' + digits.slice(7, 10);
-        this.value = f;
-      } else if (raw.startsWith('07') || raw.startsWith('00')) {
-        let f = raw.slice(0, 5);
-        if (raw.length > 5) f += ' ' + raw.slice(5, 8);
-        if (raw.length > 8) f += ' ' + raw.slice(8, 11);
-        this.value = f;
-      }
-    });
-  }
-
-  const afPhone = document.getElementById('af-phone');
-  if (afPhone) formatUKPhone(afPhone);
-  const afEmergencyPhone = document.getElementById('af-emergency-phone');
-  if (afEmergencyPhone) formatUKPhone(afEmergencyPhone);
-
-  setupUploadZone('af-id-file', 'Id');
-
-  document.querySelectorAll('#applyForm input, #applyForm textarea, #applyForm select').forEach(function (el) {
-    el.addEventListener('blur', function () {
-      if (!this.value && !this.required) return;
-      this.classList.remove('user-invalid');
-    });
-  });
-})();
-
-(function bookingReturnToast() {
-  const p = new URLSearchParams(location.search);
-  const b = p.get('booking');
-  if (b === 'paid') {
-    const ref = p.get('ref') || '';
-    showToast('✓ Payment successful' + (ref ? ' — ref ' + ref : '') + '. We’ll confirm your booking shortly.');
-    history.replaceState({}, '', location.pathname);
-  } else if (b === 'cancel') {
-    showToast('Payment was cancelled. You can rebook anytime — ref ' + (p.get('ref') || 'on file') + '.');
-    history.replaceState({}, '', location.pathname);
-  }
-})();
-
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; ++i) outputArray[i] = rawData.charCodeAt(i);
-  return outputArray;
-}
-
-async function registerClipServiceWorker() {
-  if (!('serviceWorker' in navigator)) return null;
-  try {
-    return await navigator.serviceWorker.register('/sw.js', { scope: '/' });
-  } catch (e) {
-    console.warn('SW register failed', e);
-    return null;
-  }
-}
-
-async function subscribeCustomerPush() {
-  try {
-    const reg = await navigator.serviceWorker.ready;
-    const v = await fetch('/api/push-vapid').then((r) => r.json());
-    if (!v.configured || !v.publicKey) {
-      showToast('Push isn’t configured yet — we’ll email you instead.');
+  function renderStalls(items) {
+    const el = document.getElementById("stall-grid");
+    if (!el) return;
+    const use = items.slice(0, 8);
+    if (!use.length) {
+      el.innerHTML =
+        '<p style="grid-column:1/-1;text-align:center;padding:24px;background:var(--white);border-radius:var(--radius);">Market stalls go live as traders join — <a href="/store-owner">list your stall</a>.</p>';
       return;
     }
-    const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-      showToast('Notifications blocked — you can allow them in browser settings.');
+    el.innerHTML = use
+      .map(function (item) {
+        const name = item.role || "Trader";
+        const desc = (item.bio || "").slice(0, 120) || "Independent trader on Clip Services.";
+        const city = ["Manchester", "London", "Birmingham", "Leeds"][Math.abs(name.length) % 4];
+        return (
+          '<article class="stall-card"><div class="stall-photo" aria-hidden="true">' +
+          initials(name) +
+          '</div><div class="stall-body"><h3>' +
+          escapeHtml(name) +
+          '</h3><div class="stall-meta">' +
+          escapeHtml(city) +
+          '</div><p class="stall-desc">' +
+          escapeHtml(desc) +
+          '</p><a class="btn btn-primary" href="/stores">Visit Stall</a></div></article>'
+        );
+      })
+      .join("");
+  }
+
+  function renderFeaturedScroll(items) {
+    const track = document.getElementById("featured-scroll");
+    if (!track) return;
+    const use = items.slice(0, 12);
+    if (!use.length) {
+      track.innerHTML =
+        '<p style="padding:24px;">No featured stores yet. <a href="/store-owner">Be the first to list</a>.</p>';
       return;
     }
-    const sub = await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(v.publicKey)
+    track.innerHTML = use
+      .map(function (item) {
+        const name = item.role || "Store";
+        const cats = (item.services || []).slice(0, 3).join(" · ") || item.category || "Groceries";
+        const city = ["Manchester", "London", "Birmingham", "Leeds", "Leicester"][item.id ? item.id.length % 5 : 0];
+        return (
+          '<article class="store-card"><div class="store-card-img" aria-hidden="true">🏪</div><div class="store-card-body"><h3>' +
+          escapeHtml(name) +
+          '</h3><div class="city">' +
+          escapeHtml(city) +
+          '</div><div class="store-cats">' +
+          escapeHtml(cats) +
+          '</div><p class="stars" style="font-size:13px;color:var(--brown-muted);margin:6px 0" aria-label="Reviews">Customer reviews on profile</p><a class="btn btn-primary" style="width:100%;margin-top:12px" href="/stores">Shop Now</a></div></article>'
+        );
+      })
+      .join("");
+  }
+
+  function renderCities(stats) {
+    const el = document.getElementById("city-grid");
+    if (!el || !stats || !stats.cities) return;
+    el.innerHTML = stats.cities
+      .map(function (c) {
+        return (
+          '<a class="city-card" href="/stores?city=' +
+          encodeURIComponent(c.name) +
+          '"><div class="n">' +
+          c.count +
+          '</div><div class="l">' +
+          escapeHtml(c.name) +
+          "</div></a>"
+        );
+      })
+      .join("");
+  }
+
+  function renderCalendar() {
+    const track = document.getElementById("cal-track");
+    if (!track) return;
+    track.innerHTML = EVENTS.map(function (ev) {
+      return (
+        '<article class="cal-card"><div><h4>' +
+        escapeHtml(ev.title) +
+        '</h4><p>' +
+        escapeHtml(ev.desc) +
+        '</p></div><a href="/stores?event=' +
+        encodeURIComponent(ev.id) +
+        '">Shop for this season →</a></article>'
+      );
+    }).join("");
+  }
+
+  function animateCount(el, target, duration) {
+    if (!el) return;
+    const start = performance.now();
+    const from = 0;
+    const tgt = Math.max(0, Number(target) || 0);
+    function frame(t) {
+      const p = Math.min(1, (t - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const val = Math.round(from + (tgt - from) * eased);
+      el.textContent = val.toLocaleString("en-GB");
+      if (p < 1) requestAnimationFrame(frame);
+      else el.textContent = tgt.toLocaleString("en-GB");
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function runImpactAnimation(stats) {
+    if (!stats) return;
+    const obs = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          if (!entry.isIntersecting) return;
+          obs.disconnect();
+          const s = stats.storesListed || 0;
+          const o = stats.ordersProcessed || 0;
+          const ci = stats.citiesServed || 0;
+          const co = stats.communitiesRepresented || 24;
+          animateCount(document.getElementById("impact-stores"), s, 1400);
+          animateCount(document.getElementById("impact-orders"), o, 1400);
+          animateCount(document.getElementById("impact-cities"), ci, 1400);
+          animateCount(document.getElementById("impact-comm"), co, 1400);
+        });
+      },
+      { threshold: 0.2 }
+    );
+    const sec = document.querySelector(".impact");
+    if (sec) obs.observe(sec);
+  }
+
+  /* Tabs */
+  document.querySelectorAll(".comm-tab").forEach(function (tab) {
+    tab.addEventListener("click", function () {
+      document.querySelectorAll(".comm-tab").forEach(function (t) {
+        t.setAttribute("aria-selected", "false");
+      });
+      tab.setAttribute("aria-selected", "true");
+      const id = tab.getAttribute("aria-controls");
+      document.querySelectorAll(".comm-panel").forEach(function (p) {
+        p.classList.remove("active");
+        p.hidden = true;
+      });
+      const panel = document.getElementById(id);
+      if (panel) {
+        panel.classList.add("active");
+        panel.hidden = false;
+      }
     });
-    const res = await fetch('/api/push-subscribe', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ role: 'customer', subscription: sub.toJSON() })
-    });
-    const data = await res.json();
-    if (data.ok) showToast('✓ Booking & payment alerts enabled on this device.');
-    else showToast('⚠ Could not save alert subscription.');
-  } catch (e) {
-    console.warn(e);
-    showToast('⚠ Could not enable alerts.');
-  }
-}
+  });
 
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
-const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  document.addEventListener("DOMContentLoaded", async function () {
+    const [items, stats] = await Promise.all([loadListings(), loadStats()]);
+    fillFeatured(items);
+    renderStalls(items);
+    renderFeaturedScroll(items);
+    renderCities(stats);
+    renderCalendar();
 
-let deferredInstallPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredInstallPrompt = e;
-  const bar = document.getElementById('pwa-bar');
-  if (bar && !localStorage.getItem('cs_pwa_dismiss')) bar.hidden = false;
-});
+    if (stats) {
+      document.getElementById("trust-stores").textContent = stats.storesListed ?? "0";
+      document.getElementById("trust-orders").textContent = stats.ordersProcessed ?? "0";
+      document.getElementById("impact-stores").dataset.target = String(stats.storesListed);
+      document.getElementById("impact-orders").dataset.target = String(stats.ordersProcessed);
+      document.getElementById("impact-cities").dataset.target = String(stats.citiesServed);
+      document.getElementById("impact-comm").dataset.target = String(stats.communitiesRepresented);
+    }
+    runImpactAnimation(stats || { storesListed: 0, ordersProcessed: 0, citiesServed: 0, communitiesRepresented: 24 });
 
-document.getElementById('pwa-install-btn')?.addEventListener('click', async () => {
-  if (isIOS) {
-    document.getElementById('iosGuide')?.classList.add('open');
-    return;
-  }
-  if (!deferredInstallPrompt) return;
-  deferredInstallPrompt.prompt();
-  await deferredInstallPrompt.userChoice;
-  deferredInstallPrompt = null;
-  const bar = document.getElementById('pwa-bar');
-  if (bar) bar.hidden = true;
-});
-
-document.getElementById('iosGuideClose')?.addEventListener('click', () => {
-  document.getElementById('iosGuide')?.classList.remove('open');
-});
-document.getElementById('iosGuide')?.addEventListener('click', (e) => {
-  if (e.target.id === 'iosGuide') e.target.classList.remove('open');
-});
-
-document.getElementById('pwa-bar-dismiss')?.addEventListener('click', () => {
-  localStorage.setItem('cs_pwa_dismiss', '1');
-  const bar = document.getElementById('pwa-bar');
-  if (bar) bar.hidden = true;
-});
-
-document.getElementById('push-enable-btn')?.addEventListener('click', () => {
-  if (isIOS && !isStandalone) {
-    document.getElementById('iosGuide')?.classList.add('open');
-    showToast('Add Clip Services to your home screen first, then enable alerts from the app.');
-    return;
-  }
-  subscribeCustomerPush();
-  const p = document.getElementById('push-prompt');
-  if (p) p.hidden = true;
-});
-
-document.getElementById('push-dismiss')?.addEventListener('click', () => {
-  localStorage.setItem('cs_push_dismiss', '1');
-  const p = document.getElementById('push-prompt');
-  if (p) p.hidden = true;
-});
-
-if (isIOS && !isStandalone && !localStorage.getItem('cs_pwa_dismiss')) {
-  setTimeout(() => {
-    const bar = document.getElementById('pwa-bar');
-    const txt = document.getElementById('pwa-bar-text');
-    const btn = document.getElementById('pwa-install-btn');
-    if (bar) bar.hidden = false;
-    if (txt) txt.textContent = 'Add Clip Services to your home screen for the best experience';
-    if (btn) btn.textContent = 'How to install';
-  }, 5000);
-}
-
-if (isIOS && isStandalone) {
-  const pushText = document.getElementById('push-prompt-text');
-  if (pushText) pushText.innerHTML = 'Enable booking &amp; payment alerts <strong style="color:var(--green);">(iOS 16.4+)</strong>';
-}
-
-registerClipServiceWorker().then(() => {
-  var pe = document.getElementById('push-email-input');
-  if (pe && localStorage.getItem('cs_customer_email')) pe.value = localStorage.getItem('cs_customer_email');
-  setTimeout(async () => {
-    if (isIOS && !isStandalone) return;
-    if (!('Notification' in window) || Notification.permission !== 'default') return;
-    if (localStorage.getItem('cs_push_dismiss')) return;
-    const v = await fetch('/api/push-vapid').then((r) => r.json()).catch(() => ({}));
-    if (!v.configured) return;
-    const pr = document.getElementById('push-prompt');
-    if (pr) pr.hidden = false;
-  }, 12000);
-});
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(function () {});
+    }
+  });
+})();
 </script>
-<script src="/site-track.js" defer></script>
 </body>
 </html>
