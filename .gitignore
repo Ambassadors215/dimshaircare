@@ -19,6 +19,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Personal / private notes (not for public repo)
+GLOBAL-TALENT-VISA-NOTES.md
+
 # Personal files — do not publish
 *.pdf
 *.jpeg

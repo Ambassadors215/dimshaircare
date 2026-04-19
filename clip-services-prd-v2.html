@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clip Services — Product Requirements Document v2.0</title>
+<title>Clip Services — Product Requirements Document v2.1</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -181,7 +181,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
   <div class="sb-logo">Clip Services</div>
   <div class="sb-doc">Product Requirements Doc</div>
   <div class="sb-version">
-    <span class="vbadge vb-new">v2.0 — Current</span>
+    <span class="vbadge vb-new">v2.1 — Current</span>
     <span class="vbadge vb-old">v1.0 — Deprecated</span>
   </div>
 
@@ -215,7 +215,9 @@ tr:hover td{background:rgba(255,255,255,.015);}
   <div class="sb-section">Governance</div>
   <a href="#legal">18. Legal & Compliance <span class="sb-changed">New</span></a>
   <a href="#gtm">19. Go-to-Market <span class="sb-changed">New</span></a>
-  <a href="#recommendations">20. Recommendations <span class="sb-changed">New</span></a>
+  <a href="#vision-aa">20. Vision — African & Asian marketplace <span class="sb-changed">New</span></a>
+  <a href="#notifications-matrix">21. Notifications & engagement <span class="sb-changed">New</span></a>
+  <a href="#recommendations">22. Recommendations <span class="sb-changed">Updated</span></a>
 </aside>
 
 <!-- MAIN -->
@@ -223,12 +225,12 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
 <!-- HEADER -->
 <div class="doc-header">
-  <div class="doc-eyebrow">Product Requirements Document — Version 2.0</div>
+  <div class="doc-eyebrow">Product Requirements Document — Version 2.1</div>
   <div class="doc-title">Clip<span>Services</span></div>
-  <p class="doc-intro">Clip Services has evolved from a solo runner operation into a two-sided local service marketplace. This document supersedes v1.0 entirely. The business model, platform features, user flows, commission structure, roadmap, legal compliance, go-to-market strategy, and strategic recommendations have all been updated to reflect the marketplace model.</p>
+  <p class="doc-intro">Clip Services has evolved from a solo runner operation into a two-sided local service marketplace with a clear positioning focus on <strong>African and Asian</strong> digital talent in Greater Manchester, plus universal categories. This document supersedes v1.0 entirely. v2.1 adds vision, notification architecture (email + PWA push), and engagement expectations alongside the marketplace model, GTM, and recommendations.</p>
   <div class="doc-meta">
     <div class="meta-item"><div class="meta-label">Author</div><div class="meta-value">Sonia — Founder</div></div>
-    <div class="meta-item"><div class="meta-label">Version</div><div class="meta-value">2.0 — Marketplace</div></div>
+    <div class="meta-item"><div class="meta-label">Version</div><div class="meta-value">2.1 — Marketplace + notifications</div></div>
     <div class="meta-item"><div class="meta-label">Previous version</div><div class="meta-value">1.0 — Solo runner (deprecated)</div></div>
     <div class="meta-item"><div class="meta-label">Location</div><div class="meta-value">Clippers Quays, Salford M50</div></div>
     <div class="meta-item"><div class="meta-label">Status</div><div class="meta-value">Ready to launch</div></div>
@@ -253,11 +255,20 @@ tr:hover td{background:rgba(255,255,255,.015);}
   <div class="change-item"><span class="ci-rem">REMOVED</span>Clip Pass subscription — replaced by provider-managed recurring bookings</div>
 </div>
 
+<div class="changelog" style="border-left-color:var(--cyan)">
+  <h4 style="color:var(--cyan)">What changed v2.0 → v2.1</h4>
+  <div class="change-item"><span class="ci-new">NEW</span>Positioning: African & Asian digital marketplace (operations remain Greater Manchester–first)</div>
+  <div class="change-item"><span class="ci-new">NEW</span>Notification architecture — full matrix for customer, provider, admin (see §21 + repo <code style="font-size:12px">clip-services-notifications.md</code>)</div>
+  <div class="change-item"><span class="ci-new">NEW</span>PWA manifest copy aligned; service worker cache bump for fresh installs</div>
+  <div class="change-item"><span class="ci-upd">UPDATED</span>Engagement: every critical booking, payment, negotiation, and admin event has email + push where implemented in <code style="font-size:12px">lib/notify.js</code></div>
+</div>
+
 <!-- 1. OVERVIEW -->
 <div class="section" id="overview">
   <h2><span class="snum">01</span>Executive Summary</h2>
   <div class="sdiv"></div>
   <p>Clip Services is a hyper-local two-sided service marketplace operating from Clippers Quays, Salford. The platform connects residents, apartment dwellers, and businesses in the Salford Quays / MediaCityUK area with verified local service providers — runners, cleaners, handymen, dog walkers, beauty technicians, tech helpers, and more.</p>
+  <p><strong>Cultural positioning:</strong> The product and catalogue explicitly elevate <strong>African and Asian</strong> talent and services (e.g. braids & hair, culturally competent beauty, community-trusted errands) alongside universal categories — creating value for an under-served segment and immediate differentiation from generic gig apps.</p>
   <p>Unlike global platforms (TaskRabbit, Bark.com), Clip Services is hyper-local by design. Every provider is from the area. Every customer is within 3 miles. The founder — Sonia — manages the platform, vets all providers, and earns a 15% commission on every booking without personally delivering any service.</p>
 
   <div class="callout">
@@ -999,9 +1010,84 @@ tr:hover td{background:rgba(255,255,255,.015);}
   </table>
 </div>
 
-<!-- 20. STRATEGIC RECOMMENDATIONS -->
+<!-- 20. VISION — AFRICAN & ASIAN MARKETPLACE -->
+<div class="section" id="vision-aa">
+  <h2><span class="snum">20</span>Vision: African & Asian digital marketplace</h2>
+  <div class="sdiv"></div>
+
+  <p>Clip Services is positioned as a <strong>Greater Manchester–first</strong> digital marketplace with a deliberate focus on <strong>African and Asian</strong> talent and culturally relevant services — without claiming global coverage the product does not yet have. Operations, vetting, and marketing remain anchored in Salford Quays / MediaCityUK; the <em>value proposition</em> is inclusive talent discovery, trust (verified listings, secure payments), and notifications that keep every party informed.</p>
+
+  <h3>Value &amp; benefit (why users engage)</h3>
+  <table>
+    <thead><tr><th>Audience</th><th>Value</th><th>How the product delivers</th></tr></thead>
+    <tbody>
+      <tr><td class="td-name">Customers</td><td>Find pros who “get” their context (hair, beauty, diet-aware errands, language comfort)</td><td>Category mix, provider profiles, negotiation + booking flows, PWA + email alerts</td></tr>
+      <tr><td class="td-name">Providers</td><td>Fair visibility and paid work without building their own stack</td><td>Listings, Stripe Connect path, admin publish, notifications on checkout and payment</td></tr>
+      <tr><td class="td-name">Admin</td><td>One place to see demand, risk, and payouts</td><td>Admin APIs, duplicate alerts on critical events, audit trail via email + push</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Engagement hooks (immediate)</h3>
+  <div class="story" style="border-left-color:var(--cyan);"><strong>Transactional alerts.</strong> Every meaningful state change triggers email and (where subscribed) PWA push — reducing drop-off between quote and paid job.</div>
+  <div class="story" style="border-left-color:var(--cyan);"><strong>Negotiation loop.</strong> Counter-offers and accept/decline keep both sides returning to the same thread.</div>
+  <div class="story" style="border-left-color:var(--cyan);"><strong>Installable PWA.</strong> Home-screen presence + push permission = higher return rate than one-off web visits.</div>
+
+  <div class="callout">
+    <p><strong>Metrics that matter:</strong> Pair this positioning with measurable traction — bookings, repeat customers, Stripe volume, provider count, notification opt-in rate — tracked in your analytics and ops dashboards.</p>
+  </div>
+</div>
+
+<!-- 21. NOTIFICATIONS & ENGAGEMENT -->
+<div class="section" id="notifications-matrix">
+  <h2><span class="snum">21</span>Notifications &amp; engagement architecture</h2>
+  <div class="sdiv"></div>
+
+  <p>Channels: <strong>email</strong> (transactional), <strong>PWA push</strong> (Web Push / service worker), optional <strong>WhatsApp</strong> for ops. Implementation lives in <code style="font-size:13px">lib/notify.js</code> and <code style="font-size:13px">lib/push.js</code>. The authoritative matrix is <code style="font-size:13px">clip-services-notifications.md</code> (v3).</p>
+
+  <h3>Customer (booker)</h3>
+  <table>
+    <thead><tr><th>Event</th><th>Email</th><th>Push</th></tr></thead>
+    <tbody>
+      <tr><td>Booking submitted</td><td class="td-green">Yes</td><td class="td-green">Yes</td></tr>
+      <tr><td>Checkout started</td><td class="td-green">Yes</td><td class="td-green">Yes</td></tr>
+      <tr><td>Payment succeeded</td><td class="td-green">Yes</td><td class="td-green">Yes</td></tr>
+      <tr><td>Booking status changed (incl. confirmed / completed / cancelled)</td><td class="td-green">Yes</td><td class="td-green">Yes</td></tr>
+      <tr><td>Negotiation updates (thread / offer / counter / accept / decline)</td><td class="td-green">Yes</td><td class="td-green">Yes</td></tr>
+      <tr><td>Reminders &amp; abandoned checkout (24h+)</td><td class="td-amber">Roadmap</td><td class="td-amber">Roadmap</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Provider</h3>
+  <table>
+    <thead><tr><th>Event</th><th>Email</th><th>Push</th></tr></thead>
+    <tbody>
+      <tr><td>Negotiation activity (same as customer, recipient-specific)</td><td class="td-green">Yes</td><td class="td-green">Yes</td></tr>
+      <tr><td>Customer started checkout for their job</td><td class="td-green">Yes</td><td class="td-green">Yes</td></tr>
+      <tr><td>Payment succeeded (earnings / payout context)</td><td class="td-amber">Stripe-led</td><td class="td-green">Yes</td></tr>
+      <tr><td>Listing published / updated</td><td class="td-amber">Roadmap</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Admin / operator</h3>
+  <table>
+    <thead><tr><th>Event</th><th>Email</th><th>Push</th></tr></thead>
+    <tbody>
+      <tr><td>New booking</td><td class="td-green">Yes</td><td class="td-green">Yes</td></tr>
+      <tr><td>Checkout started</td><td class="td-green">Yes</td><td class="td-green">Yes</td></tr>
+      <tr><td>Payment succeeded</td><td class="td-green">Yes</td><td class="td-green">Yes</td></tr>
+      <tr><td>New provider application</td><td class="td-green">Yes</td><td class="td-green">Yes</td></tr>
+      <tr><td>Any negotiation activity (oversight)</td><td class="td-green">Yes</td><td class="td-green">Yes</td></tr>
+      <tr><td>Booking status changed from dashboard</td><td class="td-green">Yes</td><td class="td-green">Yes</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Principle</h3>
+  <p><strong>No silent state changes.</strong> If money or a commitment moves, at least one channel must notify the affected user; high-intent events use both email and push when the user has opted into push.</p>
+</div>
+
+<!-- 22. STRATEGIC RECOMMENDATIONS -->
 <div class="section" id="recommendations">
-  <h2><span class="snum">20</span>Strategic Recommendations</h2>
+  <h2><span class="snum">22</span>Strategic Recommendations</h2>
   <div class="sdiv"></div>
 
   <div class="callout purple">

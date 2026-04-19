@@ -1,7 +1,7 @@
 {
-  "name": "Clip Services — Local marketplace",
+  "name": "Clip Services — African & Asian talent marketplace",
   "short_name": "Clip Services",
-  "description": "Book verified runners, cleaners, handymen and more in Salford Quays & MediaCityUK.",
+  "description": "Greater Manchester digital marketplace: verified African & Asian talent and local pros. Book, pay securely, get push alerts for every booking step.",
   "id": "https://clipservice.app/",
   "start_url": "https://clipservice.app/",
   "scope": "https://clipservice.app/",
@@ -23,5 +23,5 @@
       "purpose": "any"
     }
   ],
-  "categories": ["business", "lifestyle"]
+  "categories": ["business", "lifestyle", "shopping"]
 }

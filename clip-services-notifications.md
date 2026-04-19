@@ -1,34 +1,82 @@
-# Clip Services — notification matrix (email + PWA push)
+# Clip Services — full notification matrix (v3)
 
-Push notifications require **VAPID keys** in Vercel (`VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`) and the user (or admin) tapping **Enable** to grant permission. Email uses **Brevo SMTP** (`BREVO_SMTP_USER`, `BREVO_SMTP_KEY`, `EMAIL_FROM`, `ADMIN_EMAIL`).
+Channels: **Email** (Brevo SMTP), **PWA push** (VAPID), **WhatsApp** (manual / ops — not automated in code).  
+Configure: `BREVO_SMTP_*`, `EMAIL_FROM`, `ADMIN_EMAIL`, `VAPID_*`, Redis for data.
 
-## Customer (end user)
+Legend: ✅ implemented in `lib/notify.js` · 🔜 roadmap (wire cron/admin) · — not applicable
 
-| Event | Email | PWA push (customer channel) |
-|-------|--------|-----------------------------|
-| Booking saved (pay offline / WhatsApp path) | Yes — confirmation + ref | Yes — “Booking received” |
-| Stripe checkout started (awaiting card) | Yes — link to pay | Yes — “Complete payment” |
-| Card payment succeeded (Stripe webhook) | Yes — payment confirmed | Yes — “Payment confirmed” |
-| Admin sets status → **confirmed** | Yes | Yes |
-| Admin sets status → **completed** | Yes | Yes |
-| Admin sets status → **cancelled** | Yes | Yes |
-| Admin sets status → **paid** (manual) | Yes | Yes |
-| Provider application submitted | Yes — “application received” | No (email only; avoids spamming all subscribers) |
+---
 
-## Admin (operator inbox + admin push channel)
+## Customer (booker)
 
-| Event | Email to `ADMIN_EMAIL` | PWA push (admin channel) |
-|-------|-------------------------|---------------------------|
-| New booking (offline path) | Yes | Yes |
-| Checkout started (awaiting payment) | Yes | Yes |
-| Card payment succeeded | Yes | Yes |
-| New provider application | Yes | Yes |
-| Admin changes booking status in dashboard | No* | No* |
+| # | Trigger | Email | PWA push | Notes |
+|---|---------|-------|----------|--------|
+| C1 | Booking created (offline / WhatsApp path) | ✅ | ✅ | `notifyBookingSubmittedCustomer` |
+| C2 | Stripe Checkout session created (“pay now”) | ✅ | ✅ | `notifyCheckoutStartedCustomer` |
+| C3 | Card payment succeeded (Stripe webhook) | ✅ | ✅ | `notifyPaymentSucceededCustomer` |
+| C4 | Admin sets booking status → confirmed / completed / cancelled / paid | ✅ | ✅ | `notifyBookingStatusCustomer` |
+| C5 | Negotiation: new thread / offer / counter / accept / decline | ✅ | ✅ | Email + push to customer; `notifyNegotiationUpdate` |
+| C6 | Provider application submitted (if customer also contacted) | — | — | Usually N/A for customers |
+| C7 | Reminder 24h before appointment | 🔜 | 🔜 | Needs scheduled job + consent |
+| C8 | Abandoned checkout (>24h awaiting payment) | 🔜 | 🔜 | Cron + KV scan |
+| C9 | Review request after completed job | 🔜 | 🔜 | After `completed` + delay |
 
-\*Status changes are customer-facing; the admin already performed the action in the dashboard.
+---
 
-## Optional future extensions
+## Provider (listed pro)
 
-- Reminder before appointment (scheduled job + user consent).
-- “Abandoned checkout” reminder if `awaiting_payment` > 24h (cron + KV scan).
-- SMS via third party (not implemented).
+| # | Trigger | Email | PWA push | Notes |
+|---|---------|-------|----------|--------|
+| P1 | Negotiation: new request / offer / counter / accept / decline | ✅ | ✅ | `notifyNegotiationUpdate` (recipient side) |
+| P2 | Customer starts Stripe checkout (your job) | ✅ | ✅ | `notifyCheckoutStartedProvider` |
+| P3 | Payment succeeded (payout pending) | Push ✅ | Email — | `notifyPaymentSucceededProvider` (push); payout email via Stripe |
+| P4 | Admin publishes / updates listing | 🔜 | — | Optional “you’re live” email |
+| P5 | Poor rating / strike warning | 🔜 | 🔜 | Moderation policy |
+
+---
+
+## Admin / operator (`ADMIN_EMAIL` + admin push channel)
+
+| # | Trigger | Email | PWA push | Notes |
+|---|---------|-------|----------|--------|
+| A1 | New booking (any path) | ✅ | ✅ | `notifyBookingSubmittedAdmin` |
+| A2 | Checkout started (awaiting card) | ✅ | ✅ | `notifyCheckoutStartedAdmin` |
+| A3 | Card payment succeeded | ✅ | ✅ | `notifyPaymentSucceededAdmin` |
+| A4 | New provider application (+ KYC in message) | ✅ | ✅ | `notifyProviderApplicationAdmin` |
+| A5 | Negotiation activity (all types) | ✅ | ✅ | `notifyNegotiationUpdate` also pings **admin** push |
+| A6 | Booking status changed (from dashboard) | ✅ email | ✅ push | `notifyBookingStatusAdmin` (in addition to customer email) |
+| A7 | Stripe Connect account ready | 🔜 | — | Webhook `account.updated` — optional email |
+| A8 | Dispute / refund flag | 🔜 | 🔜 | Manual or future `/api/dispute` |
+
+---
+
+## Security & compliance (optional alerts)
+
+| # | Event | Channel | Notes |
+|---|--------|---------|--------|
+| S1 | Failed admin API auth (burst) | 🔜 | Rate-limit logs |
+| S2 | Stripe webhook signature failure | Logs | Already logged |
+| S3 | Redis / KV outage | 🔜 | Uptime monitor |
+
+---
+
+## Engagement (product roadmap)
+
+| Idea | Purpose |
+|------|---------|
+| Push: “Someone viewed your profile” (cap 1/day) | Provider retention |
+| Email digest: weekly “open negotiations” | Customer + provider |
+| SMS fallback (Twilio) | High-value bookings only |
+| In-app inbox (Phase 2) | Reduce email fatigue |
+
+---
+
+## Implementation map
+
+| Function | File |
+|----------|------|
+| Booking, checkout, payment, status, negotiation, provider application | `lib/notify.js` |
+| Push delivery | `lib/push.js` |
+| Stripe events | `api/lib/handlers/stripe-webhook.js` + notify calls |
+
+Update this file when adding new `notify*` functions.

@@ -1,5 +1,5 @@
-/* Clip Services — v4 */
-const CACHE = "clip-services-v6";
+/* Clip Services — v5 */
+const CACHE = "clip-services-v7";
 const OFFLINE_PAGE = "/offline.html";
 const PRECACHE = [
   "/",
