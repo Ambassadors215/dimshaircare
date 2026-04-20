@@ -3,17 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clip Services — African, Caribbean & Asian Marketplace</title>
-<meta name="description" content="The UK's marketplace for independent African, Caribbean and Asian stores and market traders. Authentic products. Real community. Order online. Stripe secure.">
+<title>Clip Services — African, Caribbean &amp; Asian Marketplace UK | Shop Online</title>
+<meta name="description" content="Find and order from African, Caribbean and Asian independent stores across the UK. Authentic food, hair, beauty and fashion. Secure card payments. Collect or get delivery.">
 <meta name="theme-color" content="#8B3A3A">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect rx='18' width='100' height='100' fill='%238B3A3A'/><text x='50' y='68' text-anchor='middle' font-size='48' font-family='Georgia' font-weight='700' fill='%23D4A017'>C</text></svg>">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Clip Services — African, Caribbean & Asian Marketplace">
-<meta property="og:description" content="Discover independent stores and market stalls across the UK. Your community, online.">
+<meta property="og:title" content="Clip Services — African, Caribbean &amp; Asian Marketplace UK | Shop Online">
+<meta property="og:description" content="Find and order from African, Caribbean and Asian independent stores across the UK. Authentic food, hair, beauty and fashion. Secure card payments. Collect or get delivery.">
 <meta property="og:url" content="https://clipservice.app/">
+<meta property="og:image" content="https://clipservice.app/icons/clip-logo-full.svg">
+<meta property="og:image:alt" content="Clip Services — UK marketplace for African, Caribbean and Asian stores">
+<meta property="og:locale" content="en_GB">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Clip Services — African, Caribbean &amp; Asian Marketplace UK">
+<meta name="twitter:description" content="Find and order from African, Caribbean and Asian independent stores across the UK. Secure card payments.">
+<meta name="twitter:image" content="https://clipservice.app/icons/clip-logo-full.svg">
 <link rel="canonical" href="https://clipservice.app/">
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
 <link rel="manifest" href="/manifest.webmanifest">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://clipservice.app/#organization","name":"Clip Services","description":"UK marketplace for African, Caribbean and Asian independent stores","url":"https://clipservice.app","foundingDate":"2026","founder":{"@type":"Person","name":"Sonia Chidinma Otikpa"},"logo":"https://clipservice.app/icons/clip-logo-full.svg"},{"@type":"WebSite","name":"Clip Services","url":"https://clipservice.app","publisher":{"@id":"https://clipservice.app/#organization"},"potentialAction":{"@type":"SearchAction","target":"https://clipservice.app/stores?q={search_term_string}","query-input":"required name=search_term_string"}}]}
+</script>
 <link rel="apple-touch-icon" href="/icons/icon-192.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -293,12 +303,12 @@ footer a:hover{color:var(--gold-soft);}
         <div class="cat-row">
           <h3>Food &amp; grocery</h3>
           <div class="cat-grid">
-            <a class="cat-cell" href="/stores?category=produce"><span class="ico">🌿</span>Fresh Produce</a>
-            <a class="cat-cell" href="/stores?category=meat"><span class="ico">🥩</span>Meat &amp; Protein</a>
-            <a class="cat-cell" href="/stores?category=staples"><span class="ico">🌾</span>Staples &amp; Grains</a>
-            <a class="cat-cell" href="/stores?category=oils"><span class="ico">🫙</span>Oils &amp; Condiments</a>
-            <a class="cat-cell" href="/stores?category=ready"><span class="ico">🍲</span>Ready Meals &amp; Snacks</a>
-            <a class="cat-cell" href="/stores?category=drinks"><span class="ico">🥤</span>Drinks &amp; Beverages</a>
+            <a class="cat-cell" href="/categories/fresh-produce"><span class="ico">🌿</span>Fresh Produce</a>
+            <a class="cat-cell" href="/categories/spices-staples"><span class="ico">🥩</span>Meat &amp; Protein</a>
+            <a class="cat-cell" href="/categories/spices-staples"><span class="ico">🌾</span>Staples &amp; Grains</a>
+            <a class="cat-cell" href="/categories/spices-staples"><span class="ico">🫙</span>Oils &amp; Condiments</a>
+            <a class="cat-cell" href="/categories/ready-meals"><span class="ico">🍲</span>Ready Meals &amp; Snacks</a>
+            <a class="cat-cell" href="/categories/drinks"><span class="ico">🥤</span>Drinks &amp; Beverages</a>
           </div>
         </div>
         <div class="cat-row">
@@ -542,6 +552,7 @@ footer a:hover{color:var(--gold-soft);}
   function renderMiniCard(item) {
     const name = item.role || "Store";
     const cat = item.category || "groceries";
+    const storeUrl = item.id ? "/store/" + encodeURIComponent(item.id) : "/stores";
     return (
       '<div class="mini-card"><h3>' +
       escapeHtml(name) +
@@ -549,7 +560,9 @@ footer a:hover{color:var(--gold-soft);}
       escapeHtml((item.services && item.services[0]) || cat.replace(/-/g, " ")) +
       " · " +
       escapeHtml(cat) +
-      '</p><a class="btn btn-secondary" style="margin-top:10px;padding:8px 14px;font-size:13px" href="/stores">View on map</a></div>'
+      '</p><a class="btn btn-secondary" style="margin-top:10px;padding:8px 14px;font-size:13px" href="' +
+      storeUrl +
+      '">View store</a></div>'
     );
   }
 
@@ -615,6 +628,7 @@ footer a:hover{color:var(--gold-soft);}
         const name = item.role || "Trader";
         const desc = (item.bio || "").slice(0, 120) || "Independent trader on Clip Services.";
         const city = ["Manchester", "London", "Birmingham", "Leeds"][Math.abs(name.length) % 4];
+        const stallUrl = item.id ? "/store/" + encodeURIComponent(item.id) : "/stores";
         return (
           '<article class="stall-card"><div class="stall-photo" aria-hidden="true">' +
           initials(name) +
@@ -624,7 +638,9 @@ footer a:hover{color:var(--gold-soft);}
           escapeHtml(city) +
           '</div><p class="stall-desc">' +
           escapeHtml(desc) +
-          '</p><a class="btn btn-primary" href="/stores">Visit Stall</a></div></article>'
+          '</p><a class="btn btn-primary" href="' +
+          stallUrl +
+          '">Visit Stall</a></div></article>'
         );
       })
       .join("");
@@ -662,9 +678,14 @@ footer a:hover{color:var(--gold-soft);}
     if (!el || !stats || !stats.cities) return;
     el.innerHTML = stats.cities
       .map(function (c) {
+        const slug = String(c.name || "")
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9-]/g, "");
+        const cityUrl = slug ? "/cities/" + slug : "/stores";
         return (
-          '<a class="city-card" href="/stores?city=' +
-          encodeURIComponent(c.name) +
+          '<a class="city-card" href="' +
+          cityUrl +
           '"><div class="n">' +
           c.count +
           '</div><div class="l">' +

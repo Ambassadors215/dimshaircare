@@ -6,6 +6,11 @@
     { "source": "/index.html", "destination": "/", "permanent": true }
   ],
   "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
+    { "source": "/store/:sid/p/:idx/:slug", "destination": "/api/product-html?storeId=:sid&idx=:idx" },
+    { "source": "/store/:id", "destination": "/api/store-html?id=:id" },
+    { "source": "/cities/:city", "destination": "/api/city-html?city=:city" },
+    { "source": "/categories/:slug", "destination": "/api/category-html?slug=:slug" },
     { "source": "/", "destination": "/clip-services-marketplace" },
     { "source": "/admin", "destination": "/admin/index.html" },
     { "source": "/admin/", "destination": "/admin/index.html" },
@@ -23,6 +28,18 @@
     "api/admin/index.js": { "maxDuration": 30 }
   },
   "headers": [
+    {
+      "source": "/sitemap.xml",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=7200" }
+      ]
+    },
+    {
+      "source": "/robots.txt",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=86400" }
+      ]
+    },
     {
       "source": "/(.*)",
       "headers": [

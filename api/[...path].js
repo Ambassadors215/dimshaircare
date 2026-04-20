@@ -15,6 +15,11 @@ import stripeWebhook from "../lib/handlers/stripe-webhook.js";
 import stripeCheckout from "../lib/handlers/stripe-checkout.js";
 import trackVisit from "../lib/handlers/track-visit.js";
 import publicStats from "../lib/handlers/public-stats.js";
+import sitemap from "../lib/handlers/sitemap.js";
+import storeHtml from "../lib/handlers/store-html.js";
+import cityHtml from "../lib/handlers/city-html.js";
+import categoryHtml from "../lib/handlers/category-html.js";
+import productHtml from "../lib/handlers/product-html.js";
 
 const handlers = {
   booking,
@@ -30,6 +35,11 @@ const handlers = {
   "stripe-checkout": stripeCheckout,
   "track-visit": trackVisit,
   "public-stats": publicStats,
+  sitemap,
+  "store-html": storeHtml,
+  "city-html": cityHtml,
+  "category-html": categoryHtml,
+  "product-html": productHtml,
 };
 
 function notFound(res) {

@@ -1,0 +1,6 @@
+# https://clipservice.app — Clip Services Ltd
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://clipservice.app/sitemap.xml

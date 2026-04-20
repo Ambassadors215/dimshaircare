@@ -3,10 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Browse stores & stalls — Clip Services</title>
-<meta name="description" content="Browse independent African, Caribbean and Asian stores and market traders on Clip Services. Filter by city and category.">
+<title>Browse African, Caribbean &amp; Asian Stores UK | Clip Services</title>
+<meta name="description" content="Browse independent African, Caribbean and Asian stores and market traders across the UK. Filter by city, order online — secure Stripe checkout on Clip Services.">
 <meta name="theme-color" content="#8B3A3A">
+<link rel="canonical" href="https://clipservice.app/stores">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Browse African, Caribbean &amp; Asian Stores UK | Clip Services">
+<meta property="og:description" content="Browse independent African, Caribbean and Asian stores across the UK. Secure payments, WhatsApp updates, PWA.">
+<meta property="og:url" content="https://clipservice.app/stores">
+<meta property="og:image" content="https://clipservice.app/icons/clip-logo-full.svg">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://clipservice.app/icons/clip-logo-full.svg">
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
 <link rel="manifest" href="/manifest.webmanifest">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"Clip Services","url":"https://clipservice.app","description":"UK marketplace for African, Caribbean and Asian independent stores","potentialAction":{"@type":"SearchAction","target":"https://clipservice.app/stores?q={search_term_string}","query-input":"required name=search_term_string"}}
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--terracotta:#8B3A3A;--cream:#F5F0E8;--brown:#2C1810;--muted:#5C4033;--gold:#D4A017;--white:#fff;}
@@ -72,13 +85,16 @@ h1{font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.75rem,4vw,2.25
   const preCity = params.get("city") || "";
   const preCat = params.get("category") || "";
   const preEvent = params.get("event") || "";
+  const preQ = params.get("q") || "";
   if(preCity) document.getElementById("city").value = preCity;
+  if(preQ) document.getElementById("q").value = preQ;
 
   function card(item){
     const name = item.role || "Store";
     const bio = (item.bio || "").slice(0, 200);
     const cats = (item.services || []).slice(0, 5).join(", ") || item.category || "Groceries";
-    return '<article class="card"><h2>'+esc(name)+'</h2><div class="meta">'+esc(cats)+'</div><p>'+esc(bio || "Independent seller on Clip Services.")+'</p><p style="margin-top:12px"><a href="/user/">Order / track</a> · <a href="https://wa.me/447487588706">WhatsApp</a></p></article>';
+    const storeHref = item.id ? "/store/"+encodeURIComponent(item.id) : "/stores";
+    return '<article class="card"><h2><a href="'+storeHref+'">'+esc(name)+'</a></h2><div class="meta">'+esc(cats)+'</div><p>'+esc(bio || "Independent seller on Clip Services.")+'</p><p style="margin-top:12px"><a href="'+storeHref+'">View store page</a> · <a href="/user/">Order / track</a> · <a href="https://wa.me/447487588706">WhatsApp</a></p></article>';
   }
   function esc(s){ const d=document.createElement("div"); d.textContent=s; return d.innerHTML; }
 
