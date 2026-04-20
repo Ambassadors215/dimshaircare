@@ -397,18 +397,18 @@ footer a:hover{color:var(--gold-soft);}
         <div class="how-col">
           <h3>For customers</h3>
           <ol>
-            <li>Find your store or stall</li>
-            <li>Browse their products</li>
-            <li>Order online securely</li>
+            <li>Browse stores</li>
+            <li>Add products</li>
+            <li>Pay securely</li>
             <li>Collect or receive delivery</li>
           </ol>
         </div>
         <div class="how-col">
           <h3>For store owners</h3>
           <ol>
-            <li>Apply to list your store</li>
+            <li>Apply in minutes</li>
             <li>Upload your products</li>
-            <li>Receive orders via WhatsApp</li>
+            <li>Receive orders on WhatsApp</li>
             <li>Get paid within 24 hours</li>
           </ol>
         </div>
@@ -478,6 +478,7 @@ footer a:hover{color:var(--gold-soft);}
         <li><a href="/stores#cities">Browse by City</a></li>
         <li><a href="/stores#categories">Browse by Category</a></li>
         <li><a href="/user/">Track My Order</a></li>
+        <li><a href="/blog">Blog</a></li>
         <li><a href="/stores#faq">FAQ</a></li>
       </ul>
     </div>
@@ -520,6 +521,9 @@ footer a:hover{color:var(--gold-soft);}
       · WhatsApp: <a href="tel:+447487588706">+44 7487 588 706</a>
     </div>
   </div>
+  <p class="wrap" style="text-align:center;margin-top:12px;font-size:13px;opacity:.9;">
+    <a href="/stores">Browse Stores</a> · <a href="/store-owner">List Your Store</a> · <a href="/blog">Blog</a> · <a href="/stores#faq">FAQ</a> · <a href="mailto:clipservices26@gmail.com">Contact</a> · <a href="/privacy-policy">Privacy</a> · <a href="/terms">Terms</a>
+  </p>
   <p class="wrap" style="text-align:center;margin-top:20px;font-size:13px;opacity:.85;">
     © 2026 Clip Services Ltd, Manchester. UK Registered Company.
   </p>
@@ -552,7 +556,7 @@ footer a:hover{color:var(--gold-soft);}
   function renderMiniCard(item) {
     const name = item.role || "Store";
     const cat = item.category || "groceries";
-    const storeUrl = item.id ? "/store/" + encodeURIComponent(item.id) : "/stores";
+    const storeUrl = item.storeSlug ? "/stores/" + encodeURIComponent(item.storeSlug) : (item.id ? "/store/" + encodeURIComponent(item.id) : "/stores");
     return (
       '<div class="mini-card"><h3>' +
       escapeHtml(name) +
@@ -628,7 +632,7 @@ footer a:hover{color:var(--gold-soft);}
         const name = item.role || "Trader";
         const desc = (item.bio || "").slice(0, 120) || "Independent trader on Clip Services.";
         const city = ["Manchester", "London", "Birmingham", "Leeds"][Math.abs(name.length) % 4];
-        const stallUrl = item.id ? "/store/" + encodeURIComponent(item.id) : "/stores";
+        const stallUrl = item.storeSlug ? "/stores/" + encodeURIComponent(item.storeSlug) : (item.id ? "/store/" + encodeURIComponent(item.id) : "/stores");
         return (
           '<article class="stall-card"><div class="stall-photo" aria-hidden="true">' +
           initials(name) +
@@ -660,6 +664,7 @@ footer a:hover{color:var(--gold-soft);}
         const name = item.role || "Store";
         const cats = (item.services || []).slice(0, 3).join(" · ") || item.category || "Groceries";
         const city = ["Manchester", "London", "Birmingham", "Leeds", "Leicester"][item.id ? item.id.length % 5 : 0];
+        const shopHref = item.storeSlug ? "/stores/" + encodeURIComponent(item.storeSlug) : (item.id ? "/store/" + encodeURIComponent(item.id) : "/stores");
         return (
           '<article class="store-card"><div class="store-card-img" aria-hidden="true">🏪</div><div class="store-card-body"><h3>' +
           escapeHtml(name) +
@@ -667,7 +672,9 @@ footer a:hover{color:var(--gold-soft);}
           escapeHtml(city) +
           '</div><div class="store-cats">' +
           escapeHtml(cats) +
-          '</div><p class="stars" style="font-size:13px;color:var(--brown-muted);margin:6px 0" aria-label="Reviews">Customer reviews on profile</p><a class="btn btn-primary" style="width:100%;margin-top:12px" href="/stores">Shop Now</a></div></article>'
+          '</div><p class="stars" style="font-size:13px;color:var(--brown-muted);margin:6px 0" aria-label="Reviews">Customer reviews on profile</p><a class="btn btn-primary" style="width:100%;margin-top:12px" href="' +
+          shopHref +
+          '">Shop Now</a></div></article>'
         );
       })
       .join("");

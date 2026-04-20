@@ -20,6 +20,9 @@ import storeHtml from "../lib/handlers/store-html.js";
 import cityHtml from "../lib/handlers/city-html.js";
 import categoryHtml from "../lib/handlers/category-html.js";
 import productHtml from "../lib/handlers/product-html.js";
+import communityHtml from "../lib/handlers/community-html.js";
+import productSeoHtml from "../lib/handlers/product-seo-html.js";
+import blogHtml from "../lib/handlers/blog-html.js";
 
 const handlers = {
   booking,
@@ -40,6 +43,9 @@ const handlers = {
   "city-html": cityHtml,
   "category-html": categoryHtml,
   "product-html": productHtml,
+  "community-html": communityHtml,
+  "product-seo-html": productSeoHtml,
+  "blog-html": blogHtml,
 };
 
 function notFound(res) {

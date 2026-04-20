@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Platform Impact — Clip Services | Tech Nation Evidence</title>
+<meta name="description" content="Live marketplace stats for Clip Services: stores onboarded, orders, cities — African, Caribbean & Asian independents UK.">
+<meta name="theme-color" content="#8B3A3A">
+<link rel="canonical" href="https://clipservice.app/impact">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--t:#8B3A3A;--g:#D4A017;--c:#F5F0E8;--b:#2C1810}
+body{font-family:Inter,sans-serif;background:var(--c);color:var(--b);margin:0;padding:32px 20px;line-height:1.65}
+.wrap{max-width:800px;margin:0 auto}
+h1{font-family:"Playfair Display",serif;color:var(--t)}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin:24px 0}
+.stat div{background:#fff;padding:16px;border-radius:12px;border:1px solid #E8DFD4;text-align:center}
+.stat strong{font-size:1.75rem;color:var(--g);display:block}
+.map-placeholder{background:#ddd;height:180px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#555;margin:20px 0}
+@media print{ .no-print{display:none} body{padding:12px} }
+a{color:var(--t);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+<p class="no-print"><a href="/">← Home</a> · <a href="/stores">Stores</a></p>
+<h1>Clip Services — platform impact</h1>
+<p>Evidence snapshot for investors, accelerators and partners: independent African, Caribbean & Asian retail on one UK marketplace.</p>
+
+<div class="stat" id="stats">
+  <div><strong id="s-st">—</strong><span>Stores listed</span></div>
+  <div><strong id="s-or">—</strong><span>Orders (all time)</span></div>
+  <div><strong id="s-ci">—</strong><span>Cities represented</span></div>
+</div>
+
+<div class="map-placeholder no-print">UK store map — live pins as stores onboard</div>
+
+<h2>Founder</h2>
+<p><strong>Sonia Chidinma Otikpa</strong> — Clip Services Ltd, Manchester. Building fair, Stripe-powered commerce for diaspora-led independents.</p>
+
+<h2>Growth</h2>
+<p>Order volume and GMV charts can be exported from your analytics dashboard; this page shows live counters from our public stats API.</p>
+
+<p class="no-print" style="margin-top:32px"><button type="button" onclick="window.print()" style="background:var(--t);color:#fff;border:none;padding:12px 20px;border-radius:10px;font-weight:700;cursor:pointer">Print / Save PDF</button></p>
+</div>
+<script>
+fetch("/api/public-stats").then(function(r){ return r.json(); }).then(function(j){
+  if (!j || !j.ok) return;
+  document.getElementById("s-st").textContent = (j.storesListed ?? 0).toLocaleString("en-GB");
+  document.getElementById("s-or").textContent = (j.ordersProcessed ?? 0).toLocaleString("en-GB");
+  document.getElementById("s-ci").textContent = (j.citiesServed ?? 0).toLocaleString("en-GB");
+}).catch(function(){});
+</script>
+</body>
+</html>

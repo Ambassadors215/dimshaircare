@@ -3,10 +3,20 @@
   "framework": null,
   "cleanUrls": true,
   "redirects": [
-    { "source": "/index.html", "destination": "/", "permanent": true }
+    { "source": "/index.html", "destination": "/", "permanent": true },
+    { "source": "/categories/spices-staples", "destination": "/categories/spices-ingredients", "permanent": true },
+    { "source": "/categories/fashion-fabric", "destination": "/categories/fashion-fabrics", "permanent": true },
+    { "source": "/categories/drinks", "destination": "/categories/drinks-beverages", "permanent": true },
+    { "source": "/categories/halal", "destination": "/categories/halal-products", "permanent": true }
   ],
   "rewrites": [
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },
+    { "source": "/blog/:slug", "destination": "/api/blog-html?slug=:slug" },
+    { "source": "/blog", "destination": "/api/blog-html" },
+    { "source": "/blog/", "destination": "/api/blog-html" },
+    { "source": "/community/:slug", "destination": "/api/community-html?slug=:slug" },
+    { "source": "/products/:slug", "destination": "/api/product-seo-html?slug=:slug" },
+    { "source": "/stores/:slug", "destination": "/api/store-html?slug=:slug" },
     { "source": "/store/:sid/p/:idx/:slug", "destination": "/api/product-html?storeId=:sid&idx=:idx" },
     { "source": "/store/:id", "destination": "/api/store-html?id=:id" },
     { "source": "/cities/:city", "destination": "/api/city-html?city=:city" },
@@ -21,7 +31,13 @@
     { "source": "/stores", "destination": "/stores/index.html" },
     { "source": "/stores/", "destination": "/stores/index.html" },
     { "source": "/store-owner", "destination": "/store-owner/index.html" },
-    { "source": "/store-owner/", "destination": "/store-owner/index.html" }
+    { "source": "/store-owner/", "destination": "/store-owner/index.html" },
+    { "source": "/market-stall", "destination": "/market-stall/index.html" },
+    { "source": "/market-stall/", "destination": "/market-stall/index.html" },
+    { "source": "/impact", "destination": "/impact/index.html" },
+    { "source": "/impact/", "destination": "/impact/index.html" },
+    { "source": "/customer/orders", "destination": "/customer/orders/index.html" },
+    { "source": "/customer/orders/", "destination": "/customer/orders/index.html" }
   ],
   "functions": {
     "api/[...path].js": { "maxDuration": 60 },
