@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0A0E1A" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>Clip Services Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -229,20 +231,20 @@
         <div class="workspace-banner">
           <div class="workspace-label">Admin Dashboard</div>
           <div class="workspace-name">Clip Services</div>
-          <div class="workspace-desc"><strong>Launch checklist:</strong> (1) <em>Applications</em> — review applicants. (2) <em>Publish to site</em> — adds their card on the marketplace and links their email so requests route to their dashboard. (3) <em>Stripe Connect</em> — same numeric <span class="mono">Provider ID</span> as the listing so payouts work. (4) <em>Negotiations</em> — only needed if no listing match; otherwise the provider is notified automatically.</div>
+          <div class="workspace-desc"><strong>Launch checklist:</strong> (1) <em>Applications</em> — review applicants. (2) <em>Publish to site</em> — adds their card on the marketplace and links their email so requests route to <span class="mono">/provider/</span> or <span class="mono">/store-owner/dashboard</span>. (3) <em>Stripe Connect</em> — same numeric <span class="mono">Provider ID</span> as the listing so payouts work. (4) <em>Negotiations</em> — only needed if no listing match; otherwise the store is notified automatically.</div>
         </div>
 
         <details class="operator-panel">
           <summary>For operators — full workflow reference</summary>
           <div class="operator-body">
             <ol>
-              <li><strong>Applications tab:</strong> Read each submission. When you are ready to onboard someone, click <strong>Publish to site</strong>. Enter a unique <span class="mono">Listing ID</span> (e.g. <span class="mono">9</span>) and the <strong>exact email</strong> they will use on <span class="mono">/provider/</span> (they sign in with a one-time email code; set <span class="mono">SESSION_SECRET</span> on Vercel). That creates their public service card and links new bookings to them.</li>
+              <li><strong>Applications tab:</strong> Read each submission. When you are ready to onboard someone, click <strong>Publish to site</strong>. Enter a unique <span class="mono">Listing ID</span> (e.g. <span class="mono">9</span>) and the <strong>exact email</strong> they will use to sign in at <span class="mono">/provider/</span> or <span class="mono">/store-owner/dashboard</span> (one-time email code; set <span class="mono">SESSION_SECRET</span> on Vercel). That creates their public card and links new bookings to them.</li>
               <li><strong>Marketplace listings tab:</strong> See everyone who is live on the homepage. <strong>Remove</strong> takes their card off the site (data stays in bookings/negotiations history).</li>
               <li><strong>Stripe Connect tab:</strong> Create Connect with the <strong>same ID</strong> as the marketplace listing so card payments can route the provider’s share automatically after the customer pays.</li>
               <li><strong>Customer journey:</strong> They book from the marketplace → request appears under <strong>Negotiations</strong> and in their <span class="mono">/user/</span> dashboard → provider sends a price → customer accepts or counters → customer pays in <span class="mono">/user/</span> when agreed.</li>
-              <li><strong>Negotiations tab (manual assign):</strong> Use only when a booking used a generic seed card (no published listing) or the provider email is missing. Paste the provider’s email and <strong>Assign Provider</strong> so they see the thread on <span class="mono">/provider/</span>.</li>
+              <li><strong>Negotiations tab (manual assign):</strong> Use only when a booking used a generic seed card (no published listing) or the store email is missing. Paste their email and <strong>Assign Provider</strong> so they see the thread on <span class="mono">/provider/</span> or <span class="mono">/store-owner/dashboard</span>.</li>
               <li><strong>Bookings tab:</strong> Operational status (new, awaiting payment, paid, etc.). Payment success is also driven by the Stripe webhook.</li>
-              <li><strong>Site visits tab:</strong> Recent page loads (marketplace, customer dashboard, provider dashboard, admin). Uses a hashed visitor id — not names or emails.</li>
+              <li><strong>Site visits tab:</strong> Recent page loads (marketplace, customer dashboard, store dashboard, admin). Uses a hashed visitor id — not names or emails.</li>
             </ol>
             <p class="muted" style="font-size:12px;margin-top:14px;line-height:1.55;margin-bottom:0;">This panel is only visible in admin. Customers and providers never see it.</p>
           </div>
@@ -358,7 +360,7 @@
             </div>
 
             <div id="negotiationsView" class="hide" style="padding:20px;">
-              <p class="muted" style="margin-bottom:16px;font-size:12px;line-height:1.55;">Use when a booking has no provider email (e.g. generic seed card). <strong>Assign Provider</strong> lets them use <span class="mono">/provider/</span>. If you published the applicant under Marketplace listings, matching emails are usually set automatically.</p>
+              <p class="muted" style="margin-bottom:16px;font-size:12px;line-height:1.55;">Use when a booking has no store email (e.g. generic seed card). <strong>Assign Provider</strong> lets them use <span class="mono">/provider/</span> or <span class="mono">/store-owner/dashboard</span>. If you published the applicant under Marketplace listings, matching emails are usually set automatically.</p>
               <div id="negsContainer"></div>
             </div>
 

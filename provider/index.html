@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0A0E1A">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
 <link rel="manifest" href="/manifest.webmanifest">
 <title>Store dashboard — Clip Services</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -81,8 +83,9 @@ a{color:var(--cyan);text-decoration:none}
   <div class="wrap">
     <div class="topbar">
       <a href="/" class="brand" style="text-decoration:none;color:inherit"><h1>Clip<span>Services</span></h1><span class="dot"></span></a>
-      <div style="display:flex;gap:8px;align-items:center">
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
         <a href="/" class="btn btn-ghost btn-sm">Marketplace</a>
+        <a href="/store-owner/dashboard" class="btn btn-ghost btn-sm">Store dashboard</a>
       </div>
     </div>
   </div>
@@ -127,7 +130,7 @@ a{color:var(--cyan);text-decoration:none}
     <div id="dashboard" class="hide">
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px">
         <div>
-          <div class="label">Provider Dashboard</div>
+          <div class="label">Store dashboard</div>
           <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700" id="welcomeText">Your Dashboard</h2>
         </div>
         <div style="display:flex;gap:8px">

@@ -81,6 +81,30 @@
         { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" },
         { "key": "X-Content-Type-Options", "value": "nosniff" }
       ]
+    },
+    {
+      "source": "/admin",
+      "headers": [
+        { "key": "Cache-Control", "value": "private, no-cache, no-store, must-revalidate, max-age=0" }
+      ]
+    },
+    {
+      "source": "/admin/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "private, no-cache, no-store, must-revalidate, max-age=0" }
+      ]
+    },
+    {
+      "source": "/provider",
+      "headers": [
+        { "key": "Cache-Control", "value": "private, no-cache, no-store, must-revalidate, max-age=0" }
+      ]
+    },
+    {
+      "source": "/provider/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "private, no-cache, no-store, must-revalidate, max-age=0" }
+      ]
     }
   ]
 }
