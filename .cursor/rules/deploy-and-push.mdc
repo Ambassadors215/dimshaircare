@@ -1,0 +1,11 @@
+---
+description: Auto-commit, push, and trigger deployment — never wait for an explicit deploy request
+alwaysApply: true
+---
+
+# Deploy and Git push
+
+- **Do not** wait for the user to say “deploy” or “push”. Treat **shipping to GitHub** as part of finishing any coding task that changes the repo.
+- When work is complete and the tree has meaningful changes: **`git add`**, **`git commit`** with a clear message, then **`git push`** to the remote(s) this project uses (e.g. `origin` and/or `clip-services` if both are kept in sync).
+- If a push fails (auth, network), **retry** and fix what you can; only then summarize what still needs a human step.
+- Skip commit/push only when: no file changes, or the user explicitly asked to **not** commit/push in that message.
