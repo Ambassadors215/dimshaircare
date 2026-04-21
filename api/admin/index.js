@@ -10,6 +10,8 @@ import {
   upsertMarketplaceListing,
   removeMarketplaceListing,
   getRecentSiteVisits,
+  getOnboardingAnalyticsCounters,
+  getOnboardingApplications,
 } from "../../lib/kv-store.js";
 import { notifyBookingStatusCustomer } from "../../lib/notify.js";
 
@@ -137,6 +139,49 @@ async function handleMarketplacePublish(req, res) {
   }
 }
 
+async function handleOnboardingStats(req, res) {
+  if (req.method !== "GET") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
+  try {
+    const counters = await getOnboardingAnalyticsCounters();
+    const applications = await getOnboardingApplications();
+    const listings = await getMarketplaceListings();
+    const pending = listings.filter((x) => x?.applicationStatus === "pending").length;
+    const live = listings.filter((x) => x?.applicationStatus && x.applicationStatus !== "pending").length;
+    const legacy = listings.filter((x) => !x?.applicationStatus).length;
+    const approvedCount = listings.filter((x) => x?.applicationStatus === "approved").length;
+    const activatedCount = listings.filter((x) => x?.applicationStatus === "active").length;
+    const vs = counters.viewsStoreApply || 0;
+    const vt = counters.viewsStallApply || 0;
+    const ss = counters.submissionsStore || 0;
+    const st = counters.submissionsStall || 0;
+    const viewsTotal = vs + vt;
+    const subTotal = ss + st;
+    const approvedPipeline = approvedCount + activatedCount;
+    return endJson(res, 200, {
+      ok: true,
+      counters,
+      listingCounts: {
+        total: listings.length,
+        pendingDrafts: pending,
+        publishedOrLegacy: live + legacy,
+        approvedCount,
+        activatedCount,
+        approvedOrActive: approvedPipeline,
+      },
+      conversion: {
+        storeViewsToSubmit: vs ? ((ss / vs) * 100).toFixed(2) : null,
+        stallViewsToSubmit: vt ? ((st / vt) * 100).toFixed(2) : null,
+        allViewsToSubmit: viewsTotal ? ((subTotal / viewsTotal) * 100).toFixed(2) : null,
+        submitToApprovedPipeline: subTotal ? ((approvedPipeline / subTotal) * 100).toFixed(2) : null,
+      },
+      recentApplications: applications.slice(0, 40),
+    });
+  } catch (e) {
+    console.error("ADMIN_ONBOARDING", e);
+    return endJson(res, 500, { ok: false, error: "Failed to load onboarding stats" });
+  }
+}
+
 async function handleSiteVisits(req, res) {
   if (req.method !== "GET") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
   try {
@@ -179,6 +224,7 @@ const ROUTES = {
   providers: handleProviders,
   "update-booking": handleUpdateBooking,
   "site-visits": handleSiteVisits,
+  "onboarding-stats": handleOnboardingStats,
 };
 
 export default async function handler(req, res) {

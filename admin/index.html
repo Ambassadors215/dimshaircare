@@ -330,6 +330,7 @@
               <button class="tab active" data-tab="bookings">Bookings</button>
               <button class="tab" data-tab="negotiations">Negotiations</button>
               <button class="tab" data-tab="contacts">Applications</button>
+              <button class="tab" data-tab="onboarding">Store onboarding</button>
               <button class="tab" data-tab="marketplace">Marketplace listings</button>
               <button class="tab" data-tab="providers">Stripe Connect</button>
               <button class="tab" data-tab="visits">Site visits</button>
@@ -370,6 +371,19 @@
                 <thead><tr><th>Date</th><th>Applicant</th><th>Full application</th><th style="min-width:120px">Actions</th></tr></thead>
                 <tbody id="contactsTbody"></tbody>
               </table>
+              </div>
+            </div>
+
+            <div id="onboardingView" class="hide">
+              <p class="muted" style="margin:0;padding:14px 20px;font-size:12px;line-height:1.55;border-bottom:1px solid var(--border);background:rgba(212,160,23,.08);">
+                <strong style="color:var(--amber)">Store &amp; stall onboarding</strong> — views increment when someone opens an apply form; submissions when they send. Set listing <span class="mono">applicationStatus</span> to <span class="mono">approved</span> or <span class="mono">active</span> when you onboard them (draft <span class="mono">pending</span> listings stay off the public directory).
+              </p>
+              <div id="onboardingMetrics" class="dash-grid" style="padding:16px 20px;"></div>
+              <div style="overflow-x:auto;">
+                <table>
+                  <thead><tr><th>When</th><th>Ref</th><th>Flow</th><th>Business / name</th><th>Email</th><th>WhatsApp</th><th>City / detail</th></tr></thead>
+                  <tbody id="onboardingTbody"></tbody>
+                </table>
               </div>
             </div>
 
@@ -481,7 +495,8 @@
         providers: {},
         negotiations: [],
         marketplace: [],
-        siteVisits: []
+        siteVisits: [],
+        onboarding: null
       };
 
       const el = {
@@ -512,6 +527,9 @@
         statNegotiations: document.getElementById("statNegotiations"),
         marketplaceView: document.getElementById("marketplaceView"),
         marketplaceTbody: document.getElementById("marketplaceTbody"),
+        onboardingView: document.getElementById("onboardingView"),
+        onboardingMetrics: document.getElementById("onboardingMetrics"),
+        onboardingTbody: document.getElementById("onboardingTbody"),
         visitsView: document.getElementById("visitsView"),
         visitsTbody: document.getElementById("visitsTbody"),
         statSiteVisits: document.getElementById("statSiteVisits"),
@@ -649,6 +667,57 @@
               </tr>`).join("");
       }
 
+      function renderOnboarding() {
+        if (!el.onboardingMetrics || !el.onboardingTbody) return;
+        const ob = state.onboarding;
+        if (!ob || !ob.ok) {
+          el.onboardingMetrics.innerHTML = '<p class="muted" style="grid-column:1/-1;padding:8px 4px">Sign in and refresh to load onboarding analytics.</p>';
+          el.onboardingTbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--faint)">No data — check token and click Refresh.</td></tr>';
+          return;
+        }
+        const c = ob.counters || {};
+        const lc = ob.listingCounts || {};
+        const conv = ob.conversion || {};
+        const vs = c.viewsStoreApply || 0;
+        const vt = c.viewsStallApply || 0;
+        const ss = c.submissionsStore || 0;
+        const st = c.submissionsStall || 0;
+        const fmt = (v) => (v == null ? "—" : `${v}%`);
+        el.onboardingMetrics.innerHTML = `
+          <div class="dash-card"><span class="dash-icon">👁</span><div class="dash-label c-cyan">Store form views</div><div class="dash-value">${vs}</div><div class="dash-status muted" style="font-size:11px">/store-owner/apply</div></div>
+          <div class="dash-card"><span class="dash-icon">👁</span><div class="dash-label c-purple">Stall form views</div><div class="dash-value">${vt}</div><div class="dash-status muted" style="font-size:11px">/market-stall/apply</div></div>
+          <div class="dash-card"><span class="dash-icon">📥</span><div class="dash-label c-amber">Store submissions</div><div class="dash-value">${ss}</div><div class="dash-status muted" style="font-size:11px">Established stores</div></div>
+          <div class="dash-card"><span class="dash-icon">📥</span><div class="dash-label c-amber">Stall submissions</div><div class="dash-value">${st}</div><div class="dash-status muted" style="font-size:11px">Market traders</div></div>
+          <div class="dash-card"><span class="dash-icon">⏳</span><div class="dash-label c-cyan">Pending drafts</div><div class="dash-value">${lc.pendingDrafts ?? "—"}</div><div class="dash-status muted" style="font-size:11px">KV listings</div></div>
+          <div class="dash-card"><span class="dash-icon">✓</span><div class="dash-label" style="color:#6ee7b7">Approved</div><div class="dash-value">${lc.approvedCount ?? "—"}</div><div class="dash-status muted" style="font-size:11px">applicationStatus</div></div>
+          <div class="dash-card"><span class="dash-icon">⚡</span><div class="dash-label" style="color:#fcd34d">Activated</div><div class="dash-value">${lc.activatedCount ?? "—"}</div><div class="dash-status muted" style="font-size:11px">Live storefronts</div></div>
+          <div class="dash-card"><span class="dash-icon">📊</span><div class="dash-label c-purple">View → submit</div><div class="dash-value" style="font-size:22px">${fmt(conv.allViewsToSubmit)}</div><div class="dash-status muted" style="font-size:11px">All views → all submissions</div></div>
+          <div class="dash-card"><span class="dash-icon">📊</span><div class="dash-label c-purple">Submit → approved</div><div class="dash-value" style="font-size:22px">${fmt(conv.submitToApprovedPipeline)}</div><div class="dash-status muted" style="font-size:11px">Approved+active vs submissions</div></div>
+          <div class="dash-card"><span class="dash-icon">🏪</span><div class="dash-label c-cyan">Store conv.</div><div class="dash-value" style="font-size:22px">${fmt(conv.storeViewsToSubmit)}</div><div class="dash-status muted" style="font-size:11px">Views → submissions</div></div>
+          <div class="dash-card"><span class="dash-icon">🛒</span><div class="dash-label c-cyan">Stall conv.</div><div class="dash-value" style="font-size:22px">${fmt(conv.stallViewsToSubmit)}</div><div class="dash-status muted" style="font-size:11px">Views → submissions</div></div>
+        `;
+        const apps = ob.recentApplications || [];
+        el.onboardingTbody.innerHTML = apps.length === 0
+          ? '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--faint)">No applications logged yet.</td></tr>'
+          : apps.map((a) => {
+            const when = a.createdAt ? timeAgo(a.createdAt) + " · " + new Date(a.createdAt).toLocaleString() : "—";
+            const flow = a.flow === "stall" ? "Stall" : a.flow === "store" ? "Store" : escHtml(a.flow || "—");
+            const biz = a.flow === "stall" ? escHtml(a.fullName || "—") : escHtml(a.storeName || "—");
+            const cityOr = a.flow === "stall"
+              ? escHtml(a.city || "") + (a.marketLocation ? " · " + escHtml(a.marketLocation) : "")
+              : escHtml(a.city || "") + (a.postcode ? " · " + escHtml(a.postcode) : "");
+            return `<tr>
+              <td class="muted" style="font-size:12px;max-width:200px">${escHtml(when)}</td>
+              <td class="mono">${escHtml(a.ref || "—")}</td>
+              <td>${flow}</td>
+              <td style="font-weight:500">${biz}</td>
+              <td class="muted" style="font-size:12px">${escHtml(a.email || "—")}</td>
+              <td class="mono" style="font-size:12px">${escHtml(a.whatsapp || "—")}</td>
+              <td class="muted" style="font-size:12px">${cityOr || "—"}</td>
+            </tr>`;
+          }).join("");
+      }
+
       function openPublishModal(email, name) {
         document.getElementById("pub-id").value = "";
         document.getElementById("pub-email").value = email || "";
@@ -688,11 +757,13 @@
         el.negotiationsView.classList.toggle("hide", state.tab !== "negotiations");
         el.contactsView.classList.toggle("hide", state.tab !== "contacts");
         if (el.marketplaceView) el.marketplaceView.classList.toggle("hide", state.tab !== "marketplace");
+        if (el.onboardingView) el.onboardingView.classList.toggle("hide", state.tab !== "onboarding");
         el.providersView.classList.toggle("hide", state.tab !== "providers");
         if (el.visitsView) el.visitsView.classList.toggle("hide", state.tab !== "visits");
 
         renderNegotiations();
         renderMarketplaceTable();
+        renderOnboarding();
 
         const bookings = filterRows(state.bookings);
         el.bookingsTbody.innerHTML = bookings.length === 0
@@ -763,13 +834,14 @@
       async function refreshAll() {
         setStatus(el.dataStatus, "Loading…");
         try {
-          const [bookings, contacts, provData, negsData, mpData, visData] = await Promise.all([
+          const [bookings, contacts, provData, negsData, mpData, visData, obData] = await Promise.all([
             api("/api/admin?action=bookings"),
             api("/api/admin?action=contacts"),
             api("/api/admin?action=providers").catch(() => ({ providers: {} })),
             api("/api/admin?action=negotiations").catch(() => ({ items: [] })),
             api("/api/admin?action=marketplace").catch(() => ({ items: [] })),
-            api("/api/admin?action=site-visits").catch(() => ({ items: [] }))
+            api("/api/admin?action=site-visits").catch(() => ({ items: [] })),
+            api("/api/admin?action=onboarding-stats").catch(() => ({}))
           ]);
           state.bookings = bookings.items || [];
           state.contacts = contacts.items || [];
@@ -777,6 +849,7 @@
           state.negotiations = negsData.items || [];
           state.marketplace = mpData.items || [];
           state.siteVisits = visData.items || [];
+          state.onboarding = obData.ok ? obData : null;
           setStatus(el.dataStatus, `${state.bookings.length} bookings · ${state.negotiations.length} negotiations · ${state.marketplace.length} live listings · ${state.contacts.length} applications`, "ok");
           render();
         } catch (e) {
