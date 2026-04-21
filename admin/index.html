@@ -378,6 +378,8 @@
               <p class="muted" style="margin:0;padding:14px 20px;font-size:12px;line-height:1.55;border-bottom:1px solid var(--border);background:rgba(212,160,23,.08);">
                 <strong style="color:var(--amber)">Store &amp; stall onboarding</strong> — views increment when someone opens an apply form; submissions when they send. Set listing <span class="mono">applicationStatus</span> to <span class="mono">approved</span> or <span class="mono">active</span> when you onboard them (draft <span class="mono">pending</span> listings stay off the public directory).
               </p>
+              <p class="muted" style="margin:0;padding:12px 20px 0;font-size:11px;color:var(--cyan)"><strong>Platform overview</strong> — marketplace orders, GMV, and activation (stores with at least one product, excluding pending drafts).</p>
+              <div id="platformMetrics" class="dash-grid" style="padding:16px 20px 8px;"></div>
               <div id="onboardingMetrics" class="dash-grid" style="padding:16px 20px;"></div>
               <div style="overflow-x:auto;">
                 <table>
@@ -496,7 +498,8 @@
         negotiations: [],
         marketplace: [],
         siteVisits: [],
-        onboarding: null
+        onboarding: null,
+        platform: null
       };
 
       const el = {
@@ -528,6 +531,7 @@
         marketplaceView: document.getElementById("marketplaceView"),
         marketplaceTbody: document.getElementById("marketplaceTbody"),
         onboardingView: document.getElementById("onboardingView"),
+        platformMetrics: document.getElementById("platformMetrics"),
         onboardingMetrics: document.getElementById("onboardingMetrics"),
         onboardingTbody: document.getElementById("onboardingTbody"),
         visitsView: document.getElementById("visitsView"),
@@ -669,6 +673,21 @@
 
       function renderOnboarding() {
         if (!el.onboardingMetrics || !el.onboardingTbody) return;
+        if (el.platformMetrics) {
+          const pl = state.platform;
+          if (!pl || !pl.ok) {
+            el.platformMetrics.innerHTML = '<p class="muted" style="grid-column:1/-1;padding:8px 4px">Platform stats load with Refresh.</p>';
+          } else {
+            el.platformMetrics.innerHTML = `
+              <div class="dash-card"><span class="dash-icon">📋</span><div class="dash-label c-cyan">Applications logged</div><div class="dash-value">${pl.totalApplicationsLogged ?? "—"}</div><div class="dash-status muted" style="font-size:11px">Onboarding log</div></div>
+              <div class="dash-card"><span class="dash-icon">✓</span><div class="dash-label" style="color:#6ee7b7">Approved stores</div><div class="dash-value">${pl.approvedStores ?? "—"}</div><div class="dash-status muted" style="font-size:11px">applicationStatus</div></div>
+              <div class="dash-card"><span class="dash-icon">🛍️</span><div class="dash-label c-amber">Activated + product</div><div class="dash-value">${pl.activatedStoresWithProducts ?? "—"}</div><div class="dash-status muted" style="font-size:11px">Non-pending + catalogue</div></div>
+              <div class="dash-card"><span class="dash-icon">📦</span><div class="dash-label c-purple">Marketplace orders</div><div class="dash-value">${pl.totalMarketplaceOrders ?? "—"}</div><div class="dash-status muted" style="font-size:11px">All-time</div></div>
+              <div class="dash-card"><span class="dash-icon">💷</span><div class="dash-label c-cyan">GMV (subtotal)</div><div class="dash-value">£${pl.totalGmvGbp ?? "—"}</div><div class="dash-status muted" style="font-size:11px">Recorded on bookings</div></div>
+              <div class="dash-card"><span class="dash-icon">📊</span><div class="dash-label c-purple">Apply → active</div><div class="dash-value" style="font-size:22px">${pl.applicationToActivePct != null ? pl.applicationToActivePct + "%" : "—"}</div><div class="dash-status muted" style="font-size:11px">Submissions vs activated</div></div>
+            `;
+          }
+        }
         const ob = state.onboarding;
         if (!ob || !ob.ok) {
           el.onboardingMetrics.innerHTML = '<p class="muted" style="grid-column:1/-1;padding:8px 4px">Sign in and refresh to load onboarding analytics.</p>';
@@ -834,14 +853,15 @@
       async function refreshAll() {
         setStatus(el.dataStatus, "Loading…");
         try {
-          const [bookings, contacts, provData, negsData, mpData, visData, obData] = await Promise.all([
+          const [bookings, contacts, provData, negsData, mpData, visData, obData, platData] = await Promise.all([
             api("/api/admin?action=bookings"),
             api("/api/admin?action=contacts"),
             api("/api/admin?action=providers").catch(() => ({ providers: {} })),
             api("/api/admin?action=negotiations").catch(() => ({ items: [] })),
             api("/api/admin?action=marketplace").catch(() => ({ items: [] })),
             api("/api/admin?action=site-visits").catch(() => ({ items: [] })),
-            api("/api/admin?action=onboarding-stats").catch(() => ({}))
+            api("/api/admin?action=onboarding-stats").catch(() => ({})),
+            api("/api/admin?action=platform-stats").catch(() => ({}))
           ]);
           state.bookings = bookings.items || [];
           state.contacts = contacts.items || [];
@@ -850,6 +870,7 @@
           state.marketplace = mpData.items || [];
           state.siteVisits = visData.items || [];
           state.onboarding = obData.ok ? obData : null;
+          state.platform = platData.ok ? platData : null;
           setStatus(el.dataStatus, `${state.bookings.length} bookings · ${state.negotiations.length} negotiations · ${state.marketplace.length} live listings · ${state.contacts.length} applications`, "ok");
           render();
         } catch (e) {

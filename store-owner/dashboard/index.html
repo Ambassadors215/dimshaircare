@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#8B3A3A">
+<title>Store dashboard — Clip Services</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+<style>
+:root{--terracotta:#8B3A3A;--gold:#D4A017;--cream:#F5F0E8;--brown:#2C1810;--muted:#5C4033;--card:#fffdf8;--border:#E0D6C8;--green:#15803D;--red:#B91C1C;--blue:#1D4ED8}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--cream);color:var(--brown);min-height:100vh;line-height:1.5}
+a{color:var(--terracotta);font-weight:600}
+.app{min-height:100vh;padding-bottom:72px}
+@media(min-width:900px){.app{display:grid;grid-template-columns:240px 1fr;padding-bottom:0}}
+.sidebar{background:var(--card);border-right:1px solid var(--border);padding:16px 12px;position:sticky;top:0;height:100vh;display:none;flex-direction:column;gap:4px}
+@media(min-width:900px){.sidebar{display:flex}}
+.sidebar .brand{font-family:'Playfair Display',Georgia,serif;font-size:1.15rem;color:var(--terracotta);padding:8px 12px 16px}
+.nav-btn{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:12px 14px;border:none;border-radius:10px;background:transparent;font:inherit;font-weight:600;cursor:pointer;color:var(--brown)}
+.nav-btn:hover,.nav-btn.active{background:rgba(139,58,58,.1);color:var(--terracotta)}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:20}
+.topbar h1{font-family:'Playfair Display',Georgia,serif;font-size:1.15rem;color:var(--terracotta)}
+.main{padding:16px;max-width:1100px}
+@media(min-width:900px){.main{padding:24px 28px}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 2px 12px rgba(44,24,16,.05)}
+.label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:10px;font:inherit;font-weight:600;border:none;cursor:pointer;text-decoration:none}
+.btn-primary{background:var(--terracotta);color:#fff}
+.btn-primary:disabled{opacity:.5}
+.btn-ghost{background:transparent;border:2px solid var(--terracotta);color:var(--terracotta)}
+.btn-gold{background:var(--gold);color:var(--brown)}
+.input,select,textarea{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:10px;font:inherit;font-size:16px;background:#fff}
+textarea{min-height:80px;resize:vertical}
+.grid5{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+.stat{background:var(--cream);border-radius:12px;padding:14px;border:1px solid var(--border)}
+.stat .num{font-family:'Playfair Display',Georgia,serif;font-size:1.5rem;color:var(--terracotta)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.switch{position:relative;width:52px;height:28px;background:#ccc;border-radius:999px;cursor:pointer;flex-shrink:0}
+.switch.on{background:var(--green)}
+.switch i{position:absolute;top:3px;left:3px;width:22px;height:22px;background:#fff;border-radius:50%;transition:transform .2s}
+.switch.on i{transform:translateX(24px)}
+.hide{display:none!important}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 8px;text-align:left;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-weight:600;font-size:11px;text-transform:uppercase}
+.badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700}
+.b-new{background:#FEE2E2;color:#991B1B}.b-conf{background:#FEF9C3;color:#854D0E}.b-ready{background:#DBEAFE;color:#1E40AF}.b-done{background:#DCFCE7;color:#166534}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--border);display:flex;gap:4px;padding:8px 10px;z-index:30;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.bottom-nav::-webkit-scrollbar{display:none}
+@media(min-width:900px){.bottom-nav{display:none}}
+.bn-btn{flex:0 0 auto;min-width:56px;border:none;background:none;font-size:9px;font-weight:600;color:var(--muted);cursor:pointer;padding:6px 4px}
+.bn-btn.active{color:var(--terracotta)}
+.modal{position:fixed;inset:0;background:rgba(44,24,16,.45);z-index:50;display:none;align-items:flex-end;justify-content:center;padding:16px}
+.modal.show{display:flex}
+.modal-panel{background:var(--card);border-radius:16px 16px 0 0;max-width:560px;width:100%;max-height:90vh;overflow:auto;padding:20px}
+.notif-panel{position:absolute;top:52px;right:16px;width:min(340px,92vw);background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,.12);display:none;padding:12px;z-index:40}
+.notif-panel.open{display:block}
+.notif-item{padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.login-wrap{max-width:440px;margin:40px auto;padding:20px}
+.status{font-size:13px;margin-top:8px;min-height:1.2em}.status.ok{color:var(--green)}.status.err{color:var(--red)}
+.empty{padding:40px 20px;text-align:center;color:var(--muted)}
+.chk{display:flex;align-items:flex-start;gap:10px;margin:10px 0;font-size:14px}
+.promo-card{border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.insight{font-size:14px;padding:8px 0;border-bottom:1px dashed var(--border)}
+</style>
+</head>
+<body>
+<div id="loginScreen" class="login-wrap card">
+  <p class="label">Store dashboard</p>
+  <h2 style="font-family:'Playfair Display',serif;margin-bottom:8px">Sign in</h2>
+  <p style="color:var(--muted);font-size:14px;margin-bottom:14px">Enter the email on your published store listing. We’ll email you a one-time code.</p>
+  <div id="stepEmail">
+    <input class="input" id="emailIn" type="email" placeholder="Your store email" autocomplete="email" />
+    <button type="button" class="btn btn-primary" style="width:100%;margin-top:10px" id="sendOtp">Email code</button>
+  </div>
+  <div id="stepCode" class="hide">
+    <p style="font-size:14px;margin-bottom:8px">Code sent to <strong id="emailShown"></strong></p>
+    <input class="input" id="otpIn" inputmode="numeric" maxlength="8" placeholder="000000" />
+    <button type="button" class="btn btn-primary" style="width:100%;margin-top:10px" id="verifyOtp">Verify</button>
+    <button type="button" class="btn btn-ghost" style="width:100%;margin-top:8px" id="backEmail">Different email</button>
+  </div>
+  <div class="status" id="loginStat"></div>
+</div>
+
+<div id="app" class="app hide">
+  <aside class="sidebar" id="sideNav">
+    <div class="brand">Clip Services</div>
+    <button type="button" class="nav-btn active" data-section="overview">🏠 Overview</button>
+    <button type="button" class="nav-btn" data-section="orders">📦 Orders</button>
+    <button type="button" class="nav-btn" data-section="products">🛍️ Products</button>
+    <button type="button" class="nav-btn" data-section="profile">🏪 Store Profile</button>
+    <button type="button" class="nav-btn" data-section="revenue">💰 Revenue</button>
+    <button type="button" class="nav-btn" data-section="reviews">⭐ Reviews</button>
+    <button type="button" class="nav-btn" data-section="promotions">🎉 Promotions</button>
+    <button type="button" class="nav-btn" data-section="analytics">📊 Analytics</button>
+    <button type="button" class="nav-btn" data-section="settings">⚙️ Settings</button>
+    <div style="margin-top:auto;padding:12px">
+      <a href="/" class="btn btn-ghost" style="width:100%">← Marketplace</a>
+      <button type="button" class="btn btn-ghost" style="width:100%;margin-top:8px" id="logoutBtn">Log out</button>
+    </div>
+  </aside>
+  <div>
+    <header class="topbar">
+      <h1 id="headerTitle">Overview</h1>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button type="button" class="btn btn-ghost" id="bellBtn" style="padding:8px 12px;font-size:18px" aria-label="Notifications">🔔</button>
+        <button type="button" class="btn btn-primary btn-sm" id="refreshDash">Refresh</button>
+      </div>
+      <div class="notif-panel" id="notifPanel"></div>
+    </header>
+    <main class="main">
+      <section id="sec-overview" class="sec"></section>
+      <section id="sec-orders" class="sec hide"></section>
+      <section id="sec-products" class="sec hide"></section>
+      <section id="sec-profile" class="sec hide"></section>
+      <section id="sec-revenue" class="sec hide"></section>
+      <section id="sec-reviews" class="sec hide"></section>
+      <section id="sec-promotions" class="sec hide"></section>
+      <section id="sec-analytics" class="sec hide"></section>
+      <section id="sec-settings" class="sec hide"></section>
+    </main>
+  </div>
+  <nav class="bottom-nav" id="bottomNav">
+    <button type="button" class="bn-btn active" data-section="overview">🏠<br>Overview</button>
+    <button type="button" class="bn-btn" data-section="orders">📦<br>Orders</button>
+    <button type="button" class="bn-btn" data-section="products">🛍️<br>Products</button>
+    <button type="button" class="bn-btn" data-section="profile">🏪<br>Profile</button>
+    <button type="button" class="bn-btn" data-section="revenue">💰<br>Revenue</button>
+    <button type="button" class="bn-btn" data-section="reviews">⭐<br>Reviews</button>
+    <button type="button" class="bn-btn" data-section="promotions">🎉<br>Promos</button>
+    <button type="button" class="bn-btn" data-section="analytics">📊<br>Stats</button>
+    <button type="button" class="bn-btn" data-section="settings">⚙️<br>Settings</button>
+  </nav>
+</div>
+
+<div id="productModal" class="modal"><div class="modal-panel">
+  <h3 style="font-family:'Playfair Display',serif;margin-bottom:12px">Add product</h3>
+  <div class="label">Product name *</div>
+  <input class="input" id="pf-name" />
+  <div class="label" style="margin-top:10px">Price (£) *</div>
+  <input class="input" id="pf-price" type="number" min="0" step="0.01" />
+  <div class="label" style="margin-top:10px">Category</div>
+  <select class="input" id="pf-cat"></select>
+  <div class="label" style="margin-top:10px">Description</div>
+  <textarea class="input" id="pf-desc"></textarea>
+  <div class="label" style="margin-top:10px">Photo * (JPG/PNG, max 5MB)</div>
+  <input type="file" id="pf-file" accept="image/jpeg,image/png" />
+  <div class="toggle-row" style="margin-top:12px"><span>In stock</span><div class="switch on" id="pf-stock"><i></i></div></div>
+  <div class="toggle-row"><span>Featured</span><div class="switch" id="pf-feat"><i></i></div></div>
+  <div style="display:flex;gap:10px;margin-top:16px">
+    <button type="button" class="btn btn-primary" style="flex:1" id="pf-save">Save product</button>
+    <button type="button" class="btn btn-ghost" id="pf-cancel">Cancel</button>
+  </div>
+</div></div>
+
+<script>
+(function(){
+const $ = (id) => document.getElementById(id);
+const CATEGORIES = ['fresh-produce','meat-fish','groceries-staples','snacks-drinks','hair-beauty','fashion-fabric','halal-products','other'];
+let store = null, dash = null, charts = {}, editingProductId = null;
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+function setStat(el, msg, k){ el.textContent = msg||''; el.className = 'status '+(k||''); }
+
+async function api(path, opt) {
+  const r = await fetch(path, Object.assign({ credentials: 'include', headers: { 'content-type': 'application/json' } }, opt||{}));
+  const d = await r.json().catch(()=>({}));
+  if (!r.ok) throw new Error(d.error || 'Request failed');
+  return d;
+}
+
+async function loadAll() {
+  const [st, pr] = await Promise.all([
+    fetch('/api/store-owner', { credentials: 'include' }).then(r=>r.json()),
+    fetch('/api/dashboard?role=provider', { credentials: 'include' }).then(r=>r.json())
+  ]);
+  if (!st.ok) throw new Error(st.error || 'No store listing for this email — apply at /store-owner/apply');
+  store = st;
+  dash = pr.ok ? pr : { negotiations: [], bookings: [], listings: [] };
+  renderOverview(); renderOrders(); renderProducts(); renderProfile(); renderRevenue(); renderReviews(); renderPromotions(); renderAnalytics(); renderSettings(); renderNotifs();
+}
+
+function navTo(sec) {
+  document.querySelectorAll('.sec').forEach(e => e.classList.add('hide'));
+  $('sec-'+sec).classList.remove('hide');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.section===sec));
+  document.querySelectorAll('.bn-btn').forEach(b => b.classList.toggle('active', b.dataset.section===sec));
+  const titles = {overview:'Overview',orders:'Orders',products:'Products',profile:'Store Profile',revenue:'Revenue',reviews:'Reviews',promotions:'Promotions',analytics:'Analytics',settings:'Settings'};
+  $('headerTitle').textContent = titles[sec] || sec;
+  if (sec === 'revenue' || sec === 'analytics') setTimeout(initCharts, 80);
+}
+
+document.querySelectorAll('[data-section]').forEach(b => b.addEventListener('click', () => navTo(b.dataset.section)));
+
+function renderOverview() {
+  const L = store.listing || {};
+  const m = store.metrics || {};
+  const open = L.storeOpen !== false;
+  $('sec-overview').innerHTML = `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div>
+          <p class="label">Store</p>
+          <h2 style="font-family:'Playfair Display',serif;font-size:1.75rem;color:var(--terracotta)">${esc(L.role||'Your store')}</h2>
+        </div>
+        <div>
+          <p class="label">Live status</p>
+          <div class="toggle-row"><span>${open?'🟢 Open':'🔴 Closed'} — customers ${open?'can':'cannot'} order</span>
+            <div class="switch ${open?'on':''}" id="openSwitch"><i></i></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="grid5">
+      <div class="stat"><div class="label">Today's orders</div><div class="num">${m.todayOrders|0}</div></div>
+      <div class="stat"><div class="label">This week's revenue</div><div class="num">£${(m.weekRevenueGbp||0).toFixed(2)}</div></div>
+      <div class="stat"><div class="label">Total orders</div><div class="num">${m.totalOrders|0}</div></div>
+      <div class="stat"><div class="label">Average rating</div><div class="num">⭐ ${(m.avgRating||0).toFixed(1)}/5</div></div>
+      <div class="stat"><div class="label">Page views (7d)</div><div class="num">${m.pageViews7d|0}</div></div>
+    </div>
+    <div class="card" style="display:flex;flex-wrap:wrap;gap:10px">
+      <button type="button" class="btn btn-primary" id="qa-add">➕ Add product</button>
+      <button type="button" class="btn btn-gold" id="qa-orders">📦 View orders</button>
+      <button type="button" class="btn btn-ghost" id="qa-profile">✏️ Edit store</button>
+    </div>
+    ${store.checklistComplete ? '' : `<div class="card"><p style="font-weight:600;margin-bottom:8px">Complete your store to start receiving orders:</p>
+      <label class="chk"><input type="checkbox" disabled ${store.checklist?.productsOk?'checked':''}/> Add 3+ products</label>
+      <label class="chk"><input type="checkbox" disabled ${store.checklist?.photoOk?'checked':''}/> Upload store photo</label>
+      <label class="chk"><input type="checkbox" disabled ${store.checklist?.hoursOk?'checked':''}/> Set opening hours</label>
+      <label class="chk"><input type="checkbox" disabled ${store.checklist?.stripeOk?'checked':''}/> Connect bank via Stripe</label>
+      <div style="height:8px;background:#eee;border-radius:4px;margin-top:10px"><div style="height:100%;width:${store.checklistPct||0}%;background:var(--gold);border-radius:4px"></div></div>
+      <p class="label" style="margin-top:6px">${store.checklistPct||0}% complete</p></div>`}
+    <div class="card"><p class="label">Order requests (same sign-in)</p>
+      <p style="font-size:14px;color:var(--muted)">Service quotes and counters appear below — same as the legacy flow.</p>
+      <div id="neg-box" style="margin-top:12px;font-size:14px"></div>
+    </div>`;
+  $('openSwitch').onclick = () => toggleOpen();
+  $('qa-add').onclick = () => { openProductModal(); navTo('products'); };
+  $('qa-orders').onclick = () => navTo('orders');
+  $('qa-profile').onclick = () => navTo('profile');
+  renderNegBox();
+}
+
+function renderNegBox() {
+  const negs = dash.negotiations || [];
+  const el = $('neg-box');
+  if (!el) return;
+  if (!negs.length) { el.innerHTML = '<p class="empty" style="padding:16px">No order requests yet.</p>'; return; }
+  el.innerHTML = negs.slice(0,5).map(n => `<div style="padding:10px 0;border-bottom:1px solid var(--border)"><strong>${esc(n.service)}</strong> · ${esc(n.customerName)} · <span style="color:var(--terracotta)">${esc(n.status)}</span></div>`).join('');
+}
+
+async function toggleOpen() {
+  const L = store.listing;
+  const next = L.storeOpen === false;
+  await api('/api/store-owner', { method:'POST', body: JSON.stringify({ action:'set-open', open: next, listingId: store.listingId }) });
+  L.storeOpen = next;
+  renderOverview();
+}
+
+function stageBadge(st) {
+  const map = { new:['b-new','🔴 New'], confirmed:['b-conf','🟡 Confirmed'], ready:['b-ready','🔵 Ready'], completed:['b-done','🟢 Completed'] };
+  const x = map[st] || map.new;
+  return `<span class="badge ${x[0]}">${x[1]}</span>`;
+}
+
+function renderOrders() {
+  const orders = store.orders || [];
+  const url = store.storeUrl || '#';
+  $('sec-orders').innerHTML = `
+    <div class="card"><p style="font-size:14px;color:var(--muted)">Marketplace checkout orders for your store. Update status for your workflow.</p>
+    <p style="margin-top:8px"><a href="${esc(url)}" target="_blank" rel="noopener">View your public store page →</a></p></div>
+    <div class="card table-wrap">
+    ${orders.length ? `<table><thead><tr><th>Order</th><th>Customer</th><th>Items</th><th>Total</th><th>Fulfilment</th><th>Status</th><th>Time</th><th>Message</th></tr></thead><tbody>
+    ${orders.map(o => `<tr>
+      <td class="mono">${esc(o.ref)}</td>
+      <td>${esc(o.customerName)}</td>
+      <td style="max-width:180px;font-size:12px">${esc(o.itemsLine)}</td>
+      <td>£${o.subtotalGBP!=null?Number(o.subtotalGBP).toFixed(2):'—'}</td>
+      <td>${esc(o.fulfillment)}</td>
+      <td>${stageBadge(o.storeStage)}
+        <select data-ref="${esc(o.ref)}" class="input st-sel" style="margin-top:6px;padding:6px;font-size:12px">
+          ${['new','confirmed','ready','completed'].map(s => `<option value="${s}" ${s===o.storeStage?'selected':''}>${s}</option>`).join('')}
+        </select></td>
+      <td style="font-size:12px">${esc((o.createdAt||'').slice(0,16))}</td>
+      <td><a class="btn btn-ghost" style="padding:6px 10px;font-size:12px" href="https://wa.me/${String(o.phone||'').replace(/\D/g,'')}" target="_blank" rel="noopener">Message</a></td>
+    </tr>`).join('')}
+    </tbody></table>` : `<div class="empty">No orders yet — share your store page to start receiving orders.<br><br><a class="btn btn-primary" href="${esc(url)}" target="_blank" rel="noopener">Open store page</a></div>`}
+    </div>`;
+  document.querySelectorAll('.st-sel').forEach(sel => {
+    sel.addEventListener('change', async () => {
+      const ref = sel.getAttribute('data-ref');
+      try {
+        const r = await api('/api/store-owner', { method:'POST', body: JSON.stringify({ action:'set-order-stage', ref, storeStage: sel.value, listingId: store.listingId }) });
+        if (r.whatsappUrl) window.open(r.whatsappUrl, '_blank');
+        await loadAll(); navTo('orders');
+      } catch(e) { alert(e.message); }
+    });
+  });
+}
+
+function renderProducts() {
+  const prods = store.listing?.storeProducts || [];
+  $('sec-products').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:12px">
+      <h2 style="font-family:'Playfair Display',serif;">Your products</h2>
+      <button type="button" class="btn btn-primary" id="addProdBtn">➕ Add product</button>
+    </div>
+    <div class="card table-wrap">
+    ${prods.length ? `<table><thead><tr><th></th><th>Photo</th><th>Name</th><th>Price</th><th>Category</th><th>Stock</th><th>Featured</th><th></th></tr></thead><tbody>
+    ${prods.map(p => `<tr>
+      <td><input type="checkbox" class="bulk-cb" value="${esc(p.id)}"/></td>
+      <td>${p.photoData ? '<span style=font-size:20px>🖼️</span>' : '—'}</td>
+      <td>${esc(p.name)}</td>
+      <td>£${Number(p.price).toFixed(2)}</td>
+      <td>${esc(p.category)}</td>
+      <td>${p.inStock!==false?'In stock':'Out'}</td>
+      <td>${p.featured?'⭐':''}</td>
+      <td><button type="button" class="btn btn-ghost del-p" data-id="${esc(p.id)}" style="padding:4px 8px;font-size:12px">Delete</button></td>
+    </tr>`).join('')}
+    </tbody></table>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button type="button" class="btn btn-ghost" id="bulk-oos">Mark selected out of stock</button>
+      <button type="button" class="btn btn-ghost" id="bulk-del" style="border-color:var(--red);color:var(--red)">Delete selected</button>
+    </div>` : `<div class="empty">No products yet — add your first product to start receiving orders.<br><br><button type="button" class="btn btn-primary" id="addProdBtn2">➕ Add product</button></div>`}
+    </div>`;
+  const openM = () => openProductModal();
+  $('addProdBtn') && ($('addProdBtn').onclick = openM);
+  $('addProdBtn2') && ($('addProdBtn2').onclick = openM);
+  document.querySelectorAll('.del-p').forEach(b => b.onclick = async () => {
+    if (!confirm('Delete this product?')) return;
+    await api('/api/store-owner', { method:'POST', body: JSON.stringify({ action:'delete-product', productId: b.dataset.id, listingId: store.listingId }) });
+    await loadAll(); navTo('products');
+  });
+  $('bulk-oos') && ($('bulk-oos').onclick = () => bulkStock(false));
+  $('bulk-del') && ($('bulk-del').onclick = bulkDelete);
+}
+
+async function bulkStock(inStock) {
+  const ids = [...document.querySelectorAll('.bulk-cb:checked')].map(x => x.value);
+  if (!ids.length) return;
+  await api('/api/store-owner', { method:'POST', body: JSON.stringify({ action:'bulk-stock', productIds: ids, inStock, listingId: store.listingId }) });
+  await loadAll(); navTo('products');
+}
+async function bulkDelete() {
+  const ids = [...document.querySelectorAll('.bulk-cb:checked')].map(x => x.value);
+  if (!ids.length || !confirm('Delete selected products?')) return;
+  await api('/api/store-owner', { method:'POST', body: JSON.stringify({ action:'bulk-delete-products', productIds: ids, listingId: store.listingId }) });
+  await loadAll(); navTo('products');
+}
+
+function openProductModal() {
+  editingProductId = null;
+  $('pf-name').value = ''; $('pf-price').value = ''; $('pf-desc').value = '';
+  $('pf-cat').innerHTML = CATEGORIES.map(c => `<option value="${c}">${c}</option>`).join('');
+  $('pf-file').value = '';
+  $('pf-stock').classList.add('on'); $('pf-feat').classList.remove('on');
+  $('productModal').classList.add('show');
+}
+$('pf-cancel').onclick = () => $('productModal').classList.remove('show');
+$('pf-stock').onclick = function(){ this.classList.toggle('on'); };
+$('pf-feat').onclick = function(){ this.classList.toggle('on'); };
+
+$('pf-save').onclick = async () => {
+  const name = $('pf-name').value.trim();
+  const price = parseFloat($('pf-price').value);
+  const file = $('pf-file').files[0];
+  if (!name || !price || !file) { alert('Name, price and photo are required'); return; }
+  if (file.size > 5*1024*1024) { alert('Photo max 5MB'); return; }
+  const b64 = await new Promise((res,rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(file); });
+  const id = 'p-' + Math.random().toString(36).slice(2,10);
+  const cur = store.listing.storeProducts || [];
+  const np = { id, name, price, category: $('pf-cat').value, description: $('pf-desc').value, photoData: b64, inStock: $('pf-stock').classList.contains('on'), featured: $('pf-feat').classList.contains('on') };
+  await api('/api/store-owner', { method:'POST', body: JSON.stringify({ action:'save-products', products: cur.concat([np]), listingId: store.listingId }) });
+  $('productModal').classList.remove('show');
+  await loadAll(); navTo('products');
+};
+
+function renderProfile() {
+  const L = store.listing || {};
+  $('sec-profile').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <h2 style="font-family:'Playfair Display',serif;">Store profile</h2>
+      <a class="btn btn-primary" href="${esc(store.storeUrl||'#')}" target="_blank" rel="noopener">Preview store page</a>
+    </div>
+    <div class="card">
+      <div class="label">Store name</div>
+      <input class="input" id="pf-role" value="${esc(L.role)}" />
+      <div class="label" style="margin-top:10px">Description</div>
+      <textarea class="input" id="pf-bio" rows="4">${esc(L.bio)}</textarea>
+      <div class="label" style="margin-top:10px">City</div>
+      <input class="input" id="pf-city" value="${esc(L.city||'')}" />
+      <div class="label" style="margin-top:10px">WhatsApp</div>
+      <input class="input" id="pf-wa" value="${esc(L.whatsappPhone||'')}" />
+      <div class="label" style="margin-top:10px">Opening hours (one line or JSON)</div>
+      <textarea class="input" id="pf-hours">${esc(L.openingHours||'')}</textarea>
+      <div class="label" style="margin-top:10px">Store photo</div>
+      <input type="file" id="pf-storephoto" accept="image/*" />
+      <div class="toggle-row" style="margin-top:12px"><span>Delivery offered</span><div class="switch ${L.deliveryEnabled?'on':''}" id="sw-del"><i></i></div></div>
+      <div id="del-opts" class="${L.deliveryEnabled?'':'hide'}">
+        <div class="label">Radius (miles)</div><input class="input" id="pf-rad" type="number" value="${L.deliveryRadiusMiles||''}" />
+        <div class="label">Delivery charge (£)</div><input class="input" id="pf-dchg" type="number" step="0.01" value="${L.deliveryChargeGbp||''}" />
+      </div>
+      <div class="toggle-row"><span>Collection offered</span><div class="switch ${L.collectionEnabled!==false?'on':''}" id="sw-col"><i></i></div></div>
+      <button type="button" class="btn btn-primary" style="margin-top:14px" id="save-prof">Save profile</button>
+    </div>`;
+  $('sw-del').onclick = function(){ this.classList.toggle('on'); $('del-opts').classList.toggle('hide'); };
+  $('sw-col').onclick = function(){ this.classList.toggle('on'); };
+  $('save-prof').onclick = async () => {
+    let photo = L.storePhotoData;
+    const f = $('pf-storephoto').files[0];
+    if (f) {
+      if (f.size > 900000) { alert('Image too large'); return; }
+      photo = await new Promise((res,rej) => { const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(f); });
+    }
+    await api('/api/store-owner', { method:'POST', body: JSON.stringify({
+      action:'save-profile',
+      listingId: store.listingId,
+      storeName: $('pf-role').value,
+      bio: $('pf-bio').value,
+      city: $('pf-city').value,
+      whatsappPhone: $('pf-wa').value,
+      openingHours: $('pf-hours').value,
+      deliveryEnabled: $('sw-del').classList.contains('on'),
+      collectionEnabled: $('sw-col').classList.contains('on'),
+      deliveryRadiusMiles: $('pf-rad').value,
+      deliveryChargeGbp: $('pf-dchg').value,
+      storePhotoData: photo
+    })});
+    alert('Saved');
+    await loadAll(); navTo('profile');
+  };
+}
+
+function renderRevenue() {
+  const s = store.stripe || {};
+  const w = s.weekVsPrevPct, m = s.monthVsPrevPct;
+  $('sec-revenue').innerHTML = `
+    <p style="color:var(--muted);margin-bottom:12px;font-size:14px">${esc(s.chartError || 'Revenue from Stripe Connect (live when your listing ID is connected).')}</p>
+    <div class="grid5">
+      <div class="stat"><div class="label">This week</div><div class="num">£${(s.thisWeekGbp||0).toFixed(2)}</div>${w!=null?`<div style="font-size:12px;color:${w>=0?'var(--green)':'var(--red)'}">${w>=0?'▲':'▼'} ${Math.abs(w)}% vs prior week</div>`:''}</div>
+      <div class="stat"><div class="label">This month</div><div class="num">£${(s.thisMonthGbp||0).toFixed(2)}</div>${m!=null?`<div style="font-size:12px;color:${m>=0?'var(--green)':'var(--red)'}">${m>=0?'▲':'▼'} ${Math.abs(m)}% vs prior month</div>`:''}</div>
+      <div class="stat"><div class="label">All time</div><div class="num">£${(s.allTimeGbp||0).toFixed(2)}</div></div>
+      <div class="stat"><div class="label">Avg order</div><div class="num">£${(s.avgOrderGbp||0).toFixed(2)}</div></div>
+    </div>
+    <div class="card"><canvas id="ch-orders" height="120"></canvas><p class="label" style="margin-top:8px">Your order volume (Stripe, 30d)</p></div>
+    <div class="card"><canvas id="ch-rev" height="120"></canvas><p class="label" style="margin-top:8px">Your revenue over time (Stripe)</p></div>`;
+}
+
+function initCharts() {
+  if (typeof Chart === 'undefined') return;
+  const s = store.stripe || {};
+  const od = (store.analytics && store.analytics.ordersPerDay) || [];
+  const rv = s.revenuePerWeek || [];
+  if (charts.o) charts.o.destroy();
+  if (charts.r) charts.r.destroy();
+  const co = $('ch-orders');
+  const cr = $('ch-rev');
+  if (co && od.length) {
+    charts.o = new Chart(co, { type:'bar', data:{ labels: od.map(x=>x.date.slice(5)), datasets:[{ label:'Orders', data: od.map(x=>x.count), backgroundColor:'rgba(139,58,58,.6)' }]}, options:{ plugins:{legend:{display:false}}, scales:{x:{ticks:{maxRotation:45}}}}});
+  }
+  if (cr && rv.length) {
+    charts.r = new Chart(cr, { type:'bar', data:{ labels: rv.map(x=>x.week), datasets:[{ label:'£', data: rv.map(x=>x.total), backgroundColor:'rgba(212,160,23,.7)' }]}, options:{ plugins:{legend:{display:false}}}});
+  }
+}
+
+function renderReviews() {
+  const revs = store.reviews || [];
+  const avg = store.metrics?.avgRating || 0;
+  const n = revs.length;
+  $('sec-reviews').innerHTML = `
+    <div class="card"><div class="num" style="font-size:2rem">⭐ ${avg.toFixed(1)}</div><p class="label">from ${n} reviews</p></div>
+    ${revs.length ? revs.map(r => `<div class="card">
+      <p>${'★'.repeat(Math.min(5,Math.max(1,Math.round(r.rating))))}${'☆'.repeat(5-Math.min(5,Math.max(1,Math.round(r.rating))))}</p>
+      <p>${esc(r.text)}</p>
+      <p class="label">${esc(r.customerFirstName)} · ${esc(r.productName)} · ${esc((r.date||'').slice(0,10))}</p>
+      <div class="label" style="margin-top:10px">Reply (shows on store page)</div>
+      <textarea class="input reply-ta" data-id="${esc(r.id)}" rows="2">${esc(r.reply||'')}</textarea>
+      <button type="button" class="btn btn-primary btn-reply" data-id="${esc(r.id)}" style="margin-top:8px">Save reply</button>
+    </div>`).join('') : '<div class="empty">No reviews yet — they appear when customers leave feedback.</div>'}`;
+  document.querySelectorAll('.btn-reply').forEach(b => b.onclick = async () => {
+    const id = b.dataset.id;
+    const ta = document.querySelector('.reply-ta[data-id="'+id+'"]');
+    await api('/api/store-owner', { method:'POST', body: JSON.stringify({ action:'save-review-reply', reviewId: id, reply: ta.value, listingId: store.listingId }) });
+    await loadAll(); navTo('reviews');
+  });
+}
+
+const EVENTS = [
+  { id:'eid', name:'Eid al-Fitr', date:'2026-03-31', desc:'Your store can be featured to Halal shoppers during Eid', fire:'high' },
+  { id:'diwali', name:'Diwali', date:'2026-11-08', desc:'Featured to Asian shoppers during Diwali', fire:'high' },
+  { id:'nindependence', name:'Nigerian Independence Day', date:'2026-10-01', desc:'Featured to Nigerian community shoppers', fire:'med' },
+  { id:'bhm', name:'Black History Month', date:'October', desc:'Featured across African & Caribbean highlights', fire:'high' },
+  { id:'carnival', name:'Caribbean Carnival Season', date:'Summer', desc:'Featured to Caribbean community shoppers', fire:'med' },
+  { id:'xmas', name:'Christmas', date:'December', desc:'Featured in festive cultural food guides', fire:'high' },
+  { id:'ramadan', name:'Ramadan', date:'2026-02-19', desc:'Featured to Halal product shoppers', fire:'high' }
+];
+
+function renderPromotions() {
+  const opt = store.listing?.promotionOptIns || {};
+  $('sec-promotions').innerHTML = `
+    <h2 style="font-family:'Playfair Display',serif;margin-bottom:8px">Get featured during cultural events</h2>
+    <p style="color:var(--muted);margin-bottom:16px">Opt in — we’ll prioritise your store in seasonal campaigns when capacity allows.</p>
+    ${EVENTS.map(e => `<div class="promo-card">
+      <label class="chk"><input type="checkbox" data-ev="${e.id}" ${opt[e.id]?'checked':''}/>
+      <span><strong>${esc(e.name)}</strong> — ${esc(e.date)}<br><span style="font-size:13px;color:var(--muted)">${esc(e.desc)}</span><br>Estimated traffic: ${e.fire==='high'?'🔥 High':'⚡ Medium'}</span></label>
+      ${opt[e.id] ? '<p style="color:var(--green);font-size:13px;margin-top:6px">You\'re featured during this event ✅</p>' : ''}
+    </div>`).join('')}
+    <button type="button" class="btn btn-primary" id="save-promo">Save preferences</button>`;
+  $('save-promo').onclick = async () => {
+    const o = {};
+    document.querySelectorAll('.promo-card input[type=checkbox]').forEach(c => { o[c.dataset.ev] = c.checked; });
+    await api('/api/store-owner', { method:'POST', body: JSON.stringify({ action:'save-promotions', optIns: o, listingId: store.listingId }) });
+    await loadAll(); navTo('promotions');
+  };
+}
+
+function renderAnalytics() {
+  const a = store.analytics || {};
+  $('sec-analytics').innerHTML = `
+    <div class="card"><canvas id="ch-views" height="100"></canvas><p class="label">Page views (30 days)</p></div>
+    <div class="card"><p class="label">Top products by views</p>
+    ${(a.topProductsByViews||[]).map(t => `<p>${esc(t.name)} — ${t.views} views</p>`).join('') || '<p class="muted">Not enough data yet.</p>'}</div>
+    <div class="card"><p class="label">Orders by day of week</p>
+    <p>${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map((d,i)=>d+': '+(a.ordersByDow||[])[i]).join(' · ')}</p>
+    <p style="margin-top:10px"><strong>Conversion</strong> (views → orders, 30d): ${a.conversionPct||0}%</p></div>
+    <div class="card"><p class="label">Insights</p>
+    ${(a.insights||[]).map(i => `<div class="insight">${esc(i)}</div>`).join('') || '<p class="muted">Insights appear as you get traffic.</p>'}</div>`;
+  setTimeout(() => {
+    if (typeof Chart === 'undefined' || !a.viewsLine) return;
+    const cv = $('ch-views');
+    if (cv && charts.v) charts.v.destroy();
+    if (cv) charts.v = new Chart(cv, { type:'line', data:{ labels: a.viewsLine.map(x=>x.date.slice(5)), datasets:[{ label:'Views', data: a.viewsLine.map(x=>x.count), borderColor:'#8B3A3A', tension:.2 }]}, options:{ plugins:{legend:{display:false}}}});
+  }, 50);
+}
+
+function renderSettings() {
+  const p = store.listing?.notificationPrefs || {};
+  $('sec-settings').innerHTML = `
+    <div class="card">
+      <p class="label">WhatsApp</p>
+      <p style="font-size:14px">Update in <strong>Store profile</strong> (same field).</p>
+      <p class="label" style="margin-top:14px">Email</p>
+      <p style="font-size:14px">Your sign-in email is tied to the listing — contact Clip Services to change it.</p>
+      <p class="label" style="margin-top:14px">Password</p>
+      <p style="font-size:14px">We use one-time email codes — there is no password for store owners.</p>
+      <p class="label" style="margin-top:14px">Notifications</p>
+      <label class="chk"><input type="checkbox" id="n1" ${p.orderWhatsApp!==false?'checked':''}/> New order WhatsApp alert</label>
+      <label class="chk"><input type="checkbox" id="n2" ${p.reviewAlert!==false?'checked':''}/> New review alert</label>
+      <label class="chk"><input type="checkbox" id="n3" ${p.weeklySummary?'checked':''}/> Weekly summary WhatsApp</label>
+      <button type="button" class="btn btn-primary" id="save-n" style="margin-top:10px">Save preferences</button>
+      <p class="label" style="margin-top:18px">Stripe Connect</p>
+      <p style="font-size:14px">Status: ${store.stripeProvider?.onboarded ? '✅ Connected' : '⏳ Not connected yet — we use your listing ID as the Connect account key. Ask operations if payouts are pending.'}</p>
+      <p class="label" style="margin-top:18px">Delete store</p>
+      <p style="font-size:14px">Contact Clip Services on WhatsApp to remove a listing — we confirm manually to protect customers.</p>
+    </div>`;
+  $('save-n').onclick = async () => {
+    await api('/api/store-owner', { method:'POST', body: JSON.stringify({ action:'save-notification-prefs', prefs: { orderWhatsApp: $('n1').checked, reviewAlert: $('n2').checked, weeklySummary: $('n3').checked }, listingId: store.listingId }) });
+    alert('Saved');
+  };
+}
+
+function renderNotifs() {
+  const o = store.orders || [];
+  const recent = o.filter(x => new Date(x.createdAt) > Date.now() - 86400000*3);
+  $('notifPanel').innerHTML = `
+    ${recent.length ? recent.slice(0,5).map(x => `<div class="notif-item">📦 Order ${esc(x.ref)} — ${esc(x.customerName)}</div>`).join('') : '<div class="notif-item">No recent orders.</div>'}
+    <div class="notif-item">⭐ Reviews and payments will show here as they happen.</div>`;
+}
+
+$('bellBtn').onclick = (e) => { e.stopPropagation(); $('notifPanel').classList.toggle('open'); };
+document.body.addEventListener('click', () => $('notifPanel').classList.remove('open'));
+
+$('refreshDash').onclick = async () => { try { await loadAll(); } catch(e) { alert(e.message); } };
+$('logoutBtn').onclick = async () => {
+  await fetch('/api/provider-auth', { method:'POST', credentials:'include', headers:{'content-type':'application/json'}, body: JSON.stringify({ action:'logout' }) });
+  location.reload();
+};
+
+$('sendOtp').onclick = async () => {
+  const email = $('emailIn').value.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { setStat($('loginStat'),'Invalid email','err'); return; }
+  setStat($('loginStat'),'Sending…');
+  try {
+    await api('/api/provider-auth', { method:'POST', body: JSON.stringify({ action:'request-otp', email }) });
+    $('emailShown').textContent = email;
+    $('stepEmail').classList.add('hide'); $('stepCode').classList.remove('hide');
+    setStat($('loginStat'),'Check your inbox','ok');
+  } catch(e) { setStat($('loginStat'), e.message, 'err'); }
+};
+$('verifyOtp').onclick = async () => {
+  const email = $('emailIn').value.trim().toLowerCase();
+  const code = $('otpIn').value.replace(/\D/g,'');
+  try {
+    await api('/api/provider-auth', { method:'POST', body: JSON.stringify({ action:'verify-otp', email, code }) });
+    try {
+      await loadAll();
+      $('loginScreen').classList.add('hide');
+      $('app').classList.remove('hide');
+      navTo('overview');
+    } catch (e2) {
+      setStat($('loginStat'), e2.message || 'Could not load store', 'err');
+    }
+  } catch(e) { setStat($('loginStat'), e.message, 'err'); }
+};
+$('backEmail').onclick = () => { $('stepCode').classList.add('hide'); $('stepEmail').classList.remove('hide'); };
+
+fetch('/api/store-owner', { credentials:'include' }).then(r=>r.json()).then(d => {
+  if (d.ok) {
+    $('loginScreen').classList.add('hide');
+    $('app').classList.remove('hide');
+    store = d;
+    loadAll().then(() => navTo('overview')).catch(()=>{});
+  }
+}).catch(()=>{});
+})();
+</script>
+</body>
+</html>

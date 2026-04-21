@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0A0E1A">
 <link rel="manifest" href="/manifest.webmanifest">
-<title>Provider Dashboard — Clip Services</title>
+<title>Store dashboard — Clip Services</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#0A0E1A;--bg2:#0F1424;--card:#131A2E;--border:#1C2848;--text:#E0E8F8;--muted:#6B7FA0;--faint:#3A4D6E;--cyan:#00C8F0;--cyan2:#0099BB;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--radius:16px}
@@ -91,13 +91,13 @@ a{color:var(--cyan);text-decoration:none}
   <div class="wrap" style="padding-top:24px;padding-bottom:48px">
 
     <div class="card" id="loginCard">
-      <div class="label">Provider dashboard</div>
+      <div class="label">Store dashboard</div>
       <h2 style="font-family:'Syne',sans-serif;font-size:22px;font-weight:700;margin-bottom:8px">Sign in</h2>
-      <p style="color:var(--muted);font-size:14px;margin-bottom:10px;line-height:1.6"><strong>Service providers only</strong> — customers book without an account. Enter the email on your published listing; we’ll send a <strong>one-time code</strong>. After you verify, you stay signed in on this browser for a long time until you log out.</p>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:10px;line-height:1.6"><strong>Store owners only</strong> — customers order without an account. Enter the email on your published listing; we’ll send a <strong>one-time code</strong>. After you verify, you stay signed in on this browser for a long time until you log out.</p>
       <p style="color:var(--muted);font-size:13px;margin-bottom:14px;line-height:1.55">We don’t match this to your application form: any valid address can get a code. If sending fails, it’s almost always mail setup (on Brevo’s free plan, add your provider email under <strong>Contacts</strong> or verify your domain so messages can reach that inbox).</p>
       <div id="otpStepEmail">
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <input class="input" id="emailInput" placeholder="Your provider email" type="email" autocomplete="email" style="max-width:320px">
+          <input class="input" id="emailInput" placeholder="Your store owner email" type="email" autocomplete="email" style="max-width:320px">
           <button type="button" class="btn btn-p" id="sendOtpBtn">Email me a code</button>
         </div>
       </div>
@@ -117,7 +117,7 @@ a{color:var(--cyan);text-decoration:none}
       <div class="how-body">
         <ol>
           <li>After you apply, the operator publishes you under <strong>Applications → Publish to site</strong> with a listing ID and your email.</li>
-          <li>Customers book your card on the <a href="/">marketplace</a>; you get a thread here to <strong>send a price offer</strong> (or accept their counter).</li>
+          <li>Customers request your products on the <a href="/">marketplace</a>; you get a thread here to <strong>send a price offer</strong> (or accept their counter).</li>
           <li>They pay from <a href="/user/">their dashboard</a> once a price is agreed. Card payouts use Stripe Connect if the operator set your listing ID up there.</li>
           <li>If you see no requests yet, you may still be on seed/placeholder listings only — ask the operator to publish your profile.</li>
         </ol>
@@ -138,19 +138,19 @@ a{color:var(--cyan);text-decoration:none}
       </div>
 
       <div class="card provider-hint" style="padding:16px 18px;margin-bottom:18px">
-        <p><strong>Quick reminder:</strong> Send your offer or counter in <em>Requests &amp; Negotiations</em>. When the customer accepts, they complete payment from their side. Use <strong>Refresh</strong> after emails or payments.</p>
+        <p><strong>Quick reminder:</strong> Send your offer or counter in <em>Order requests &amp; negotiations</em>. When the customer accepts, they complete payment from their side. Use <strong>Refresh</strong> after emails or payments.</p>
       </div>
 
       <div class="stats-row" id="statsRow">
-        <div class="stat-card"><div class="stat-num" id="statNegs">0</div><div class="stat-lbl">Negotiations</div></div>
+        <div class="stat-card"><div class="stat-num" id="statNegs">0</div><div class="stat-lbl">Order requests</div></div>
         <div class="stat-card"><div class="stat-num" id="statActive">0</div><div class="stat-lbl">Active</div></div>
-        <div class="stat-card"><div class="stat-num" id="statBookings">0</div><div class="stat-lbl">Bookings</div></div>
+        <div class="stat-card"><div class="stat-num" id="statBookings">0</div><div class="stat-lbl">Orders</div></div>
       </div>
 
       <div class="card" style="padding:16px 18px;margin-bottom:16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px">
         <div style="flex:1;min-width:200px">
           <div class="label">Phone notifications</div>
-          <p style="font-size:13px;color:var(--muted);margin:6px 0 0;line-height:1.55">New requests and negotiation updates for <strong id="pushEmailLabel"></strong> on <em>this</em> device. Same email as your published listing.</p>
+          <p style="font-size:13px;color:var(--muted);margin:6px 0 0;line-height:1.55">New order requests and updates for <strong id="pushEmailLabel"></strong> on <em>this</em> device. Same email as your published listing.</p>
         </div>
         <button type="button" class="btn btn-p btn-sm" id="enablePushBtn">Enable push alerts</button>
       </div>
@@ -158,8 +158,8 @@ a{color:var(--cyan);text-decoration:none}
       <div id="listingSettings" class="hide"></div>
 
       <div class="tabs">
-        <button class="tab active" data-tab="negotiations">Requests & Negotiations</button>
-        <button class="tab" data-tab="bookings">Confirmed Bookings</button>
+        <button class="tab active" data-tab="negotiations">Order requests &amp; negotiations</button>
+        <button class="tab" data-tab="bookings">Confirmed orders</button>
       </div>
 
       <div id="negView"></div>
@@ -212,7 +212,7 @@ function badgeClass(status) {
 function renderNegotiations() {
   const el = $('negView');
   if (!state.negotiations.length) {
-    el.innerHTML = '<div class="empty">No service requests yet. When customers request your services, they will appear here.</div>';
+    el.innerHTML = '<div class="empty">No order requests yet. When customers request your products, they will appear here.</div>';
     return;
   }
   el.innerHTML = state.negotiations.map(n => {
@@ -245,7 +245,7 @@ function renderNegotiations() {
 
     return '<div class="card">' +
       '<div class="neg-header"><div><div class="neg-service">' + escHtml(n.service) + '</div>' +
-      '<div class="neg-detail">' + escHtml(n.customerName || '') + ' &middot; ' + escHtml(n.id) + ' &middot; ' + timeAgo(n.createdAt) + '</div></div>' +
+      '<div class="neg-detail">Customer: ' + escHtml(n.customerName || '') + ' &middot; ' + escHtml(n.id) + ' &middot; ' + timeAgo(n.createdAt) + '</div></div>' +
       '<span class="badge ' + badgeClass(n.status) + '">' + n.status + '</span></div>' +
       '<div class="msg-list">' + msgs + '</div>' + actions + '</div>';
   }).join('');
@@ -254,13 +254,13 @@ function renderNegotiations() {
 function renderBookings() {
   const el = $('bookView');
   if (!state.bookings.length) {
-    el.innerHTML = '<div class="empty">No confirmed bookings yet.</div>';
+    el.innerHTML = '<div class="empty">No confirmed orders yet.</div>';
     return;
   }
   el.innerHTML = state.bookings.map(b =>
     '<div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">' +
     '<div><div style="font-family:\'Syne\',sans-serif;font-size:15px;font-weight:700">' + escHtml(b.service) + '</div>' +
-    '<div style="font-size:12px;color:var(--muted);margin-top:4px">' + escHtml(b.customerName||'') + ' &middot; ' + escHtml(b.ref) + ' &middot; ' + escHtml(b.date||'') + ' ' + escHtml(b.time||'') + '</div></div>' +
+    '<div style="font-size:12px;color:var(--muted);margin-top:4px">Customer: ' + escHtml(b.customerName||'') + ' &middot; ' + escHtml(b.ref) + ' &middot; ' + escHtml(b.date||'') + ' ' + escHtml(b.time||'') + '</div></div>' +
     '<span class="badge ' + badgeClass(b.status) + '">' + (b.status||'new') + '</span></div>' +
     (b.agreedPrice ? '<div style="margin-top:8px;font-family:\'Syne\',sans-serif;font-size:18px;font-weight:700;color:var(--cyan)">&pound;' + Number(b.agreedPrice).toFixed(2) + '</div>' : '') +
     '</div>'
@@ -282,7 +282,7 @@ function renderListingSettings() {
     return;
   }
   box.className = 'card';
-  box.innerHTML = '<div class="label">Your marketplace listing</div>' +
+    box.innerHTML = '<div class="label">Your products (marketplace listing)</div>' +
     '<p style="font-size:13px;color:var(--muted);margin:8px 0 12px;line-height:1.55">Prices always come from you. Turn off counter-offers if you prefer fixed menu pricing — customers can still accept or decline.</p>' +
     state.listings.map(function (l) {
       return '<div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">' +
@@ -374,7 +374,7 @@ async function declineNeg(negId) {
 $('sendOtpBtn').addEventListener('click', async () => {
   const email = $('emailInput').value.trim().toLowerCase();
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    setStatus($('loginStatus'), 'Enter a valid provider email', 'err');
+    setStatus($('loginStatus'), 'Enter a valid store owner email', 'err');
     return;
   }
   setStatus($('loginStatus'), 'Sending code…', null);
@@ -506,7 +506,7 @@ if ('serviceWorker' in navigator) {
 
 document.getElementById('enablePushBtn')?.addEventListener('click', async function () {
   var em = state.email;
-  if (!em || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { alert('Sign in with your provider email first.'); return; }
+  if (!em || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) { alert('Sign in with your store email first.'); return; }
   try {
     var reg = await navigator.serviceWorker.ready;
     var v = await fetch('/api/push-vapid').then(function (r) { return r.json(); });

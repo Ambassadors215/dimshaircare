@@ -139,6 +139,40 @@ async function handleMarketplacePublish(req, res) {
   }
 }
 
+async function handlePlatformStats(req, res) {
+  if (req.method !== "GET") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
+  try {
+    const listings = await getMarketplaceListings();
+    const bookings = await getBookings();
+    const counters = await getOnboardingAnalyticsCounters();
+    const apps = await getOnboardingApplications();
+    const marketplaceOrders = bookings.filter((b) => b.marketplaceOrder);
+    const gmv = marketplaceOrders.reduce((s, b) => s + Number(b.subtotalGBP || b.totalGBP || 0), 0);
+    const approvedStores = listings.filter((x) => x?.applicationStatus === "approved").length;
+    const activatedStores = listings.filter((x) => {
+      if (x?.applicationStatus === "pending") return false;
+      const pl = Array.isArray(x?.priceList) ? x.priceList.length : 0;
+      const sp = Array.isArray(x?.storeProducts) ? x.storeProducts.length : 0;
+      return pl + sp > 0;
+    }).length;
+    const subTotal = (counters.submissionsStore || 0) + (counters.submissionsStall || 0);
+    const applicationToActivePct = subTotal ? ((activatedStores / subTotal) * 100).toFixed(2) : null;
+    return endJson(res, 200, {
+      ok: true,
+      totalApplicationsLogged: apps.length,
+      onboardingSubmissionsTotal: subTotal,
+      approvedStores,
+      activatedStoresWithProducts: activatedStores,
+      totalMarketplaceOrders: marketplaceOrders.length,
+      totalGmvGbp: Math.round(gmv * 100) / 100,
+      applicationToActivePct,
+    });
+  } catch (e) {
+    console.error("ADMIN_PLATFORM", e);
+    return endJson(res, 500, { ok: false, error: "Failed to load platform stats" });
+  }
+}
+
 async function handleOnboardingStats(req, res) {
   if (req.method !== "GET") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
   try {
@@ -225,6 +259,7 @@ const ROUTES = {
   "update-booking": handleUpdateBooking,
   "site-visits": handleSiteVisits,
   "onboarding-stats": handleOnboardingStats,
+  "platform-stats": handlePlatformStats,
 };
 
 export default async function handler(req, res) {

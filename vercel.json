@@ -30,6 +30,8 @@
     { "source": "/user/", "destination": "/user/index.html" },
     { "source": "/stores", "destination": "/stores/index.html" },
     { "source": "/stores/", "destination": "/stores/index.html" },
+    { "source": "/store-owner/dashboard", "destination": "/store-owner/dashboard/index.html" },
+    { "source": "/store-owner/dashboard/", "destination": "/store-owner/dashboard/index.html" },
     { "source": "/store-owner/apply", "destination": "/store-owner/apply/index.html" },
     { "source": "/store-owner/apply/", "destination": "/store-owner/apply/index.html" },
     { "source": "/market-stall/apply", "destination": "/market-stall/apply/index.html" },

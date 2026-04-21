@@ -25,6 +25,7 @@ import productSeoHtml from "../lib/handlers/product-seo-html.js";
 import blogHtml from "../lib/handlers/blog-html.js";
 import storeApplication from "../lib/handlers/store-application.js";
 import onboardingTrack from "../lib/handlers/onboarding-track.js";
+import storeOwnerApi from "../lib/handlers/store-owner-api.js";
 
 const handlers = {
   booking,
@@ -50,6 +51,7 @@ const handlers = {
   "blog-html": blogHtml,
   "store-application": storeApplication,
   "onboarding-track": onboardingTrack,
+  "store-owner": storeOwnerApi,
 };
 
 function notFound(res) {
