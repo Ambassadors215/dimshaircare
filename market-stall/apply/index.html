@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>List your market stall — Clip Services</title>
+<meta name="description" content="£15/month — turn your market stall into an online shop on Clip Services UK.">
+<meta name="theme-color" content="#8B3A3A">
+<link rel="canonical" href="https://clipservice.app/market-stall/apply">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--t:#8B3A3A;--g:#D4A017;--c:#F5F0E8;--b:#2C1810;--m:#5C4033;--w:#fff;--err:#B91C1C;--bd:#E0D6C8}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,sans-serif;background:var(--c);color:var(--b);padding-bottom:40px;line-height:1.55}
+.hero{text-align:center;padding:28px 18px 20px;background:linear-gradient(165deg,var(--c),#EDE8E0);border-bottom:1px solid var(--bd)}
+.hero h1{font-family:"Playfair Display",Georgia,serif;color:var(--t);font-size:clamp(1.45rem,4.5vw,1.9rem);margin:12px 0 10px}
+.hero .sub{color:var(--m);font-size:15px;max-width:420px;margin:0 auto 14px}
+.hl{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;font-size:14px;color:var(--m)}
+.hl span{background:var(--w);padding:8px 14px;border-radius:999px;border:1px solid var(--bd)}
+.wrap{max-width:480px;margin:0 auto;padding:18px}
+.progress{height:6px;background:#ddd;border-radius:99px;margin:16px 0 6px}
+.progress i{display:block;height:100%;background:var(--t);width:25%;transition:width .2s}
+.steps{font-size:12px;color:var(--m);text-align:center;margin-bottom:14px}
+form{background:var(--w);border-radius:16px;padding:20px 16px;border:1px solid var(--bd)}
+.step{display:none}.step.active{display:block}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:6px}
+.req{color:var(--err)}
+input,select,textarea{width:100%;padding:14px;border:1px solid var(--bd);border-radius:12px;font-size:16px;margin-bottom:14px}
+textarea{min-height:72px}
+.chk{display:flex;align-items:center;gap:8px;font-size:13px;margin:6px 0;cursor:pointer}
+.chk input{width:20px;height:20px;accent-color:var(--t)}
+details.optional{margin:12px 0;border:1px dashed var(--bd);border-radius:12px;padding:12px;background:var(--c)}
+details.optional summary{cursor:pointer;font-weight:700;color:var(--t)}
+.nav{display:flex;gap:10px;margin-top:8px}
+.btn{flex:1;padding:14px;border-radius:12px;font-weight:700;border:none;cursor:pointer;font-size:16px;min-height:52px;font-family:inherit}
+.btn-back{background:transparent;color:var(--t);border:2px solid var(--t)}
+.btn-next,.btn-go{background:var(--t);color:var(--w)}
+.btn-submit{background:linear-gradient(135deg,var(--g),#b8860b);color:var(--b);width:100%;margin-top:12px}
+.err{color:var(--err);font-size:13px;display:none;margin-bottom:10px}.err.show{display:block}
+a{color:var(--t);font-weight:600}
+</style>
+</head>
+<body>
+<div class="hero">
+  <a href="/" style="font-size:14px">← Home</a>
+  <h1>Turn your market stall into an online shop</h1>
+  <p class="sub">Sell beyond your market day and reach more customers across your city.</p>
+  <div class="hl">
+    <span>💷 £15/month flat</span>
+    <span>🖥️ No website needed</span>
+    <span>⚡ We set everything up</span>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="progress"><i id="prog"></i></div>
+  <p class="steps" id="stepLabel">Step 1 of 4 — About you</p>
+
+  <form id="f" novalidate>
+    <p class="err" id="formErr"></p>
+
+    <div class="step active" data-step="1">
+      <label for="fullName">Full name <span class="req">*</span></label>
+      <input id="fullName" required autocomplete="name" maxlength="120">
+      <label for="whatYouSell">What do you sell? <span class="req">*</span></label>
+      <input id="whatYouSell" required placeholder="One sentence, e.g. Caribbean veg, spices and drinks" maxlength="500">
+      <label for="city">City <span class="req">*</span></label>
+      <select id="city" required>
+        <option value="">Choose…</option>
+        <option value="manchester">Manchester</option>
+        <option value="london">London</option>
+        <option value="birmingham">Birmingham</option>
+        <option value="leeds">Leeds</option>
+        <option value="leicester">Leicester</option>
+        <option value="bradford">Bradford</option>
+        <option value="bristol">Bristol</option>
+        <option value="liverpool">Liverpool</option>
+        <option value="sheffield">Sheffield</option>
+        <option value="nottingham">Nottingham</option>
+        <option value="other">Other</option>
+      </select>
+      <div class="nav"><span></span><button type="button" class="btn btn-next" id="to2">Continue</button></div>
+    </div>
+
+    <div class="step" data-step="2">
+      <label for="whatsapp">WhatsApp number <span class="req">*</span></label>
+      <input id="whatsapp" type="tel" required autocomplete="tel" maxlength="40">
+      <label for="email">Email <span class="req">*</span></label>
+      <input id="email" type="email" required autocomplete="email" maxlength="120">
+      <div class="nav"><button type="button" class="btn btn-back" id="b1">Back</button><button type="button" class="btn btn-next" id="to3">Continue</button></div>
+    </div>
+
+    <div class="step" data-step="3">
+      <details class="optional" id="optDetails">
+        <summary>Add more details — optional</summary>
+        <label for="marketLoc" style="margin-top:12px">Market name or location</label>
+        <input id="marketLoc" maxlength="200">
+        <label>Days you trade</label>
+        <div id="days"></div>
+        <label>Local delivery?</label>
+        <select id="delivery">
+          <option value="">—</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
+        <label for="photo">Photo of your stall (optional)</label>
+        <input id="photo" type="file" accept="image/jpeg,image/png">
+      </details>
+      <div class="nav"><button type="button" class="btn btn-back" id="b2">Back</button><button type="button" class="btn btn-go" id="to4">Continue</button></div>
+    </div>
+
+    <div class="step" data-step="4">
+      <label class="chk"><input type="checkbox" id="terms" required> I agree to Clip Services <a href="/terms" target="_blank">Terms</a> and <a href="/privacy-policy" target="_blank">Privacy Policy</a>.</label>
+      <button type="submit" class="btn btn-submit">List my stall →</button>
+      <button type="button" class="btn btn-back" id="b3" style="margin-top:10px;width:100%">Back</button>
+    </div>
+  </form>
+</div>
+
+<script>
+(function(){
+  var DAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  var dh = document.getElementById("days");
+  DAYS.forEach(function(d){
+    var lab = document.createElement("label");
+    lab.className = "chk";
+    lab.innerHTML = '<input type="checkbox" name="day" value="'+d+'"> '+d;
+    dh.appendChild(lab);
+  });
+
+  fetch("/api/onboarding-track", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event: "view_stall_apply" }) }).catch(function(){});
+
+  var step = 1;
+  function show(n){
+    step = n;
+    document.querySelectorAll(".step").forEach(function(el){ el.classList.toggle("active", el.getAttribute("data-step")==String(n)); });
+    document.getElementById("prog").style.width = (n/4*100)+"%";
+    var t = ["About you","Contact","Optional details","Submit"];
+    document.getElementById("stepLabel").textContent = "Step "+n+" of 4 — "+t[n-1];
+    document.getElementById("formErr").classList.remove("show");
+    window.scrollTo(0,0);
+  }
+  document.getElementById("to2").onclick = function(){
+    if (!document.getElementById("fullName").value.trim() || !document.getElementById("whatYouSell").value.trim() || !document.getElementById("city").value) {
+      document.getElementById("formErr").textContent = "Fill in all required fields."; document.getElementById("formErr").classList.add("show"); return;
+    }
+    show(2);
+  };
+  document.getElementById("to3").onclick = function(){
+    var e = document.getElementById("email").value.trim();
+    if (!document.getElementById("whatsapp").value.trim() || !e || e.indexOf("@")<0) {
+      document.getElementById("formErr").textContent = "Valid WhatsApp and email required."; document.getElementById("formErr").classList.add("show"); return;
+    }
+    show(3);
+  };
+  document.getElementById("to4").onclick = function(){ show(4); };
+  document.getElementById("b1").onclick = function(){ show(1); };
+  document.getElementById("b2").onclick = function(){ show(2); };
+  document.getElementById("b3").onclick = function(){ show(3); };
+
+  document.getElementById("f").onsubmit = function(ev){
+    ev.preventDefault();
+    if (!document.getElementById("terms").checked) return;
+    var days = Array.prototype.map.call(document.querySelectorAll('input[name="day"]:checked'), function(x){ return x.value; });
+    var payload = {
+      flow: "stall",
+      fullName: document.getElementById("fullName").value.trim(),
+      whatYouSell: document.getElementById("whatYouSell").value.trim(),
+      city: document.getElementById("city").value,
+      whatsapp: document.getElementById("whatsapp").value.trim(),
+      email: document.getElementById("email").value.trim().toLowerCase(),
+      marketLocation: document.getElementById("marketLoc").value.trim(),
+      tradeDays: days,
+      delivery: document.getElementById("delivery").value || "",
+      termsAccepted: true
+    };
+    var file = document.getElementById("photo").files[0];
+    function go(){
+      fetch("/api/store-application", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+        .then(function(r){ return r.json(); })
+        .then(function(j){
+          if (j.ok && j.redirect) location.href = j.redirect;
+          else { document.getElementById("formErr").textContent = j.error || "Error"; document.getElementById("formErr").classList.add("show"); }
+        })
+        .catch(function(){ document.getElementById("formErr").textContent = "Network error"; document.getElementById("formErr").classList.add("show"); });
+    }
+    if (!file) { go(); return; }
+    if (file.size > 5*1024*1024) { document.getElementById("formErr").textContent = "Photo max 5MB"; document.getElementById("formErr").classList.add("show"); return; }
+    var r = new FileReader();
+    r.onload = function(){
+      payload.photo = { name: file.name, type: file.type, data: String(r.result).split(",")[1] };
+      go();
+    };
+    r.readAsDataURL(file);
+  };
+})();
+</script>
+</body>
+</html>

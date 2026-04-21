@@ -23,6 +23,8 @@ import productHtml from "../lib/handlers/product-html.js";
 import communityHtml from "../lib/handlers/community-html.js";
 import productSeoHtml from "../lib/handlers/product-seo-html.js";
 import blogHtml from "../lib/handlers/blog-html.js";
+import storeApplication from "../lib/handlers/store-application.js";
+import onboardingTrack from "../lib/handlers/onboarding-track.js";
 
 const handlers = {
   booking,
@@ -46,6 +48,8 @@ const handlers = {
   "community-html": communityHtml,
   "product-seo-html": productSeoHtml,
   "blog-html": blogHtml,
+  "store-application": storeApplication,
+  "onboarding-track": onboardingTrack,
 };
 
 function notFound(res) {

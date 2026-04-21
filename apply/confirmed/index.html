@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Application received — Clip Services</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#8B3A3A">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--t:#8B3A3A;--g:#D4A017;--c:#F5F0E8;--b:#2C1810}
+body{font-family:Inter,sans-serif;background:var(--c);color:var(--b);margin:0;padding:32px 20px;text-align:center;line-height:1.65}
+.wrap{max-width:520px;margin:0 auto}
+h1{font-family:"Playfair Display",serif;color:var(--t);font-size:1.75rem;margin-bottom:12px}
+.btn{display:inline-block;margin-top:20px;padding:14px 24px;background:var(--t);color:#fff;font-weight:700;border-radius:12px;text-decoration:none;width:100%;max-width:360px;box-sizing:border-box}
+.btn-gold{background:linear-gradient(135deg,var(--g),#b8860b);color:var(--b)}
+a{color:var(--t);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Application received 🎉</h1>
+  <p id="sub">We will review your store and contact you within 24–48 hours via WhatsApp.</p>
+  <p class="ref" id="refLine" style="font-size:14px;color:#5C4033"></p>
+  <p style="margin-top:20px;font-size:15px">Tap below to open WhatsApp with a confirmation message you can send us.</p>
+  <a class="btn btn-gold" id="waBtn" href="#">Open WhatsApp</a>
+  <p style="margin-top:28px"><a href="/">Back to home</a> · <a href="/stores">Browse stores</a></p>
+</div>
+<script>
+(function(){
+  var p = new URLSearchParams(location.search);
+  var ref = p.get("ref") || "";
+  var name = p.get("name") || "";
+  var store = p.get("store") || "";
+  var flow = p.get("flow") || "store";
+  if (flow === "stall") {
+    document.getElementById("sub").textContent = "We will review your stall and contact you within 24–48 hours via WhatsApp.";
+  }
+  if (ref) document.getElementById("refLine").textContent = "Reference: " + ref;
+  var msg = "Hi 👋 We've received your application" + (store ? " to list " + store : "") + " on Clip Services. We'll review it and get back to you within 48 hours." + (ref ? " Ref: " + ref : "");
+  var wa = "447487588706";
+  document.getElementById("waBtn").href = "https://wa.me/" + wa + "?text=" + encodeURIComponent(msg);
+})();
+</script>
+</body>
+</html>

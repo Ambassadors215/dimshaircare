@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apply to list your store — Clip Services</title>
+<meta name="description" content="Get your African, Caribbean or Asian store online in 48 hours. Free application — Clip Services UK marketplace.">
+<meta name="theme-color" content="#8B3A3A">
+<link rel="canonical" href="https://clipservice.app/store-owner/apply">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--t:#8B3A3A;--td:#6B2E2E;--g:#D4A017;--c:#F5F0E8;--b:#2C1810;--m:#5C4033;--w:#fff;--err:#B91C1C;--bd:#E0D6C8}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--c);color:var(--b);line-height:1.55;padding-bottom:48px}
+.wrap{max-width:520px;margin:0 auto;padding:20px 18px 32px}
+.hero{background:linear-gradient(165deg,var(--c) 0%,#EDE8E0 100%);padding:28px 0 8px;text-align:center;border-bottom:1px solid var(--bd)}
+.hero h1{font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.5rem,5vw,2rem);color:var(--t);margin:0 0 10px;line-height:1.15}
+.hero .sub{font-size:15px;color:var(--m);max-width:420px;margin:0 auto 18px}
+.trust{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;font-size:13px;color:var(--m)}
+.trust span{background:var(--w);padding:8px 12px;border-radius:999px;border:1px solid var(--bd)}
+.progress{height:6px;background:#ddd;border-radius:99px;margin:20px 0 8px;overflow:hidden}
+.progress i{display:block;height:100%;background:var(--t);width:25%;transition:width .25s}
+.steps{font-size:12px;color:var(--m);text-align:center;margin-bottom:16px}
+form{background:var(--w);border-radius:16px;padding:22px 18px;border:1px solid var(--bd);box-shadow:0 4px 20px rgba(0,0,0,.05)}
+.step{display:none}
+.step.active{display:block}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--b)}
+.req{color:var(--err)}
+input,select,textarea{width:100%;padding:14px 14px;border:1px solid var(--bd);border-radius:12px;font-size:16px;font-family:inherit;margin-bottom:14px}
+textarea{min-height:88px;resize:vertical}
+.chk-grid{display:grid;gap:10px;margin-bottom:14px}
+.chk{display:flex;align-items:flex-start;gap:10px;font-size:14px;cursor:pointer}
+.chk input{width:22px;height:22px;accent-color:var(--t);margin-top:2px;flex-shrink:0}
+.radio-row label{display:flex;align-items:center;gap:10px;font-weight:500;margin-bottom:10px;cursor:pointer}
+.radio-row input{width:22px;height:22px;accent-color:var(--t)}
+.hint{font-size:12px;color:var(--m);margin:-8px 0 12px}
+.err{color:var(--err);font-size:13px;margin-bottom:10px;display:none}
+.err.show{display:block}
+.subbox{background:var(--c);padding:14px;border-radius:12px;font-size:14px;color:var(--m);margin-bottom:16px;border:1px solid var(--bd)}
+.nav{display:flex;gap:10px;margin-top:8px}
+.btn{flex:1;padding:14px 16px;border-radius:12px;font-weight:700;font-size:16px;border:none;cursor:pointer;font-family:inherit;min-height:52px}
+.btn-back{background:transparent;color:var(--t);border:2px solid var(--t)}
+.btn-next{background:var(--t);color:var(--w)}
+.btn-next:disabled{opacity:.5;cursor:not-allowed}
+.btn-submit{background:linear-gradient(135deg,var(--g),#b8860b);color:var(--b);width:100%}
+a{color:var(--t);font-weight:600}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="wrap" style="padding-top:8px">
+    <a href="/store-owner" style="font-size:14px">← Store owner hub</a>
+    <h1>Get your store online in 48 hours</h1>
+    <p class="sub">Join the UK’s African, Caribbean &amp; Asian marketplace. We set everything up for you — no technical skills needed.</p>
+    <div class="trust">
+      <span>✅ Free to apply</span>
+      <span>✅ We build your store page</span>
+      <span>✅ Start receiving orders fast</span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="progress"><i id="prog" style="width:25%"></i></div>
+  <p class="steps" id="stepLabel">Step 1 of 4 — Business info</p>
+
+  <form id="f" novalidate>
+    <p class="err" id="formErr"></p>
+
+    <div class="step active" data-step="1">
+      <label for="storeName">Store name <span class="req">*</span></label>
+      <input id="storeName" name="storeName" required autocomplete="organization" maxlength="200">
+
+      <label for="storeType">Store type <span class="req">*</span></label>
+      <select id="storeType" required>
+        <option value="">Choose…</option>
+        <option value="african-grocery">African Grocery</option>
+        <option value="caribbean-grocery">Caribbean Grocery</option>
+        <option value="south-asian-grocery">South Asian Grocery</option>
+        <option value="east-asian-grocery">East Asian Grocery</option>
+        <option value="middle-eastern-grocery">Middle Eastern Grocery</option>
+        <option value="african-hair-beauty">African Hair &amp; Beauty</option>
+        <option value="asian-beauty">Asian Beauty Store</option>
+        <option value="african-fashion">African Fashion</option>
+        <option value="caribbean-fashion">Caribbean Fashion</option>
+        <option value="halal-butcher">Halal Butcher</option>
+        <option value="mixed-community">Mixed Community Store</option>
+        <option value="other">Other</option>
+      </select>
+
+      <label for="city">City <span class="req">*</span></label>
+      <select id="city" required>
+        <option value="">Choose…</option>
+        <option value="manchester">Manchester</option>
+        <option value="london">London</option>
+        <option value="birmingham">Birmingham</option>
+        <option value="leeds">Leeds</option>
+        <option value="leicester">Leicester</option>
+        <option value="bradford">Bradford</option>
+        <option value="bristol">Bristol</option>
+        <option value="liverpool">Liverpool</option>
+        <option value="sheffield">Sheffield</option>
+        <option value="nottingham">Nottingham</option>
+        <option value="other">Other</option>
+      </select>
+
+      <label for="postcode">Postcode <span class="req">*</span></label>
+      <input id="postcode" name="postcode" required autocomplete="postal-code" maxlength="20">
+      <div class="nav"><span></span><button type="button" class="btn btn-next" id="to2">Continue</button></div>
+    </div>
+
+    <div class="step" data-step="2">
+      <label for="ownerName">Owner full name <span class="req">*</span></label>
+      <input id="ownerName" name="ownerName" required autocomplete="name" maxlength="120">
+
+      <label for="whatsapp">WhatsApp number <span class="req">*</span></label>
+      <input id="whatsapp" name="whatsapp" type="tel" required autocomplete="tel" placeholder="e.g. 07123 456789" maxlength="40">
+
+      <label for="email">Email address <span class="req">*</span></label>
+      <input id="email" name="email" type="email" required autocomplete="email" maxlength="120">
+      <div class="nav"><button type="button" class="btn btn-back" id="back1">Back</button><button type="button" class="btn btn-next" id="to3">Continue</button></div>
+    </div>
+
+    <div class="step" data-step="3">
+      <label>What do you sell? <span class="req">*</span> (select all that apply)</label>
+      <div class="chk-grid" id="sellGrid"></div>
+
+      <label for="description">Quick description <span class="req">*</span></label>
+      <p class="hint">Tell customers what you sell (1–2 sentences). Max 100 words.</p>
+      <textarea id="description" maxlength="800" required placeholder="e.g. West African groceries, fresh plantain, spices and drinks."></textarea>
+
+      <label for="photo">Store photo or logo (optional)</label>
+      <p class="hint">JPG or PNG, max 5MB.</p>
+      <input id="photo" type="file" accept="image/jpeg,image/png">
+
+      <label>Fulfilment <span class="req">*</span></label>
+      <div class="radio-row">
+        <label><input type="radio" name="fulfilment" value="collection" checked> Collection only</label>
+        <label><input type="radio" name="fulfilment" value="both"> Collection and local delivery</label>
+      </div>
+      <div class="nav"><button type="button" class="btn btn-back" id="back2">Back</button><button type="button" class="btn btn-next" id="to4">Continue</button></div>
+    </div>
+
+    <div class="step" data-step="4">
+      <label class="chk"><input type="checkbox" id="verifyBiz"> <span>I confirm I am a legitimate business or trader and all information provided is accurate.</span></label>
+
+      <div class="subbox">
+        <strong>Subscription</strong><br>
+        Plans start from £29/month. You will select your plan after your application is approved.
+      </div>
+
+      <label class="chk"><input type="checkbox" id="terms"> <span>I agree to Clip Services <a href="/terms" target="_blank" rel="noopener">Terms of Service</a>, <a href="/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>, and Marketplace Guidelines.</span></label>
+
+      <div class="nav" style="margin-top:16px"><button type="button" class="btn btn-back" id="back3">Back</button></div>
+      <button type="submit" class="btn btn-submit" style="margin-top:14px;width:100%">Apply to list my store →</button>
+    </div>
+  </form>
+</div>
+
+<script>
+(function(){
+  var SELL = [
+    ["fresh-produce","Fresh Produce"],
+    ["meat-fish","Meat & Fish"],
+    ["groceries-staples","Groceries & Staples"],
+    ["snacks-drinks","Snacks & Drinks"],
+    ["hair-beauty","Hair & Beauty"],
+    ["fashion-fabric","Fashion & Fabric"],
+    ["halal","Halal Products"],
+    ["other","Other"]
+  ];
+  var grid = document.getElementById("sellGrid");
+  SELL.forEach(function(pair){
+    var id = "s-" + pair[0];
+    var lab = document.createElement("label");
+    lab.className = "chk";
+    lab.innerHTML = '<input type="checkbox" name="sell" value="'+pair[0]+'" id="'+id+'"> <span>'+pair[1]+'</span>';
+    grid.appendChild(lab);
+  });
+
+  fetch("/api/onboarding-track", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ event: "view_store_apply" }) }).catch(function(){});
+
+  var step = 1;
+  var labels = ["Business info","Contact","Products & delivery","Review & apply"];
+  function showStep(n){
+    step = n;
+    document.querySelectorAll(".step").forEach(function(el){
+      el.classList.toggle("active", el.getAttribute("data-step") == String(n));
+    });
+    document.getElementById("prog").style.width = (n/4*100) + "%";
+    document.getElementById("stepLabel").textContent = "Step " + n + " of 4 — " + labels[n-1];
+    document.getElementById("formErr").classList.remove("show");
+    window.scrollTo(0,0);
+  }
+
+  document.getElementById("to2").onclick = function(){
+    if (!document.getElementById("storeName").value.trim() || !document.getElementById("storeType").value || !document.getElementById("city").value || !document.getElementById("postcode").value.trim()) {
+      document.getElementById("formErr").textContent = "Please complete all fields."; document.getElementById("formErr").classList.add("show"); return;
+    }
+    showStep(2);
+  };
+  document.getElementById("to3").onclick = function(){
+    var em = document.getElementById("email").value.trim();
+    if (!document.getElementById("ownerName").value.trim() || !document.getElementById("whatsapp").value.trim() || !em || em.indexOf("@")<0) {
+      document.getElementById("formErr").textContent = "Please add valid contact details."; document.getElementById("formErr").classList.add("show"); return;
+    }
+    showStep(3);
+  };
+  document.getElementById("to4").onclick = function(){
+    var desc = document.getElementById("description").value.trim();
+    var wc = desc ? desc.split(/\s+/).filter(Boolean).length : 0;
+    var any = document.querySelectorAll('input[name="sell"]:checked').length;
+    if (!any) { document.getElementById("formErr").textContent = "Select at least one category."; document.getElementById("formErr").classList.add("show"); return; }
+    if (!desc || wc > 100) { document.getElementById("formErr").textContent = "Add a short description (max 100 words)."; document.getElementById("formErr").classList.add("show"); return; }
+    showStep(4);
+  };
+  document.getElementById("back1").onclick = function(){ showStep(1); };
+  document.getElementById("back2").onclick = function(){ showStep(2); };
+  document.getElementById("back3").onclick = function(){ showStep(3); };
+
+  document.getElementById("f").onsubmit = function(ev){
+    ev.preventDefault();
+    if (!document.getElementById("verifyBiz").checked || !document.getElementById("terms").checked) {
+      document.getElementById("formErr").textContent = "Please confirm verification and agree to the terms."; document.getElementById("formErr").classList.add("show"); return;
+    }
+    var sell = Array.prototype.map.call(document.querySelectorAll('input[name="sell"]:checked'), function(x){ return x.value; });
+    var payload = {
+      flow: "store",
+      storeName: document.getElementById("storeName").value.trim(),
+      storeType: document.getElementById("storeType").value,
+      city: document.getElementById("city").value,
+      postcode: document.getElementById("postcode").value.trim(),
+      ownerName: document.getElementById("ownerName").value.trim(),
+      whatsapp: document.getElementById("whatsapp").value.trim(),
+      email: document.getElementById("email").value.trim().toLowerCase(),
+      sellCategories: sell,
+      description: document.getElementById("description").value.trim(),
+      fulfilment: document.querySelector('input[name="fulfilment"]:checked').value,
+      verificationBusiness: true,
+      termsAccepted: true
+    };
+    var file = document.getElementById("photo").files[0];
+    function sendPhoto(){
+      if (!file) return submitJson(payload);
+      if (file.size > 5*1024*1024) { document.getElementById("formErr").textContent = "Photo must be 5MB or smaller."; document.getElementById("formErr").classList.add("show"); return; }
+      var r = new FileReader();
+      r.onload = function(){
+        var b64 = String(r.result).split(",")[1];
+        payload.photo = { name: file.name, type: file.type, data: b64 };
+        submitJson(payload);
+      };
+      r.readAsDataURL(file);
+    }
+    sendPhoto();
+  };
+
+  function submitJson(payload){
+    document.querySelector(".btn-submit").disabled = true;
+    fetch("/api/store-application", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if (j.ok && j.redirect) {
+          location.href = j.redirect;
+          return;
+        }
+        document.getElementById("formErr").textContent = j.error || "Something went wrong.";
+        document.getElementById("formErr").classList.add("show");
+        document.querySelector(".btn-submit").disabled = false;
+      })
+      .catch(function(){
+        document.getElementById("formErr").textContent = "Network error — try again.";
+        document.getElementById("formErr").classList.add("show");
+        document.querySelector(".btn-submit").disabled = false;
+      });
+  }
+})();
+</script>
+</body>
+</html>
