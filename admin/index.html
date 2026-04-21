@@ -9,6 +9,7 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>Clip Services Admin</title>
+    <!-- admin-ui-build: 2026-04-03 store-platform -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
@@ -231,6 +232,7 @@
         <div class="workspace-banner">
           <div class="workspace-label">Admin Dashboard</div>
           <div class="workspace-name">Clip Services</div>
+          <div class="workspace-desc" style="font-size:12px;opacity:.9;margin-bottom:10px"><strong>Build</strong> · Admin UI v2026.04 · API includes <span class="mono">onboarding-stats</span>, <span class="mono">platform-stats</span>. If this line is missing, your deploy is stale — hard-refresh or redeploy.</div>
           <div class="workspace-desc"><strong>Launch checklist:</strong> (1) <em>Applications</em> — review applicants. (2) <em>Publish to site</em> — adds their card on the marketplace and links their email so requests route to <span class="mono">/provider/</span> or <span class="mono">/store-owner/dashboard</span>. (3) <em>Stripe Connect</em> — same numeric <span class="mono">Provider ID</span> as the listing so payouts work. (4) <em>Negotiations</em> — only needed if no listing match; otherwise the store is notified automatically.</div>
         </div>
 
@@ -240,10 +242,10 @@
             <ol>
               <li><strong>Applications tab:</strong> Read each submission. When you are ready to onboard someone, click <strong>Publish to site</strong>. Enter a unique <span class="mono">Listing ID</span> (e.g. <span class="mono">9</span>) and the <strong>exact email</strong> they will use to sign in at <span class="mono">/provider/</span> or <span class="mono">/store-owner/dashboard</span> (one-time email code; set <span class="mono">SESSION_SECRET</span> on Vercel). That creates their public card and links new bookings to them.</li>
               <li><strong>Marketplace listings tab:</strong> See everyone who is live on the homepage. <strong>Remove</strong> takes their card off the site (data stays in bookings/negotiations history).</li>
-              <li><strong>Stripe Connect tab:</strong> Create Connect with the <strong>same ID</strong> as the marketplace listing so card payments can route the provider’s share automatically after the customer pays.</li>
-              <li><strong>Customer journey:</strong> They book from the marketplace → request appears under <strong>Negotiations</strong> and in their <span class="mono">/user/</span> dashboard → provider sends a price → customer accepts or counters → customer pays in <span class="mono">/user/</span> when agreed.</li>
+              <li><strong>Stripe Connect tab:</strong> Create Connect with the <strong>same ID</strong> as the marketplace listing so card payments can route the store’s share automatically after the customer pays.</li>
+              <li><strong>Customer journey:</strong> They book from the marketplace → request appears under <strong>Negotiations</strong> and in their <span class="mono">/user/</span> dashboard → store owner sends a price → customer accepts or counters → customer pays in <span class="mono">/user/</span> when agreed.</li>
               <li><strong>Negotiations tab (manual assign):</strong> Use only when a booking used a generic seed card (no published listing) or the store email is missing. Paste their email and <strong>Assign Provider</strong> so they see the thread on <span class="mono">/provider/</span> or <span class="mono">/store-owner/dashboard</span>.</li>
-              <li><strong>Bookings tab:</strong> Operational status (new, awaiting payment, paid, etc.). Payment success is also driven by the Stripe webhook.</li>
+              <li><strong>Orders tab:</strong> Operational status (new, awaiting payment, paid, etc.). Payment success is also driven by the Stripe webhook.</li>
               <li><strong>Site visits tab:</strong> Recent page loads (marketplace, customer dashboard, store dashboard, admin). Uses a hashed visitor id — not names or emails.</li>
             </ol>
             <p class="muted" style="font-size:12px;margin-top:14px;line-height:1.55;margin-bottom:0;">This panel is only visible in admin. Customers and providers never see it.</p>
@@ -254,7 +256,7 @@
         <div class="dash-grid" id="dashGrid">
           <div class="dash-card">
             <span class="dash-icon">📋</span>
-            <div class="dash-label c-cyan">Bookings</div>
+            <div class="dash-label c-cyan">Orders</div>
             <div class="dash-value" id="statBookings">—</div>
             <div class="dash-status"><span class="dot dot-green dot-pulse"></span> Live</div>
           </div>
@@ -303,7 +305,7 @@
               </button>
             </div>
             <p class="muted" style="margin-top:12px;font-size:11px;line-height:1.6;">
-              Requires <span class="mono">ADMIN_TOKEN</span>, <span class="mono">KV_REDIS_URL</span>, <span class="mono">SESSION_SECRET</span> (16+ chars, provider OTP sign-in), <span class="mono">BREVO_SMTP_*</span> / <span class="mono">EMAIL_FROM</span> (to send codes), <span class="mono">STRIPE_SECRET_KEY</span>, <span class="mono">STRIPE_WEBHOOK_SECRET</span>, <span class="mono">SITE_URL</span>, <span class="mono">VAPID_PUBLIC_KEY</span>, <span class="mono">VAPID_PRIVATE_KEY</span> on Vercel.
+              Requires <span class="mono">ADMIN_TOKEN</span>, <span class="mono">KV_REDIS_URL</span>, <span class="mono">SESSION_SECRET</span> (16+ chars, store-owner OTP sign-in), <span class="mono">BREVO_SMTP_*</span> / <span class="mono">EMAIL_FROM</span> (to send codes), <span class="mono">STRIPE_SECRET_KEY</span>, <span class="mono">STRIPE_WEBHOOK_SECRET</span>, <span class="mono">SITE_URL</span>, <span class="mono">VAPID_PUBLIC_KEY</span>, <span class="mono">VAPID_PRIVATE_KEY</span> on Vercel.
             </p>
           </div>
 
@@ -329,7 +331,7 @@
         <div class="data-panel">
           <div class="panel-head">
             <div class="tabs" role="tablist">
-              <button class="tab active" data-tab="bookings">Bookings</button>
+              <button class="tab active" data-tab="bookings">Orders</button>
               <button class="tab" data-tab="negotiations">Negotiations</button>
               <button class="tab" data-tab="contacts">Applications</button>
               <button class="tab" data-tab="onboarding">Store onboarding</button>
@@ -354,19 +356,19 @@
 
             <div id="bookingsView" style="overflow-x:auto;">
               <table>
-                <thead><tr><th>Ref</th><th>Created</th><th>Client</th><th>Service</th><th>Slot</th><th>Status</th><th>Actions</th></tr></thead>
+                <thead><tr><th>Ref</th><th>Created</th><th>Customer</th><th>Service</th><th>Slot</th><th>Status</th><th>Actions</th></tr></thead>
                 <tbody id="bookingsTbody"></tbody>
               </table>
             </div>
 
             <div id="negotiationsView" class="hide" style="padding:20px;">
-              <p class="muted" style="margin-bottom:16px;font-size:12px;line-height:1.55;">Use when a booking has no store email (e.g. generic seed card). <strong>Assign Provider</strong> lets them use <span class="mono">/provider/</span> or <span class="mono">/store-owner/dashboard</span>. If you published the applicant under Marketplace listings, matching emails are usually set automatically.</p>
+              <p class="muted" style="margin-bottom:16px;font-size:12px;line-height:1.55;">Use when an order has no store email (e.g. generic seed card). <strong>Assign store owner</strong> lets them use <span class="mono">/provider/</span> or <span class="mono">/store-owner/dashboard</span>. If you published the applicant under Marketplace listings, matching emails are usually set automatically.</p>
               <div id="negsContainer"></div>
             </div>
 
             <div id="contactsView" class="hide">
               <p class="muted" style="margin:0;padding:14px 20px;font-size:12px;line-height:1.55;border-bottom:1px solid var(--border);background:rgba(0,200,240,.04);">
-                <strong style="color:var(--cyan)">Provider applications</strong> — click <strong>Publish to site</strong> to add a marketplace card and link this email to new requests. Listing ID should match Stripe Connect ID when you use payouts.
+                <strong style="color:var(--cyan)">Store owner applications</strong> — click <strong>Publish to site</strong> to add a marketplace card and link this email to new requests. Listing ID should match Stripe Connect ID when you use payouts.
               </p>
               <div style="overflow-x:auto;">
               <table>
@@ -395,7 +397,7 @@
               <p class="muted" style="margin-bottom:16px;font-size:12px;line-height:1.55;">These listings are merged into the homepage service grid (<span class="mono">/api/listings</span>). Customers who book notify the provider email on file.</p>
               <div style="overflow-x:auto;">
                 <table>
-                  <thead><tr><th>Listing ID</th><th>Display name</th><th>Provider email</th><th>Category</th><th>Actions</th></tr></thead>
+                  <thead><tr><th>Listing ID</th><th>Display name</th><th>Store email</th><th>Category</th><th>Actions</th></tr></thead>
                   <tbody id="marketplaceTbody"></tbody>
                 </table>
               </div>
@@ -414,18 +416,18 @@
             </div>
 
             <div id="providersView" class="hide" style="padding:20px;">
-              <p class="muted" style="margin-top:0;margin-bottom:16px;"><strong>Stripe Connect</strong> — use the same <span class="mono">Provider ID</span> as the marketplace listing so card payments can split to their account.</p>
+              <p class="muted" style="margin-top:0;margin-bottom:16px;"><strong>Stripe Connect</strong> — use the same numeric ID as the marketplace listing (Connect “provider” ID) so card payments can split to their account.</p>
               <div id="providersStatus" class="status"></div>
               <div style="overflow-x:auto;">
                 <table>
-                  <thead><tr><th>ID</th><th>Provider</th><th>Email</th><th>Stripe Status</th><th>Actions</th></tr></thead>
+                  <thead><tr><th>ID</th><th>Store / name</th><th>Email</th><th>Stripe Status</th><th>Actions</th></tr></thead>
                   <tbody id="providersTbody"></tbody>
                 </table>
               </div>
               <hr class="divider" style="margin:24px 0 16px" />
               <h3 style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:12px;">Add Provider to Stripe Connect</h3>
               <div class="row" style="flex-wrap:wrap;gap:8px;">
-                <input class="input" id="cpId" placeholder="Provider ID" style="width:90px" />
+                <input class="input" id="cpId" placeholder="Listing ID" style="width:90px" />
                 <input class="input" id="cpName" placeholder="Name" style="width:180px" />
                 <input class="input" id="cpEmail" placeholder="Email" style="width:220px" type="email" />
                 <button class="btn btn-primary" id="connectProviderBtn">Connect</button>
@@ -439,11 +441,11 @@
 
       <div id="publishModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;align-items:flex-start;justify-content:center;padding:24px;overflow-y:auto;">
         <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);max-width:520px;width:100%;margin:24px auto;padding:24px;box-shadow:0 24px 80px rgba(0,0,0,.5);">
-          <h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;">Publish provider to marketplace</h3>
-          <p class="muted" style="font-size:12px;margin-bottom:16px;line-height:1.5;">Creates a bookable service card and links this email to new customer requests. Listing ID should match Stripe Connect provider ID if you use payouts.</p>
+          <h3 style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;margin-bottom:8px;">Publish store to marketplace</h3>
+          <p class="muted" style="font-size:12px;margin-bottom:16px;line-height:1.5;">Creates a bookable card and links this email to new customer requests. Listing ID should match Stripe Connect account ID if you use payouts.</p>
           <div style="display:grid;gap:10px;">
-            <div><div class="muted" style="font-size:11px;margin-bottom:4px;">Listing / provider ID *</div><input class="input" id="pub-id" placeholder="e.g. 9" /></div>
-            <div><div class="muted" style="font-size:11px;margin-bottom:4px;">Provider email *</div><input class="input" id="pub-email" type="email" /></div>
+            <div><div class="muted" style="font-size:11px;margin-bottom:4px;">Listing ID *</div><input class="input" id="pub-id" placeholder="e.g. 9" /></div>
+            <div><div class="muted" style="font-size:11px;margin-bottom:4px;">Store owner email *</div><input class="input" id="pub-email" type="email" /></div>
             <div><div class="muted" style="font-size:11px;margin-bottom:4px;">Display name (shown to customers) *</div><input class="input" id="pub-role" placeholder="e.g. Mobile hair stylist" /></div>
             <div><div class="muted" style="font-size:11px;margin-bottom:4px;">Bio</div><textarea class="input" id="pub-bio" rows="3" placeholder="Short description for the card"></textarea></div>
             <div><div class="muted" style="font-size:11px;margin-bottom:4px;">Services (comma-separated)</div><input class="input" id="pub-services" placeholder="Braids, Wig install, ..." /></div>
@@ -620,15 +622,15 @@
               <div>
                 <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:15px;">${escHtml(n.service || '')}</div>
                 <div class="muted" style="font-size:11px;margin-top:4px;">${escHtml(n.id)} · ${escHtml(n.bookingRef || '')} · ${escHtml(n.customerName || '')} (${escHtml(n.customerEmail || '')})</div>
-                ${hasProvider ? `<div style="font-size:12px;margin-top:4px;color:var(--green);">Provider: ${escHtml(n.providerEmail)}</div>` : ''}
+                ${hasProvider ? `<div style="font-size:12px;margin-top:4px;color:var(--green);">Store: ${escHtml(n.providerEmail)}</div>` : ''}
                 ${lastText ? `<div class="muted" style="font-size:11px;margin-top:4px;">Last: ${escHtml(lastText)}</div>` : ''}
                 ${n.agreedPrice ? `<div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--cyan);margin-top:6px;">Agreed: £${Number(n.agreedPrice).toFixed(2)}</div>` : ''}
               </div>
               <span class="badge ${badgeClass}">${n.status || 'pending'}</span>
             </div>
             ${!hasProvider ? `<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px;">
-              <input class="input" placeholder="Provider email" style="width:240px;font-size:12px;padding:8px 12px;" data-neg-id="${n.id}" data-field="provider-email" />
-              <button class="btn btn-primary" style="font-size:12px;padding:8px 14px;" onclick="assignProvider('${n.id}')">Assign Provider</button>
+              <input class="input" placeholder="Store owner email" style="width:240px;font-size:12px;padding:8px 12px;" data-neg-id="${n.id}" data-field="provider-email" />
+              <button class="btn btn-primary" style="font-size:12px;padding:8px 14px;" onclick="assignProvider('${n.id}')">Assign store owner</button>
             </div>` : ''}
           </div>`;
         }).join('');
@@ -637,7 +639,7 @@
       async function assignProvider(negId) {
         const input = el.negsContainer.querySelector(`[data-neg-id="${negId}"][data-field="provider-email"]`);
         const email = input?.value?.trim();
-        if (!email) { alert('Enter a provider email'); return; }
+        if (!email) { alert('Enter a store owner email'); return; }
         try {
           const res = await fetch('/api/negotiate', {
             method: 'POST',
@@ -646,7 +648,7 @@
           });
           const data = await res.json();
           if (!data.ok) throw new Error(data.error || 'Failed');
-          setStatus(el.dataStatus, 'Provider assigned to ' + negId, 'ok');
+          setStatus(el.dataStatus, 'Store owner assigned to ' + negId, 'ok');
           await refreshAll();
         } catch (e) { setStatus(el.dataStatus, e.message || 'Failed to assign', 'err'); }
       }
@@ -970,7 +972,7 @@
             ...filterRows(state.siteVisits).map((v) => [v.ts,v.path,v.country || "",v.visitor || "",v.ref || ""])];
           downloadCsv(`site-visits-${new Date().toISOString().slice(0,10)}.csv`, rows);
         } else {
-          setStatus(el.dataStatus, "Switch to Bookings, Applications, or Site visits to export CSV.", "err");
+          setStatus(el.dataStatus, "Switch to Orders, Applications, or Site visits to export CSV.", "err");
         }
       });
 
