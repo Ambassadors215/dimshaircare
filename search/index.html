@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search — Clip Services</title>
+<meta name="robots" content="index,follow">
+<meta name="theme-color" content="#8B3A3A">
+<link rel="canonical" href="https://clipservice.app/search">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/global-search.css">
+<style>
+:root{--t:#8B3A3A;--g:#D4A017;--c:#F5F0E8;--br:#2C1810;--card:#fffdf8}
+*{box-sizing:border-box}
+body{margin:0;font-family:"DM Sans",system-ui,sans-serif;background:var(--c);color:var(--br);line-height:1.45}
+a{color:var(--t);font-weight:600}
+.sr-wrap{max-width:1180px;margin:0 auto;padding:16px;display:grid;gap:20px}
+@media(min-width:900px){.sr-wrap{grid-template-columns:280px 1fr;align-items:start}}
+.sr-head{margin-bottom:8px}
+.sr-head h1{font-family:"Playfair Display",Georgia,serif;color:var(--t);font-size:1.35rem;margin:0 0 6px}
+.sr-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0}
+.sr-toolbar select{padding:10px 12px;border-radius:10px;border:1px solid rgba(139,58,58,.3);font-size:14px;background:#fff}
+.filters{background:var(--card);border:1px solid rgba(139,58,58,.15);border-radius:14px;padding:16px;position:sticky;top:72px}
+.filters h2{font-size:1rem;margin:0 0 12px;color:var(--t)}
+.filters label{display:block;font-size:13px;margin:8px 0 4px;font-weight:600}
+.filters fieldset{border:none;padding:0;margin:0 0 12px}
+.filters input[type=checkbox],.filters input[type=radio]{margin-right:6px}
+.price-row{display:flex;gap:8px;align-items:center;font-size:14px}
+#mob-fil{display:none;width:100%;padding:14px;background:var(--t);color:#fff;border:none;border-radius:12px;font-weight:700;margin-bottom:8px}
+@media(max-width:899px){
+  #mob-fil{display:block!important}
+  .filters{position:fixed;left:0;right:0;bottom:0;top:auto;max-height:70vh;overflow-y:auto;z-index:300;transform:translateY(100%);transition:transform .25s;box-shadow:0 -8px 32px rgba(0,0,0,.15)}
+  .filters.open{transform:translateY(0)}
+  .fil-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:299}
+  .fil-backdrop.show{display:block}
+}
+.grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:560px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:900px){.grid{grid-template-columns:repeat(3,1fr)}}
+.pcard{background:var(--card);border-radius:14px;border:1px solid rgba(139,58,58,.12);overflow:hidden;display:flex;flex-direction:column}
+.pcard .ph{aspect-ratio:1;background:#e8dfd4}
+.pcard .ph img{width:100%;height:100%;object-fit:cover}
+.pcard .pb{padding:12px 14px 16px;flex:1;display:flex;flex-direction:column}
+.pcard h3{margin:0 0 6px;font-size:1rem;line-height:1.25}
+.pcard .price{font-size:1.15rem;font-weight:800;color:var(--t)}
+.meta{font-size:13px;color:#5c4033;margin:4px 0 8px}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.badges span{font-size:11px;padding:4px 8px;border-radius:6px;background:rgba(139,58,58,.1);font-weight:600}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.btn-q{background:var(--t);color:#fff;border:none;padding:12px 16px;border-radius:10px;font-weight:700;cursor:pointer;flex:1;min-height:48px;font-size:15px}
+.btn-v{background:transparent;border:2px solid var(--t);color:var(--t);padding:10px 14px;border-radius:10px;font-weight:700;text-decoration:none;text-align:center;font-size:14px}
+.empty{text-align:center;padding:40px 20px;max-width:520px;margin:0 auto}
+.cat-fallback{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-top:20px}
+.cat-fallback a{display:block;padding:16px;background:var(--card);border-radius:12px;text-align:center;text-decoration:none;border:1px solid rgba(139,58,58,.15)}
+</style>
+</head>
+<body>
+<div id="global-search-mount"></div>
+<p class="sr-wrap" style="padding-top:8px;margin:0 auto;max-width:1180px"><a href="/">← Home</a> · <a href="/stores">Stores</a></p>
+
+<div class="sr-wrap">
+  <aside class="filters" id="filters">
+    <button type="button" class="fil-backdrop" id="fil-backdrop" aria-hidden="true"></button>
+    <h2>Filters</h2>
+    <fieldset>
+      <legend class="sr-only">Community</legend>
+      <label><input type="radio" name="comm" value="" checked> All</label>
+      <label><input type="radio" name="comm" value="african"> African</label>
+      <label><input type="radio" name="comm" value="caribbean"> Caribbean</label>
+      <label><input type="radio" name="comm" value="asian"> Asian</label>
+    </fieldset>
+    <label for="fcity">City</label>
+    <select id="fcity"><option value="">All cities</option></select>
+    <fieldset id="facet-cats-wrap" style="margin:12px 0">
+      <legend>Category</legend>
+      <div id="facet-cats" class="facet-cats"></div>
+    </fieldset>
+    <label for="fsort">Sort</label>
+    <select id="fsort">
+      <option value="relevant">Most relevant</option>
+      <option value="price_asc">Price: low to high</option>
+      <option value="price_desc">Price: high to low</option>
+      <option value="rated">Highest rated</option>
+      <option value="nearest">Nearest (by city)</option>
+      <option value="delivery">Fastest delivery</option>
+    </select>
+    <fieldset>
+      <legend>Fulfilment</legend>
+      <label><input type="checkbox" id="fcol" value="collection"> Collection</label>
+      <label><input type="checkbox" id="fdel" value="delivery"> Delivery</label>
+    </fieldset>
+    <div class="price-row">
+      <label>£ <input type="number" id="pmin" min="0" step="1" placeholder="0" style="width:70px;padding:8px"></label>
+      <span>—</span>
+      <label>£ <input type="number" id="pmax" min="0" step="1" placeholder="100+" style="width:70px;padding:8px"></label>
+    </div>
+    <label for="prange">Max price: £<span id="prange-val">100</span></label>
+    <input type="range" id="prange" min="0" max="100" value="100" style="width:100%;margin-bottom:12px" />
+    <fieldset>
+      <legend>Rating</legend>
+      <label><input type="radio" name="rat" value=""> Any</label>
+      <label><input type="radio" name="rat" value="3"> 3+ stars</label>
+      <label><input type="radio" name="rat" value="4"> 4+ stars</label>
+      <label><input type="radio" name="rat" value="5"> 5 stars</label>
+    </fieldset>
+    <label><input type="checkbox" id="fopen"> Open now</label>
+    <label><input type="checkbox" id="fstock"> In stock only</label>
+  </aside>
+
+  <main>
+    <button type="button" id="mob-fil">Filters</button>
+    <div class="sr-head">
+      <h1 id="sr-title">Search</h1>
+      <p class="sr-toolbar"><span id="sr-count"></span></p>
+    </div>
+    <div id="results" class="grid"></div>
+    <div id="empty" class="empty" style="display:none">
+      <p id="empty-msg"></p>
+      <div class="cat-fallback" id="cat-fallback"></div>
+    </div>
+  </main>
+</div>
+
+<script src="/js/global-search.js" defer></script>
+<script id="sr-jsonld" type="application/ld+json">{}</script>
+<script>
+(function(){
+  var params = new URLSearchParams(location.search);
+  var landing = params.get("landing");
+  var filtersEl = document.getElementById("filters");
+  var RECENT_KEY = "clip_recent_searches";
+  document.getElementById("mob-fil").onclick = function(){
+    filtersEl.classList.add("open");
+    document.getElementById("fil-backdrop").classList.add("show");
+  };
+  document.getElementById("fil-backdrop").onclick = function(){
+    filtersEl.classList.remove("open");
+    this.classList.remove("show");
+  };
+
+  function esc(s){
+    return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+  }
+
+  function toast(msg){
+    var el = document.getElementById("sr-toast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "sr-toast";
+      el.style.cssText = "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#15803d;color:#fff;padding:14px 22px;border-radius:14px;font-weight:700;z-index:400;box-shadow:0 8px 28px rgba(0,0,0,.2)";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg || "Added to basket \u2713";
+    el.style.display = "block";
+    setTimeout(function(){ el.style.display = "none"; }, 1800);
+  }
+
+  function cartKey(id){ return "clipCart:"+id; }
+  function quickAdd(listingId, idx){
+    var k = cartKey(listingId);
+    try{
+      var c = JSON.parse(localStorage.getItem(k)||"{}");
+      c[String(idx)] = (Number(c[String(idx)])||0)+1;
+      localStorage.setItem(k, JSON.stringify(c));
+    }catch(e){}
+    toast("Added \u2014 open the store to checkout");
+  }
+
+  function syncPrange(){
+    var r = document.getElementById("prange");
+    var pm = document.getElementById("pmax");
+    if (r && pm) {
+      pm.value = r.value === "100" ? "" : r.value;
+      var v = document.getElementById("prange-val");
+      if (v) v.textContent = r.value;
+    }
+  }
+  document.getElementById("prange").addEventListener("input", function(){
+    syncPrange();
+  });
+  document.getElementById("prange").addEventListener("change", function(){ run(); });
+
+  function buildQuery(){
+    var q = new URLSearchParams();
+    var slug = landing;
+    var gs = document.getElementById("gs-q");
+    var term = (gs && gs.value.trim()) || params.get("q") || "";
+    if (slug) q.set("slug", slug);
+    else if (term) q.set("q", term);
+
+    var comm = document.querySelector("input[name=comm]:checked");
+    if (comm && comm.value) q.set("community", comm.value);
+    var city = document.getElementById("fcity").value;
+    if (city) q.set("city", city);
+    q.set("sort", document.getElementById("fsort").value);
+    var c = document.getElementById("fcol").checked;
+    var d = document.getElementById("fdel").checked;
+    if (c && !d) q.set("fulfilment", "collection");
+    else if (d && !c) q.set("fulfilment", "delivery");
+    else q.set("fulfilment", "both");
+    var pmin = document.getElementById("pmin").value;
+    var pmax = document.getElementById("pmax").value;
+    if (pmin) q.set("priceMin", pmin);
+    if (pmax) q.set("priceMax", pmax);
+    var cats = [];
+    document.querySelectorAll("#facet-cats input:checked").forEach(function(ch){ cats.push(ch.value); });
+    if (cats.length) q.set("categories", cats.join(","));
+    var rat = document.querySelector("input[name=rat]:checked");
+    if (rat && rat.value) q.set("ratingMin", rat.value);
+    if (document.getElementById("fopen").checked) q.set("openNow", "true");
+    if (document.getElementById("fstock").checked) q.set("inStockOnly", "true");
+    return q;
+  }
+
+  function renderFacets(facets, selectedCsv){
+    var wrap = document.getElementById("facet-cats");
+    if (!wrap || !facets || !facets.length) { if (wrap) wrap.innerHTML = "<span class=\"muted\" style=\"font-size:13px\">Categories appear after results load.</span>"; return; }
+    var sel = (selectedCsv || "").split(",").map(function(s){ return s.trim().toLowerCase(); }).filter(Boolean);
+    wrap.innerHTML = facets.map(function(f){
+      var on = sel.indexOf(f.slug) >= 0 ? " checked" : "";
+      return '<label style="display:block;font-weight:500;margin:4px 0"><input type="checkbox" value="'+esc(f.slug)+'"'+on+"/> "+esc(f.label)+" <span style=\"opacity:.7\">("+f.count+")</span></label>";
+    }).join("");
+    wrap.querySelectorAll("input").forEach(function(ch){
+      ch.addEventListener("change", run);
+    });
+  }
+
+  function jsonLd(products, term){
+    var el = document.getElementById("sr-jsonld");
+    if (!el || !products.length) return;
+    var base = "https://clipservice.app";
+    var obj = {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "Search: " + (term || "products"),
+      "numberOfItems": products.length,
+      "itemListElement": products.slice(0, 24).map(function(p, i){
+        return {
+          "@type": "ListItem",
+          "position": i + 1,
+          "url": base + p.productUrl,
+          "name": p.name
+        };
+      })
+    };
+    el.textContent = JSON.stringify(obj);
+  }
+
+  function render(data){
+    var products = data.products || [];
+    var title = document.getElementById("sr-title");
+    var term = data.q || "";
+    if (term && term.length >= 2) {
+      try {
+        var rs = JSON.parse(localStorage.getItem(RECENT_KEY) || "[]");
+        if (!Array.isArray(rs)) rs = [];
+        rs = rs.filter(function(x){ return String(x).toLowerCase() !== term.toLowerCase(); });
+        rs.unshift(term);
+        localStorage.setItem(RECENT_KEY, JSON.stringify(rs.slice(0, 8)));
+      } catch (e) {}
+    }
+    if (data.landing) {
+      var ld = data.landing;
+      document.title = "Buy " + term + " in " + (ld.city || "the UK") + " | Clip Services";
+      title.textContent = "Buy " + term + (ld.city ? " in " + ld.city : "") + " | Clip Services";
+    } else {
+      title.textContent = term ? ("Search results") : "Browse products";
+    }
+    var cnt = document.getElementById("sr-count");
+    if (products.length) {
+      cnt.textContent = "Showing " + products.length + " result" + (products.length === 1 ? "" : "s") + (term ? " for \u201c" + term + "\u201d" : "");
+    } else {
+      cnt.textContent = term ? ("No products for \u201c" + term + "\u201d") : "No matching products";
+    }
+
+    var box = document.getElementById("results");
+    var empty = document.getElementById("empty");
+    var uq = new URLSearchParams(location.search);
+    renderFacets(data.facetCategories || [], uq.get("categories") || "");
+
+    if (!products.length){
+      var jsel = document.getElementById("sr-jsonld");
+      if (jsel) jsel.textContent = "{}";
+      box.innerHTML = "";
+      empty.style.display = "block";
+      document.getElementById("empty-msg").textContent = "No results for \u201c" + (term || "your filters") + "\u201d \u2014 try browsing by category.";
+      var fb = document.getElementById("cat-fallback");
+      var cats = [
+        { slug: "fresh-produce", label: "Fresh produce" },
+        { slug: "halal-products", label: "Halal" },
+        { slug: "rice-grains-flour", label: "Rice & flour" },
+        { slug: "hair-beauty", label: "Hair & beauty" },
+        { slug: "spices-ingredients", label: "Spices" },
+        { slug: "snacks-sweets", label: "Snacks" }
+      ];
+      fb.innerHTML = cats.map(function(c){
+        return '<a href="/categories/'+esc(c.slug)+'">'+esc(c.label)+"</a>";
+      }).join("");
+      return;
+    }
+    empty.style.display = "none";
+    jsonLd(products, term);
+    box.innerHTML = products.map(function(p){
+      var img = p.photoData ? '<img src="'+esc(p.photoData)+'" alt="'+esc(p.name)+'" loading="lazy"/>' : "";
+      return '<article class="pcard">'+
+        '<div class="ph">'+img+'</div>'+
+        '<div class="pb">'+
+        '<h3>'+esc(p.name)+'</h3>'+
+        '<div class="price">\u00a3'+(Number(p.priceNum)||0).toFixed(2)+'</div>'+
+        '<div class="meta"><a href="'+esc(p.storeUrl)+'">'+esc(p.storeName)+'</a> \u00b7 '+esc(p.city||"")+'<br/>\u2605 '+ (Number(p.rating)||"\u2014") +'</div>'+
+        '<div class="badges">'+
+        (p.fulfilment.collection ? "<span>Collection</span>":"")+
+        (p.fulfilment.delivery ? "<span>Delivery</span>":"")+
+        "</div>"+
+        '<div class="actions">'+
+        '<button type="button" class="btn-q" data-lid="'+esc(p.listingId)+'" data-idx="'+Number(p.productIdx)+'">Quick Add</button>'+
+        '<a class="btn-v" href="'+esc(p.storeUrl)+'">View store</a>'+
+        "</div></div></article>";
+    }).join("");
+
+    box.querySelectorAll(".btn-q").forEach(function(btn){
+      btn.onclick = function(){ quickAdd(btn.getAttribute("data-lid"), btn.getAttribute("data-idx")); };
+    });
+  }
+
+  function run(){
+    var q = buildQuery();
+    history.replaceState({}, "", location.pathname + (q.toString() ? "?"+q.toString() : ""));
+    params = new URLSearchParams(location.search);
+    fetch("/api/search?"+q.toString())
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (!data.ok) return;
+        if (data.cities) {
+          var sel = document.getElementById("fcity");
+          var cur = sel.value;
+          sel.innerHTML = '<option value="">All cities</option>' +
+            data.cities.map(function(c){ return "<option>"+esc(c)+"</option>"; }).join("");
+          if (cur) sel.value = cur;
+        }
+        render(data);
+      });
+  }
+
+  ["fcity","fsort","fcol","fdel","pmin","pmax","fopen","fstock"].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.addEventListener("change", run);
+  });
+  document.querySelectorAll("input[name=comm], input[name=rat]").forEach(function(el){
+    el.addEventListener("change", run);
+  });
+
+  var catCsv = params.get("categories");
+  if (catCsv) {
+    setTimeout(function(){
+      catCsv.split(",").forEach(function(s){
+        var v = s.trim().toLowerCase();
+        document.querySelectorAll("#facet-cats input").forEach(function(inp){
+          if (inp.value === v) inp.checked = true;
+        });
+      });
+    }, 600);
+  }
+
+  if (landing) {
+    var t = setInterval(function(){
+      var gs = document.getElementById("gs-q");
+      if (gs) { clearInterval(t); gs.value = ""; run(); }
+    }, 100);
+  } else {
+    var iq = params.get("q") || "";
+    var t2 = setInterval(function(){
+      var gs = document.getElementById("gs-q");
+      if (gs) { clearInterval(t2); gs.value = iq; syncPrange(); run(); }
+    }, 100);
+  }
+})();
+</script>
+</body>
+</html>
