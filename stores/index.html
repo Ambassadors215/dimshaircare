@@ -21,6 +21,7 @@
 {"@context":"https://schema.org","@type":"WebSite","name":"Clip Services","url":"https://clipservice.app","description":"UK marketplace for African, Caribbean and Asian independent stores","potentialAction":{"@type":"SearchAction","target":"https://clipservice.app/stores?q={search_term_string}","query-input":"required name=search_term_string"}}
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/global-search.css">
 <style>
 :root{--terracotta:#8B3A3A;--cream:#F5F0E8;--brown:#2C1810;--muted:#5C4033;--gold:#D4A017;--white:#fff;}
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -46,12 +47,13 @@ h1{font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.75rem,4vw,2.25
 </style>
 </head>
 <body>
+<div id="global-search-mount"></div>
 <header>
   <div class="nav-top">
     <a href="/">← Home</a>
     <a class="btn" href="/store-owner">List your store</a>
   </div>
-  <h1 id="mission">African, Caribbean &amp; Asian stores across the UK</h1>
+  <h1 id="mission">African, Caribbean &amp; Asian Stores Across the UK</h1>
   <p class="lead" id="intro">Clip Services is the marketplace for diaspora-led independents: grocers, beauty suppliers, fabric sellers and market traders. Whether you’re searching for <strong>Nigerian ingredients in London</strong>, <strong>halal meat in Manchester</strong>, or <strong>Caribbean staples in Birmingham</strong>, browse stores by community and city — then pay securely with Stripe and get WhatsApp updates from many sellers. We’re growing UK-wide: every listing is a real independent you can order from, not a gig-economy middleman.</p>
   <p class="lead" id="categories">Independent African, Caribbean and Asian sellers across the UK. Pay securely with Stripe; order updates via WhatsApp and PWA.</p>
   <h2 id="cities" style="font-size:1.1rem;margin-bottom:10px;font-family:'Playfair Display',Georgia,serif">Filter</h2>
@@ -163,5 +165,6 @@ h1{font-family:"Playfair Display",Georgia,serif;font-size:clamp(1.75rem,4vw,2.25
   load();
 })();
 </script>
+<script src="/js/global-search.js" defer></script>
 </body>
 </html>

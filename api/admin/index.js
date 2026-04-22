@@ -12,6 +12,7 @@ import {
   getRecentSiteVisits,
   getOnboardingAnalyticsCounters,
   getOnboardingApplications,
+  getSearchAnalyticsSummary,
 } from "../../lib/kv-store.js";
 import { notifyBookingStatusCustomer } from "../../lib/notify.js";
 
@@ -227,6 +228,17 @@ async function handleSiteVisits(req, res) {
   }
 }
 
+async function handleSearchAnalytics(req, res) {
+  if (req.method !== "GET") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
+  try {
+    const summary = await getSearchAnalyticsSummary();
+    return endJson(res, 200, { ok: true, ...summary });
+  } catch (e) {
+    console.error("ADMIN_SEARCH_ANALYTICS", e);
+    return endJson(res, 500, { ok: false, error: "Failed to load search analytics" });
+  }
+}
+
 async function handleMarketplaceUnpublish(req, res) {
   if (req.method !== "POST") return endJson(res, 405, { ok: false, error: "Method Not Allowed" });
   let payload;
@@ -260,6 +272,7 @@ const ROUTES = {
   "site-visits": handleSiteVisits,
   "onboarding-stats": handleOnboardingStats,
   "platform-stats": handlePlatformStats,
+  "search-analytics": handleSearchAnalytics,
 };
 
 export default async function handler(req, res) {

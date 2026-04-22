@@ -29,6 +29,7 @@ import storeOwnerApi from "../lib/handlers/store-owner-api.js";
 import storeAnalytics from "../lib/handlers/store-analytics.js";
 import orderPublic from "../lib/handlers/order-public.js";
 import searchApi from "../lib/handlers/search-api.js";
+import searchEvent from "../lib/handlers/search-event.js";
 
 const handlers = {
   booking,
@@ -58,6 +59,7 @@ const handlers = {
   "store-analytics": storeAnalytics,
   "order-public": orderPublic,
   search: searchApi,
+  "search-event": searchEvent,
 };
 
 function notFound(res) {

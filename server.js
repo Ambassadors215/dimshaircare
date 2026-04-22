@@ -243,6 +243,16 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, { ok: true });
     }
 
+    // Admin + catch-all API (same modules as Vercel: api/admin/index.js, api/[...path].js)
+    if (url.pathname === "/api/admin" || url.pathname.startsWith("/api/admin/")) {
+      const { default: adminHandler } = await import("./api/admin/index.js");
+      return adminHandler(req, res);
+    }
+    if (url.pathname.startsWith("/api/")) {
+      const { default: apiCatchAll } = await import("./api/[...path].js");
+      return apiCatchAll(req, res);
+    }
+
     if (req.method !== "GET" && req.method !== "HEAD") {
       return send(res, 405, { "content-type": "text/plain; charset=utf-8" }, "Method Not Allowed");
     }

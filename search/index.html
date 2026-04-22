@@ -53,6 +53,9 @@ a{color:var(--t);font-weight:600}
 .empty{text-align:center;padding:40px 20px;max-width:520px;margin:0 auto}
 .cat-fallback{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));margin-top:20px}
 .cat-fallback a{display:block;padding:16px;background:var(--card);border-radius:12px;text-align:center;text-decoration:none;border:1px solid rgba(139,58,58,.15)}
+a.sr-pc{color:inherit;text-decoration:none}
+a.sr-pc:hover{color:var(--t);text-decoration:underline}
+a.ph-link{display:block}
 </style>
 </head>
 <body>
@@ -128,6 +131,7 @@ a{color:var(--t);font-weight:600}
 (function(){
   var params = new URLSearchParams(location.search);
   var landing = params.get("landing");
+  var lastSearchTerm = "";
   var filtersEl = document.getElementById("filters");
   var RECENT_KEY = "clip_recent_searches";
   document.getElementById("mob-fil").onclick = function(){
@@ -142,6 +146,26 @@ a{color:var(--t);font-weight:600}
   function esc(s){
     return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
   }
+
+  function sendSearchEvent(event, qHint){
+    try{
+      fetch("/api/search-event", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ event: event, q: qHint || "" }),
+        keepalive: true
+      }).catch(function(){});
+    }catch(e){}
+  }
+
+  document.getElementById("results").addEventListener("click", function(e){
+    var pc = e.target.closest("a.sr-pc");
+    if (pc) { sendSearchEvent("product_click", lastSearchTerm); return; }
+    var bv = e.target.closest("a.btn-v");
+    if (bv) { sendSearchEvent("view_store", lastSearchTerm); return; }
+    var ma = e.target.closest(".meta a");
+    if (ma) { sendSearchEvent("store_click", lastSearchTerm); }
+  }, true);
 
   function toast(msg){
     var el = document.getElementById("sr-toast");
@@ -164,6 +188,7 @@ a{color:var(--t);font-weight:600}
       c[String(idx)] = (Number(c[String(idx)])||0)+1;
       localStorage.setItem(k, JSON.stringify(c));
     }catch(e){}
+    sendSearchEvent("quick_add", lastSearchTerm);
     toast("Added \u2014 open the store to checkout");
   }
 
@@ -251,6 +276,7 @@ a{color:var(--t);font-weight:600}
     var products = data.products || [];
     var title = document.getElementById("sr-title");
     var term = data.q || "";
+    lastSearchTerm = term;
     if (term && term.length >= 2) {
       try {
         var rs = JSON.parse(localStorage.getItem(RECENT_KEY) || "[]");
@@ -303,10 +329,17 @@ a{color:var(--t);font-weight:600}
     jsonLd(products, term);
     box.innerHTML = products.map(function(p){
       var img = p.photoData ? '<img src="'+esc(p.photoData)+'" alt="'+esc(p.name)+'" loading="lazy"/>' : "";
+      var purl = esc(p.productUrl || "");
+      var phBlock = p.productUrl
+        ? '<a href="'+purl+'" class="sr-pc ph-link"><div class="ph">'+img+'</div></a>'
+        : '<div class="ph">'+img+'</div>';
+      var titleBlock = p.productUrl
+        ? '<h3><a href="'+purl+'" class="sr-pc">'+esc(p.name)+'</a></h3>'
+        : '<h3>'+esc(p.name)+'</h3>';
       return '<article class="pcard">'+
-        '<div class="ph">'+img+'</div>'+
+        phBlock+
         '<div class="pb">'+
-        '<h3>'+esc(p.name)+'</h3>'+
+        titleBlock+
         '<div class="price">\u00a3'+(Number(p.priceNum)||0).toFixed(2)+'</div>'+
         '<div class="meta"><a href="'+esc(p.storeUrl)+'">'+esc(p.storeName)+'</a> \u00b7 '+esc(p.city||"")+'<br/>\u2605 '+ (Number(p.rating)||"\u2014") +'</div>'+
         '<div class="badges">'+

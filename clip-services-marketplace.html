@@ -19,10 +19,11 @@
 <meta name="twitter:description" content="Find and order from African, Caribbean and Asian independent stores across the UK. Secure card payments.">
 <meta name="twitter:image" content="https://clipservice.app/icons/clip-logo-full.svg">
 <link rel="canonical" href="https://clipservice.app/">
+<link rel="stylesheet" href="/css/global-search.css">
 <link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
 <link rel="manifest" href="/manifest.webmanifest">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://clipservice.app/#organization","name":"Clip Services","description":"UK marketplace for African, Caribbean and Asian independent stores","url":"https://clipservice.app","foundingDate":"2026","founder":{"@type":"Person","name":"Sonia Chidinma Otikpa"},"logo":"https://clipservice.app/icons/clip-logo-full.svg"},{"@type":"WebSite","name":"Clip Services","url":"https://clipservice.app","publisher":{"@id":"https://clipservice.app/#organization"},"potentialAction":{"@type":"SearchAction","target":"https://clipservice.app/stores?q={search_term_string}","query-input":"required name=search_term_string"}}]}
+{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://clipservice.app/#organization","name":"Clip Services","description":"UK marketplace for African, Caribbean and Asian independent stores","url":"https://clipservice.app","foundingDate":"2026","founder":{"@type":"Person","name":"Sonia Chidinma Otikpa"},"logo":"https://clipservice.app/icons/clip-logo-full.svg"},{"@type":"WebSite","name":"Clip Services","url":"https://clipservice.app","publisher":{"@id":"https://clipservice.app/#organization"},"potentialAction":{"@type":"SearchAction","target":"https://clipservice.app/search?q={search_term_string}","query-input":"required name=search_term_string"}}]}
 </script>
 <link rel="apple-touch-icon" href="/icons/icon-192.svg">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -215,6 +216,7 @@ footer a:hover{color:var(--gold-soft);}
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
+<div id="global-search-mount"></div>
 <div class="topbar" role="status">
   <strong>Clip Services Ltd</strong> · UK registered · <span id="topbar-tagline">African, Caribbean & Asian Marketplace — Your Community, Online</span>
 </div>
@@ -802,5 +804,6 @@ footer a:hover{color:var(--gold-soft);}
   });
 })();
 </script>
+<script src="/js/global-search.js" defer></script>
 </body>
 </html>

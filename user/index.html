@@ -7,6 +7,7 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <title>Customer Dashboard — Clip Services</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/css/global-search.css">
 <style>
 :root{--bg:#0A0E1A;--bg2:#0F1424;--card:#131A2E;--border:#1C2848;--text:#E0E8F8;--muted:#6B7FA0;--faint:#3A4D6E;--cyan:#00C8F0;--cyan2:#0099BB;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--radius:16px}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -73,6 +74,7 @@ a{color:var(--cyan);text-decoration:none}
 </style>
 </head>
 <body>
+<div id="global-search-mount"></div>
 <header>
   <div class="wrap">
     <div class="topbar">
@@ -494,6 +496,7 @@ document.getElementById('enablePushBtn')?.addEventListener('click', async functi
   }
 });
 </script>
+<script src="/js/global-search.js" defer></script>
 <script src="/site-track.js" defer></script>
 </body>
 </html>

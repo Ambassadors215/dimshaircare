@@ -41,6 +41,17 @@
     return "clipCart:" + id;
   }
 
+  function sendSearchEvent(event, qHint) {
+    try {
+      fetch("/api/search-event", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ event: event, q: qHint || "" }),
+        keepalive: true,
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
   function quickAdd(listingId, idx) {
     var k = cartKey(listingId);
     try {
@@ -48,6 +59,8 @@
       c[String(idx)] = (Number(c[String(idx)]) || 0) + 1;
       localStorage.setItem(k, JSON.stringify(c));
     } catch (e) {}
+    var qEl = document.getElementById("gs-q");
+    sendSearchEvent("quick_add", qEl ? qEl.value.trim() : "");
     var el = document.getElementById("gs-toast");
     if (!el) {
       el = document.createElement("div");
@@ -125,7 +138,7 @@
               '<div class="row">' +
               '<a href="' +
               esc(p.productUrl) +
-              '">' +
+              '" data-se="product">' +
               esc(p.name) +
               " — £" +
               (Number(p.priceNum) || 0).toFixed(2) +
@@ -152,7 +165,7 @@
             return (
               '<div class="row"><a href="' +
               esc(s.storeUrl) +
-              '">' +
+              '" data-se="store">' +
               esc(s.name) +
               " — " +
               esc(s.city || "") +
@@ -247,6 +260,19 @@
     dd.addEventListener("click", function (e) {
       e.stopPropagation();
     });
+
+    dd.addEventListener(
+      "click",
+      function (e) {
+        var a = e.target.closest("a[data-se]");
+        if (!a) return;
+        var kind = a.getAttribute("data-se");
+        var ev = kind === "product" ? "product_click" : kind === "store" ? "store_click" : null;
+        if (!ev) return;
+        sendSearchEvent(ev, input.value.trim());
+      },
+      true
+    );
   }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount);

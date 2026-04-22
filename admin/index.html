@@ -394,6 +394,14 @@
               </p>
               <p class="muted" style="margin:0;padding:12px 20px 0;font-size:11px;color:var(--terracotta)"><strong>Platform overview</strong> — marketplace orders, GMV, and activation (stores with at least one product, excluding pending drafts).</p>
               <div id="platformMetrics" class="dash-grid" style="padding:16px 20px 8px;"></div>
+              <div id="searchMetricsBlock" style="padding:12px 20px 20px;border-top:1px solid var(--border)">
+                <p class="muted" style="font-size:12px;margin-bottom:10px"><strong>Search discovery</strong> — query terms from <span class="mono">/api/search</span>; clicks and Quick Add from <span class="mono">/api/search-event</span> (global bar + full results).</p>
+                <div id="searchFunnelMetrics" class="dash-grid" style="padding:0 0 16px"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                  <div><strong style="font-size:13px">Top searches</strong><ul id="topSearchTerms" style="margin:8px 0;padding-left:18px;font-size:13px;line-height:1.5"></ul></div>
+                  <div><strong style="font-size:13px">No-results searches</strong><ul id="noResultTerms" style="margin:8px 0;padding-left:18px;font-size:13px;line-height:1.5"></ul></div>
+                </div>
+              </div>
               <div id="onboardingMetrics" class="dash-grid" style="padding:16px 20px;"></div>
               <div style="overflow-x:auto;">
                 <table>
@@ -513,7 +521,8 @@
         marketplace: [],
         siteVisits: [],
         onboarding: null,
-        platform: null
+        platform: null,
+        searchAnalytics: null
       };
 
       const el = {
@@ -546,6 +555,9 @@
         marketplaceTbody: document.getElementById("marketplaceTbody"),
         onboardingView: document.getElementById("onboardingView"),
         platformMetrics: document.getElementById("platformMetrics"),
+        topSearchTerms: document.getElementById("topSearchTerms"),
+        noResultTerms: document.getElementById("noResultTerms"),
+        searchFunnelMetrics: document.getElementById("searchFunnelMetrics"),
         onboardingMetrics: document.getElementById("onboardingMetrics"),
         onboardingTbody: document.getElementById("onboardingTbody"),
         visitsView: document.getElementById("visitsView"),
@@ -706,8 +718,7 @@
         if (!ob || !ob.ok) {
           el.onboardingMetrics.innerHTML = '<p class="muted" style="grid-column:1/-1;padding:8px 4px">Sign in and refresh to load onboarding analytics.</p>';
           el.onboardingTbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--faint)">No data — check token and click Refresh.</td></tr>';
-          return;
-        }
+        } else {
         const c = ob.counters || {};
         const lc = ob.listingCounts || {};
         const conv = ob.conversion || {};
@@ -749,6 +760,32 @@
               <td class="muted" style="font-size:12px">${cityOr || "—"}</td>
             </tr>`;
           }).join("");
+        }
+        const sa = state.searchAnalytics;
+        if (el.searchFunnelMetrics) {
+          if (!sa || !sa.ok) {
+            el.searchFunnelMetrics.innerHTML = '<p class="muted" style="grid-column:1/-1;padding:4px 0">Sign in and refresh for search funnel metrics.</p>';
+          } else {
+            const f = sa.funnel || {};
+            const ctr = sa.ctrEngagementApprox ?? "—";
+            el.searchFunnelMetrics.innerHTML = `
+              <div class="dash-card"><span class="dash-icon">🖱</span><div class="dash-label c-cyan">Product clicks</div><div class="dash-value">${f.productClick ?? 0}</div><div class="dash-status muted" style="font-size:11px">From search UI</div></div>
+              <div class="dash-card"><span class="dash-icon">🏪</span><div class="dash-label c-amber">Store clicks</div><div class="dash-value">${f.storeClick ?? 0}</div><div class="dash-status muted" style="font-size:11px">Dropdown / snippets</div></div>
+              <div class="dash-card"><span class="dash-icon">⚡</span><div class="dash-label" style="color:#6ee7b7">Quick Add</div><div class="dash-value">${f.quickAdd ?? 0}</div><div class="dash-status muted" style="font-size:11px">Basket adds</div></div>
+              <div class="dash-card"><span class="dash-icon">🚪</span><div class="dash-label c-purple">View store</div><div class="dash-value">${f.viewStore ?? 0}</div><div class="dash-status muted" style="font-size:11px">Full results CTA</div></div>
+              <div class="dash-card"><span class="dash-icon">📈</span><div class="dash-label c-purple">Engagement / queries</div><div class="dash-value" style="font-size:22px">${ctr}%</div><div class="dash-status muted" style="font-size:11px">Rough vs logged searches</div></div>
+            `;
+          }
+        }
+        if (el.topSearchTerms && el.noResultTerms) {
+          if (!sa || !sa.ok) {
+            el.topSearchTerms.innerHTML = '<li class="muted">Refresh to load</li>';
+            el.noResultTerms.innerHTML = '<li class="muted">—</li>';
+          } else {
+            el.topSearchTerms.innerHTML = (sa.topTerms || []).slice(0, 15).map((x) => `<li>${escHtml(x.term)} <span class="muted">(${x.count})</span></li>`).join("") || '<li class="muted">No data yet</li>';
+            el.noResultTerms.innerHTML = (sa.noResultsTerms || []).slice(0, 15).map((x) => `<li>${escHtml(x.term)} <span class="muted">(${x.count})</span></li>`).join("") || '<li class="muted">None logged</li>';
+          }
+        }
       }
 
       function openPublishModal(email, name) {
@@ -867,7 +904,7 @@
       async function refreshAll() {
         setStatus(el.dataStatus, "Loading…");
         try {
-          const [bookings, contacts, provData, negsData, mpData, visData, obData, platData] = await Promise.all([
+          const [bookings, contacts, provData, negsData, mpData, visData, obData, platData, searchData] = await Promise.all([
             api("/api/admin?action=bookings"),
             api("/api/admin?action=contacts"),
             api("/api/admin?action=providers").catch(() => ({ providers: {} })),
@@ -875,7 +912,8 @@
             api("/api/admin?action=marketplace").catch(() => ({ items: [] })),
             api("/api/admin?action=site-visits").catch(() => ({ items: [] })),
             api("/api/admin?action=onboarding-stats").catch(() => ({})),
-            api("/api/admin?action=platform-stats").catch(() => ({}))
+            api("/api/admin?action=platform-stats").catch(() => ({})),
+            api("/api/admin?action=search-analytics").catch(() => ({}))
           ]);
           state.bookings = bookings.items || [];
           state.contacts = contacts.items || [];
@@ -885,6 +923,7 @@
           state.siteVisits = visData.items || [];
           state.onboarding = obData.ok ? obData : null;
           state.platform = platData.ok ? platData : null;
+          state.searchAnalytics = searchData.ok ? searchData : null;
           setStatus(el.dataStatus, `${state.bookings.length} bookings · ${state.negotiations.length} negotiations · ${state.marketplace.length} live listings · ${state.contacts.length} applications`, "ok");
           render();
         } catch (e) {
