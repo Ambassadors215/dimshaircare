@@ -1,6 +1,9 @@
 node_modules/
 data/*.json
 
+# Vercel CLI local link (machine-specific)
+.vercel/
+
 # Secrets — never commit
 .env
 .env.*

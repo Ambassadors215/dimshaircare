@@ -26,6 +26,6 @@ Both sites call **`/api/booking`** and **`/api/contact`**. They must be deployed
 
 - **`origin`** should point at **[Clips-Service-](https://github.com/Ambassadors215/Clips-Service-)**. Production work is pushed here so **[clips-service](https://vercel.com/ambassadors215s-projects/clips-service)** on Vercel updates.
 - Do **not** use **`dimshaircare`** as `origin` — keep **`origin`** = Clips-Service- only.
-- Optional mirror: add **`dimshaircare`** → `https://github.com/Ambassadors215/dimshaircare.git`. After `git push origin main`, run **`git push dimshaircare main`** so the [dimshaircare](https://github.com/Ambassadors215/dimshaircare) repo matches [Clips-Service-](https://github.com/Ambassadors215/Clips-Service-) (same `main` history).
+- Optional: the legacy **[dimshaircare](https://github.com/Ambassadors215/dimshaircare)** GitHub repo can stay as a mirror (`git push dimshaircare main`). The **dimshaircare** Vercel project should use the **same** GitHub repo as **clips-service** ([Clips-Service-](https://github.com/Ambassadors215/Clips-Service-)) so one push deploys both hosts (routing is by domain in `middleware.js`). To reconnect Git for that project: `VERCEL_TOKEN` in `.env.local`, then **`node scripts/vercel-connect-dimshaircare.mjs`** (uses `npx vercel git connect`). Check both: **`npm run vercel:git-status`**.
 
 Push to the remote connected to each Vercel project when you want that deployment to update.

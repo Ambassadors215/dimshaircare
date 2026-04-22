@@ -16,7 +16,8 @@
     "test:payment-parse": "node scripts/test-payment-json-parse.mjs",
     "vercel:env:push": "node scripts/vercel-push-env.mjs",
     "vercel:env:ls": "node scripts/vercel-env-list.mjs",
-    "vercel:smoke": "node scripts/vercel-smoke.mjs"
+    "vercel:smoke": "node scripts/vercel-smoke.mjs",
+    "vercel:git-status": "node scripts/vercel-git-status.mjs"
   },
   "dependencies": {
     "ioredis": "^5.4.2",
