@@ -3,64 +3,73 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0A0E1A" />
+    <meta name="theme-color" content="#8B3A3A" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <title>Clip Services Admin</title>
-    <!-- admin-ui-build: 2026-04-03 store-platform -->
+    <!-- admin-ui-build: 2026-04-terracotta -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
       :root {
-        --bg: #0A0E1A;
-        --bg2: #0F1424;
-        --card: #131A2E;
-        --card2: #182040;
-        --border: #1C2848;
-        --border-glow: rgba(0,200,240,.15);
-        --text: #E0E8F8;
-        --muted-text: #6B7FA0;
-        --faint: #3A4D6E;
-        --cyan: #00C8F0;
-        --cyan2: #0099BB;
-        --green: #10B981;
-        --amber: #F59E0B;
-        --red: #EF4444;
-        --purple: #8B5CF6;
+        --terracotta: #8b3a3a;
+        --terracotta-d: #6b2e2e;
+        --gold: #d4a017;
+        --cream: #f5f0e8;
+        --cream-2: #ede6dc;
+        --card-w: #fffdf8;
+        --brown: #2c1810;
+        --muted-brown: #5c4033;
+        --border-warm: #e0d6c8;
+        --bg: var(--cream);
+        --bg2: var(--cream-2);
+        --card: var(--card-w);
+        --card2: #f0ebe4;
+        --border: var(--border-warm);
+        --border-glow: rgba(139, 58, 58, 0.22);
+        --text: var(--brown);
+        --muted-text: var(--muted-brown);
+        --faint: #8a7a6e;
+        --cyan: var(--terracotta);
+        --cyan2: var(--terracotta-d);
+        --green: #15803d;
+        --amber: #b45309;
+        --red: #b91c1c;
+        --purple: #7c3aed;
         --radius: 16px;
       }
       * { box-sizing: border-box; margin: 0; padding: 0; }
       body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--bg); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
       /* HEADER */
-      header { position: sticky; top: 0; z-index: 10; background: rgba(10,14,26,.92); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+      header { position: sticky; top: 0; z-index: 10; background: rgba(255, 253, 248, 0.96); backdrop-filter: blur(12px); border-bottom: 2px solid rgba(139, 58, 58, 0.15); box-shadow: 0 4px 24px rgba(44, 24, 16, 0.06); }
       .wrap { max-width: 1200px; margin: 0 auto; padding: 16px 20px; }
       .topbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
       .brand { display: flex; align-items: center; gap: 12px; }
-      .brand h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.02em; }
-      .brand h1 span { color: var(--cyan); }
-      .brand-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s ease infinite; }
+      .brand h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 22px; letter-spacing: -0.02em; color: var(--brown); }
+      .brand h1 span { color: var(--terracotta); }
+      .brand-dot { width: 8px; height: 8px; background: var(--gold); border-radius: 50%; animation: pulse 2s ease infinite; }
       @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
       .header-actions { display: flex; gap: 8px; align-items: center; }
 
       /* WORKSPACE BANNER */
       .workspace-banner { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; margin-bottom: 20px; }
-      .workspace-label { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--cyan); margin-bottom: 4px; }
-      .workspace-name { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+      .workspace-label { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 4px; }
+      .workspace-name { font-family: 'Playfair Display', 'Syne', Georgia, serif; font-size: 22px; font-weight: 700; margin-bottom: 4px; color: var(--terracotta); }
       .workspace-desc { font-size: 13px; color: var(--muted-text); line-height: 1.5; }
 
       /* DASHBOARD GRID */
       .dash-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
-      .dash-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: border-color .25s, box-shadow .25s; cursor: default; position: relative; overflow: hidden; }
-      .dash-card:hover { border-color: var(--border-glow); box-shadow: 0 0 24px rgba(0,200,240,.06); }
-      .dash-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); opacity: 0; transition: opacity .3s; }
+      .dash-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; transition: border-color .25s, box-shadow .25s; cursor: default; position: relative; overflow: hidden; box-shadow: 0 2px 12px rgba(44, 24, 16, 0.04); }
+      .dash-card:hover { border-color: rgba(139, 58, 58, 0.35); box-shadow: 0 8px 28px rgba(139, 58, 58, 0.08); }
+      .dash-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--gold), var(--terracotta), var(--gold)); opacity: 0; transition: opacity .3s; }
       .dash-card:hover::before { opacity: .5; }
       .dash-icon { font-size: 28px; margin-bottom: 10px; display: block; }
       .dash-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
-      .dash-label.c-cyan { color: var(--cyan); }
+      .dash-label.c-cyan { color: var(--terracotta); }
       .dash-label.c-green { color: var(--green); }
       .dash-label.c-amber { color: var(--amber); }
       .dash-label.c-purple { color: var(--purple); }
@@ -76,7 +85,7 @@
       .config-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
       .config-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
       .config-card h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-      .config-card h3 svg { width: 18px; height: 18px; stroke: var(--cyan); }
+      .config-card h3 svg { width: 18px; height: 18px; stroke: var(--terracotta); }
 
       /* MAIN DATA PANEL */
       .data-panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
@@ -88,44 +97,44 @@
       .tabs { display: flex; gap: 0; }
       .tab { padding: 10px 18px; font-size: 13px; font-weight: 500; color: var(--muted-text); border-bottom: 2px solid transparent; cursor: pointer; transition: all .2s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
       .tab:hover { color: var(--text); }
-      .tab.active { color: var(--cyan); border-bottom-color: var(--cyan); }
+      .tab.active { color: var(--terracotta); border-bottom-color: var(--gold); font-weight: 600; }
 
       /* INPUTS & BUTTONS */
-      .input { width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; font-size: 14px; color: var(--text); outline: none; font-family: 'DM Sans', sans-serif; transition: border-color .2s; }
-      .input:focus { border-color: var(--cyan); box-shadow: 0 0 0 3px rgba(0,200,240,.1); }
+      .input { width: 100%; background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; font-size: 14px; color: var(--text); outline: none; font-family: 'DM Sans', sans-serif; transition: border-color .2s; }
+      .input:focus { border-color: var(--terracotta); box-shadow: 0 0 0 3px rgba(139, 58, 58, 0.12); }
       .input::placeholder { color: var(--faint); }
       .btn { border: none; border-radius: 10px; padding: 10px 16px; cursor: pointer; font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: all .2s; display: inline-flex; align-items: center; gap: 6px; }
-      .btn-primary { background: var(--cyan); color: var(--bg); }
-      .btn-primary:hover { background: var(--cyan2); }
-      .btn-ghost { background: rgba(255,255,255,.04); border: 1px solid var(--border); color: var(--muted-text); }
-      .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+      .btn-primary { background: var(--terracotta); color: #fff; }
+      .btn-primary:hover { background: var(--terracotta-d); }
+      .btn-ghost { background: var(--card); border: 1px solid var(--border); color: var(--muted-text); }
+      .btn-ghost:hover { border-color: var(--terracotta); color: var(--terracotta); }
       .btn-danger { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.25); color: var(--red); }
 
       /* TABLE */
       table { width: 100%; border-collapse: collapse; }
       th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 13px; }
-      th { font-size: 11px; color: var(--faint); letter-spacing: .1em; text-transform: uppercase; font-weight: 500; background: var(--bg2); position: sticky; top: 0; }
-      tr:hover td { background: rgba(0,200,240,.02); }
+      th { font-size: 11px; color: var(--muted-brown); letter-spacing: .1em; text-transform: uppercase; font-weight: 600; background: var(--cream-2); position: sticky; top: 0; }
+      tr:hover td { background: rgba(139, 58, 58, 0.04); }
 
       /* BADGES */
       .badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight: 500; letter-spacing: .03em; white-space: nowrap; }
       .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-      .badge.success { background: rgba(16,185,129,.1); color: #6EE7B7; border: 1px solid rgba(16,185,129,.2); }
+      .badge.success { background: rgba(21, 128, 61, 0.12); color: #14532d; border: 1px solid rgba(21, 128, 61, 0.25); }
       .badge.success::before { background: var(--green); }
-      .badge.danger { background: rgba(239,68,68,.1); color: #FCA5A5; border: 1px solid rgba(239,68,68,.2); }
+      .badge.danger { background: rgba(185, 28, 28, 0.1); color: #991b1b; border: 1px solid rgba(185, 28, 28, 0.22); }
       .badge.danger::before { background: var(--red); }
-      .badge.warn { background: rgba(245,158,11,.1); color: #FCD34D; border: 1px solid rgba(245,158,11,.2); }
+      .badge.warn { background: rgba(180, 83, 9, 0.12); color: #92400e; border: 1px solid rgba(180, 83, 9, 0.22); }
       .badge.warn::before { background: var(--amber); }
-      .badge.neutral { background: rgba(99,130,180,.08); color: var(--muted-text); border: 1px solid var(--border); }
+      .badge.neutral { background: rgba(92, 64, 51, 0.06); color: var(--muted-text); border: 1px solid var(--border); }
       .badge.neutral::before { background: var(--faint); }
 
       /* SELECT */
-      .select { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: var(--text); font-family: 'DM Sans', sans-serif; outline: none; cursor: pointer; }
-      .select:focus { border-color: var(--cyan); }
+      .select { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 12px; color: var(--text); font-family: 'DM Sans', sans-serif; outline: none; cursor: pointer; }
+      .select:focus { border-color: var(--terracotta); }
 
       /* STATUS & UTILITY */
       .muted { color: var(--muted-text); font-size: 13px; }
-      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; color: var(--cyan); }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 12px; color: var(--terracotta-d); }
       .status { font-size: 13px; min-height: 18px; margin-top: 8px; }
       .status.ok { color: var(--green); }
       .status.err { color: var(--red); }
@@ -133,7 +142,8 @@
       .actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
       .hide { display: none !important; }
       .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
-      a { color: var(--cyan); }
+      a { color: var(--terracotta); font-weight: 600; }
+      a:hover { color: var(--terracotta-d); }
 
       /* SCROLLBAR */
       ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -167,7 +177,7 @@
       }
       .operator-panel > summary::after {
         content: "▾";
-        color: var(--cyan);
+        color: var(--terracotta);
         font-size: 12px;
         transition: transform 0.2s;
       }
@@ -232,7 +242,7 @@
         <div class="workspace-banner">
           <div class="workspace-label">Admin Dashboard</div>
           <div class="workspace-name">Clip Services</div>
-          <div class="workspace-desc" style="font-size:12px;opacity:.9;margin-bottom:10px"><strong>Build</strong> · Admin UI v2026.04 · API includes <span class="mono">onboarding-stats</span>, <span class="mono">platform-stats</span>. If this line is missing, your deploy is stale — hard-refresh or redeploy.</div>
+          <div class="workspace-desc" style="font-size:12px;opacity:.9;margin-bottom:10px"><strong>Build</strong> · Admin UI <strong style="color:var(--terracotta)">terracotta theme</strong> v2026.04 · API: <span class="mono">onboarding-stats</span>, <span class="mono">platform-stats</span>. Missing styles = stale cache — hard-refresh.</div>
           <div class="workspace-desc"><strong>Launch checklist:</strong> (1) <em>Applications</em> — review applicants. (2) <em>Publish to site</em> — adds their card on the marketplace and links their email so requests route to <span class="mono">/provider/</span> or <span class="mono">/store-owner/dashboard</span>. (3) <em>Stripe Connect</em> — same numeric <span class="mono">Provider ID</span> as the listing so payouts work. (4) <em>Negotiations</em> — only needed if no listing match; otherwise the store is notified automatically.</div>
         </div>
 
@@ -367,8 +377,8 @@
             </div>
 
             <div id="contactsView" class="hide">
-              <p class="muted" style="margin:0;padding:14px 20px;font-size:12px;line-height:1.55;border-bottom:1px solid var(--border);background:rgba(0,200,240,.04);">
-                <strong style="color:var(--cyan)">Store owner applications</strong> — click <strong>Publish to site</strong> to add a marketplace card and link this email to new requests. Listing ID should match Stripe Connect ID when you use payouts.
+              <p class="muted" style="margin:0;padding:14px 20px;font-size:12px;line-height:1.55;border-bottom:1px solid var(--border);background:rgba(139,58,58,.06);">
+                <strong style="color:var(--terracotta)">Store owner applications</strong> — click <strong>Publish to site</strong> to add a marketplace card and link this email to new requests. Listing ID should match Stripe Connect ID when you use payouts.
               </p>
               <div style="overflow-x:auto;">
               <table>
@@ -382,7 +392,7 @@
               <p class="muted" style="margin:0;padding:14px 20px;font-size:12px;line-height:1.55;border-bottom:1px solid var(--border);background:rgba(212,160,23,.08);">
                 <strong style="color:var(--amber)">Store &amp; stall onboarding</strong> — views increment when someone opens an apply form; submissions when they send. Set listing <span class="mono">applicationStatus</span> to <span class="mono">approved</span> or <span class="mono">active</span> when you onboard them (draft <span class="mono">pending</span> listings stay off the public directory).
               </p>
-              <p class="muted" style="margin:0;padding:12px 20px 0;font-size:11px;color:var(--cyan)"><strong>Platform overview</strong> — marketplace orders, GMV, and activation (stores with at least one product, excluding pending drafts).</p>
+              <p class="muted" style="margin:0;padding:12px 20px 0;font-size:11px;color:var(--terracotta)"><strong>Platform overview</strong> — marketplace orders, GMV, and activation (stores with at least one product, excluding pending drafts).</p>
               <div id="platformMetrics" class="dash-grid" style="padding:16px 20px 8px;"></div>
               <div id="onboardingMetrics" class="dash-grid" style="padding:16px 20px;"></div>
               <div style="overflow-x:auto;">
@@ -404,8 +414,8 @@
             </div>
 
             <div id="visitsView" class="hide">
-              <p class="muted" style="margin:0;padding:14px 20px;font-size:12px;line-height:1.55;border-bottom:1px solid var(--border);background:rgba(0,200,240,.04);">
-                <strong style="color:var(--cyan)">Anonymous traffic</strong> — path + time + coarse country (Vercel). <span class="mono">Visitor</span> is a hashed fingerprint (not an email or name). Keep a cookie banner / privacy policy if UK/EU traffic requires it.
+              <p class="muted" style="margin:0;padding:14px 20px;font-size:12px;line-height:1.55;border-bottom:1px solid var(--border);background:rgba(139,58,58,.06);">
+                <strong style="color:var(--terracotta)">Anonymous traffic</strong> — path + time + coarse country (Vercel). <span class="mono">Visitor</span> is a hashed fingerprint (not an email or name). Keep a cookie banner / privacy policy if UK/EU traffic requires it.
               </p>
               <div style="overflow-x:auto;">
                 <table>
@@ -624,7 +634,7 @@
                 <div class="muted" style="font-size:11px;margin-top:4px;">${escHtml(n.id)} · ${escHtml(n.bookingRef || '')} · ${escHtml(n.customerName || '')} (${escHtml(n.customerEmail || '')})</div>
                 ${hasProvider ? `<div style="font-size:12px;margin-top:4px;color:var(--green);">Store: ${escHtml(n.providerEmail)}</div>` : ''}
                 ${lastText ? `<div class="muted" style="font-size:11px;margin-top:4px;">Last: ${escHtml(lastText)}</div>` : ''}
-                ${n.agreedPrice ? `<div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--cyan);margin-top:6px;">Agreed: £${Number(n.agreedPrice).toFixed(2)}</div>` : ''}
+                ${n.agreedPrice ? `<div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--terracotta);margin-top:6px;">Agreed: £${Number(n.agreedPrice).toFixed(2)}</div>` : ''}
               </div>
               <span class="badge ${badgeClass}">${n.status || 'pending'}</span>
             </div>
@@ -823,8 +833,8 @@
                 <td><div>${timeAgo(c.createdAt)}</div><div class="muted" style="font-size:11px">${c.createdAt ? new Date(c.createdAt).toLocaleDateString() : ""}</div></td>
                 <td style="min-width:160px">
                   <div style="font-weight:500">${escHtml(c.name || "—")}</div>
-                  <div class="muted" style="font-size:11px">${c.email ? `<a href="mailto:${escHtml(c.email)}" style="color:var(--cyan)">${escHtml(c.email)}</a>` : "—"}</div>
-                  ${phone ? `<div class="muted" style="font-size:11px;margin-top:6px">${escHtml(phone)} ${wa ? `<a href="${escHtml(wa)}" target="_blank" rel="noopener" style="color:var(--cyan);white-space:nowrap">· WhatsApp</a>` : ""}</div>` : ""}
+                  <div class="muted" style="font-size:11px">${c.email ? `<a href="mailto:${escHtml(c.email)}" style="color:var(--terracotta)">${escHtml(c.email)}</a>` : "—"}</div>
+                  ${phone ? `<div class="muted" style="font-size:11px;margin-top:6px">${escHtml(phone)} ${wa ? `<a href="${escHtml(wa)}" target="_blank" rel="noopener" style="color:var(--terracotta);white-space:nowrap">· WhatsApp</a>` : ""}</div>` : ""}
                 </td>
                 <td style="max-width:min(560px,92vw);vertical-align:top">
                   <pre style="margin:0;font-family:ui-monospace,monospace;font-size:11px;line-height:1.5;white-space:pre-wrap;word-break:break-word;max-height:360px;overflow:auto;color:var(--muted-text);background:var(--bg2);padding:12px;border-radius:10px;border:1px solid var(--border)">${escHtml(c.message || "")}</pre>
