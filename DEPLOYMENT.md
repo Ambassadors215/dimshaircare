@@ -25,6 +25,7 @@ Both sites call **`/api/booking`** and **`/api/contact`**. They must be deployed
 ## Git remotes
 
 - **`origin`** should point at **[Clips-Service-](https://github.com/Ambassadors215/Clips-Service-)**. Production work is pushed here so **[clips-service](https://vercel.com/ambassadors215s-projects/clips-service)** on Vercel updates.
-- Do **not** use the old **`dimshaircare`** GitHub repo as `origin` for this project — it confuses deploys. A legacy `dimshaircare` remote is optional only if you still mirror there on purpose.
+- Do **not** use **`dimshaircare`** as `origin` — keep **`origin`** = Clips-Service- only.
+- Optional mirror: add **`dimshaircare`** → `https://github.com/Ambassadors215/dimshaircare.git`. After `git push origin main`, run **`git push dimshaircare main`** so the [dimshaircare](https://github.com/Ambassadors215/dimshaircare) repo matches [Clips-Service-](https://github.com/Ambassadors215/Clips-Service-) (same `main` history).
 
 Push to the remote connected to each Vercel project when you want that deployment to update.
