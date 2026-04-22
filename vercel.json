@@ -45,7 +45,9 @@
     { "source": "/impact", "destination": "/impact/index.html" },
     { "source": "/impact/", "destination": "/impact/index.html" },
     { "source": "/customer/orders", "destination": "/customer/orders/index.html" },
-    { "source": "/customer/orders/", "destination": "/customer/orders/index.html" }
+    { "source": "/customer/orders/", "destination": "/customer/orders/index.html" },
+    { "source": "/customer/order-confirmed", "destination": "/customer/order-confirmed/index.html" },
+    { "source": "/customer/order-confirmed/", "destination": "/customer/order-confirmed/index.html" }
   ],
   "functions": {
     "api/[...path].js": { "maxDuration": 60 },

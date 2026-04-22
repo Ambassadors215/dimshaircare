@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Order confirmed — Clip Services</title>
+    <meta name="robots" content="noindex,follow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --terracotta: #8b3a3a;
+        --gold: #d4a017;
+        --cream: #f5f0e8;
+        --brown: #2c1810;
+        --card: #fffdf8;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "DM Sans", system-ui, sans-serif;
+        background: var(--cream);
+        color: var(--brown);
+        min-height: 100vh;
+        padding: 24px 16px 48px;
+      }
+      .wrap {
+        max-width: 520px;
+        margin: 0 auto;
+      }
+      h1 {
+        font-family: "Playfair Display", Georgia, serif;
+        color: var(--terracotta);
+        font-size: 1.75rem;
+        margin: 0 0 8px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid rgba(139, 58, 58, 0.2);
+        border-radius: 16px;
+        padding: 20px;
+        margin-top: 16px;
+        box-shadow: 0 4px 20px rgba(44, 24, 16, 0.06);
+      }
+      .muted {
+        color: #5c4033;
+        font-size: 0.95rem;
+      }
+      ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+      .btn {
+        display: inline-block;
+        margin-top: 14px;
+        background: var(--terracotta);
+        color: #fff;
+        text-decoration: none;
+        font-weight: 700;
+        padding: 12px 18px;
+        border-radius: 12px;
+      }
+      .btn-ghost {
+        background: transparent;
+        color: var(--terracotta);
+        border: 2px solid var(--terracotta);
+      }
+      .err {
+        color: #b91c1c;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <h1>Thank you</h1>
+      <p class="muted" id="sub">Loading your order…</p>
+      <div class="card" id="box" style="display: none">
+        <p><strong>Order</strong> <span id="ref"></span></p>
+        <ul id="lines"></ul>
+        <p id="tot"></p>
+        <p id="ful"></p>
+        <p id="addr" class="muted" style="display: none"></p>
+        <p class="muted" id="ready"></p>
+        <a class="btn" id="wa" href="#" style="display: none">Track your order via WhatsApp</a>
+        <p class="muted" style="margin-top: 16px; font-size: 0.9rem">A confirmation email has been sent to the address you used at checkout.</p>
+      </div>
+      <p class="err" id="e"></p>
+      <p><a href="/">← Back to marketplace</a></p>
+    </div>
+    <script>
+      (function () {
+        var q = new URLSearchParams(location.search);
+        var ref = q.get("ref");
+        var sub = document.getElementById("sub");
+        var box = document.getElementById("box");
+        var err = document.getElementById("e");
+        if (!ref) {
+          sub.textContent = "Missing order reference.";
+          return;
+        }
+        fetch("/api/order-public?ref=" + encodeURIComponent(ref))
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (data) {
+            if (!data.ok || !data.order) {
+              err.textContent = data.error || "Could not load order.";
+              sub.textContent = "If you just paid, wait a few seconds and refresh.";
+              return;
+            }
+            var o = data.order;
+            sub.textContent = "Your payment was successful.";
+            box.style.display = "block";
+            document.getElementById("ref").textContent = o.ref;
+            var ul = document.getElementById("lines");
+            ul.innerHTML = "";
+            (o.cartSnapshot || []).forEach(function (l) {
+              var li = document.createElement("li");
+              li.textContent = (l.qty || 0) + "× " + (l.item || "");
+              ul.appendChild(li);
+            });
+            var parts = [];
+            if (o.subtotalGBP != null) parts.push("Subtotal £" + Number(o.subtotalGBP).toFixed(2));
+            if (Number(o.deliveryFeeGBP) > 0) parts.push("Delivery £" + Number(o.deliveryFeeGBP).toFixed(2));
+            if (o.totalGBP != null) parts.push("Total paid £" + Number(o.totalGBP).toFixed(2));
+            document.getElementById("tot").textContent = parts.join(" · ");
+            document.getElementById("ful").innerHTML =
+              "<strong>Fulfilment:</strong> " + (o.fulfillment === "delivery" ? "Delivery" : "Collection");
+            if (o.fulfillment === "delivery" && o.deliveryAddress) {
+              var a = o.deliveryAddress;
+              var ad = document.getElementById("addr");
+              ad.style.display = "block";
+              ad.textContent = a.line1 + ", " + a.city + " " + a.postcode;
+            }
+            document.getElementById("ready").textContent =
+              o.fulfillment === "delivery"
+                ? "Estimated: driver route varies — the store will confirm timing on WhatsApp."
+                : "Estimated ready: in around 2 hours — the store will confirm on WhatsApp.";
+            var wa = document.getElementById("wa");
+            var sp = o.storeWhatsApp || "";
+            var d = String(sp).replace(/\D/g, "");
+            if (d.length >= 10) {
+              if (d.startsWith("0")) d = "44" + d.slice(1);
+              else if (!d.startsWith("44")) d = "44" + d;
+              wa.href = "https://wa.me/" + d + "?text=" + encodeURIComponent("Hi — I just placed order " + o.ref);
+              wa.style.display = "inline-block";
+            }
+          })
+          .catch(function () {
+            err.textContent = "Network error.";
+          });
+      })();
+    </script>
+  </body>
+</html>
