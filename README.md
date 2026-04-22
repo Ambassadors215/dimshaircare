@@ -4,6 +4,8 @@
 
 **Live:** [clipservice.app](https://clipservice.app)
 
+**Canonical source & production deploy:** push to [`Ambassadors215/Clips-Service-`](https://github.com/Ambassadors215/Clips-Service-) on GitHub; Vercel project **[clips-service](https://vercel.com/ambassadors215s-projects/clips-service)** should be connected to that repo (not the separate `dimshaircare` GitHub/Vercel project). See [DEPLOYMENT.md](./DEPLOYMENT.md).
+
 This repository also contains **Dim's Haircare** (`dimshaircare.html`): on [dimshaircare.vercel.app](https://dimshaircare.vercel.app) the salon homepage is served; on Clip’s domain the marketplace is served (see `middleware.js` and [DEPLOYMENT.md](./DEPLOYMENT.md)).
 
 ---

@@ -10,7 +10,7 @@ Both Vercel projects can use **the same Git branch** and **the same `vercel.json
 ## Vercel checklist
 
 1. **clips-service** — connect [Clips-Service-](https://github.com/Ambassadors215/Clips-Service-) (or your fork), production branch `main`. Attach **clipservice.app** here only.
-2. **dimshaircare** — connect the **same repo** (`dimshaircare` remote) or `Clips-Service-` if you consolidate; branch `main`. Keep **dimshaircare.vercel.app** here. Do **not** attach clipservice.app to this project.
+2. **dimshaircare** (optional second project) — if you use it, connect the **same** GitHub repo [`Clips-Service-`](https://github.com/Ambassadors215/Clips-Service-) and branch `main` (do **not** rely on a separate `dimshaircare` GitHub repo for this codebase). Keep **dimshaircare.vercel.app** here. Do **not** attach clipservice.app to this project.
 
 ## Custom domain for the hair site
 
@@ -24,7 +24,7 @@ Both sites call **`/api/booking`** and **`/api/contact`**. They must be deployed
 
 ## Git remotes
 
-- `clip-services` → Clip Services GitHub repo (recommended for production pushes).
-- `origin` → `dimshaircare` repo (often the same files; used for the second Vercel project).
+- **`origin`** should point at **[Clips-Service-](https://github.com/Ambassadors215/Clips-Service-)**. Production work is pushed here so **[clips-service](https://vercel.com/ambassadors215s-projects/clips-service)** on Vercel updates.
+- Do **not** use the old **`dimshaircare`** GitHub repo as `origin` for this project — it confuses deploys. A legacy `dimshaircare` remote is optional only if you still mirror there on purpose.
 
-Push to the remote(s) connected to each Vercel project when you want that deployment to update.
+Push to the remote connected to each Vercel project when you want that deployment to update.
